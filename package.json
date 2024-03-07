@@ -1,5 +1,4 @@
 {
-    "type": "module",
     "scripts": {
         "dev": "npm run build -- --sourcemap=inline --watch",
         "build": "esbuild src/widget/main.tsx --minify --format=esm --bundle --outdir=src/llm4vis/static",

@@ -1,12 +1,12 @@
-import { ChakraProvider } from '@chakra-ui/react';
-import { PropsWithChildren } from 'react';
-import root from 'react-shadow/emotion';
+import { ChakraProvider } from "@chakra-ui/react";
+import { PropsWithChildren } from "react";
+import ShadowRoot from "react-shadow/emotion";
 
 function Providers({ children }: PropsWithChildren<{}>) {
   return (
-    <root.div id="shadow-root">
+    <ShadowRoot.div id="shadow-root">
       <ChakraProvider>{children}</ChakraProvider>
-    </root.div>
+    </ShadowRoot.div>
   );
 }
 
