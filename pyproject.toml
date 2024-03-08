@@ -9,7 +9,7 @@ dependencies = ["anywidget"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pyright"]
 
 # automatically add the dev feature to the default env (e.g., hatch shell)
 [tool.hatch.envs.default]
@@ -70,7 +70,7 @@ target-version = "py38"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-select = ["E4", "E7", "E9", "F", "I"]
+select = ["E4", "E7", "E9", "F", "I", "FA"]
 ignore = []
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -92,3 +92,16 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+
+[tool.pyright]
+include = ["src/**/*.py"]
+exclude = ["**/node_modules",
+    "**/__pycache__",
+    "src/experimental",
+    "src/typestubs"
+]
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+pythonVersion = "3.8"
