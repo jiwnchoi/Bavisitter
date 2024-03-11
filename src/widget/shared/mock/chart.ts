@@ -1,6 +1,12 @@
-const MOCK_CHART = {
+import type { VisualizationSpec } from "react-vega";
+
+const MOCK_CHART: VisualizationSpec = {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   description: "A simple bar chart with embedded data.",
+  autosize: {
+    type: "fit-x",
+    contains: "padding",
+  },
   data: {
     values: [
       {
