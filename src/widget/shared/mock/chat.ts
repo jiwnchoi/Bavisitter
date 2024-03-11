@@ -1,18 +1,19 @@
-const MOCK_CHAT = [
+import { IMessage } from "@shared/types";
+
+const MOCK_CHAT: IMessage[] = [
   {
     type: "system",
-    message: "Welcome to the chat room!",
+    content: "Welcome to the chat room!",
   },
   {
     type: "user",
-    message: "Draw Simple Bar Chart",
+    content: "Draw Simple Bar Chart",
   },
   {
     type: "machine",
-    message: `To visualize the provided data as a simple bar chart using Vega-Lite specification, you can use the following spec. This specification describes a bar chart where the x-axis represents the category (field "a") and the y-axis represents the value (field "b").
+    content: `To visualize the provided data as a simple bar chart using Vega-Lite specification, you can use the following spec. This specification describes a bar chart where the x-axis represents the category (field "a") and the y-axis represents the value (field "b").
 
-json
-Copy code
+\`\`\`json
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A simple bar chart with rectangular bars.",
@@ -35,14 +36,15 @@ Copy code
     "y": {"field": "b", "type": "quantitative", "axis": {"title": "Value"}}
   }
 }
+\`\`\`
 This spec defines a Vega-Lite visualization with:
 
-A schema for Vega-Lite version 5.
-A description of the chart.
-The given data embedded directly into the specification.
-A bar mark type to represent the data points.
-Encoding for the axes, with the "x" axis mapping to field "a" as an ordinal type (representing categorical data) and the "y" axis mapping to field "b" as a quantitative type (representing numerical data).
-To visualize this, you can paste this specification into a Vega-Lite editor, such as the online Vega Editor available at https://vega.github.io/editor/.`,
+- A schema for Vega-Lite version 5.
+- A description of the chart.
+- The given data embedded directly into the specification.
+- A bar mark type to represent the data points.
+- Encoding for the axes, with the "x" axis mapping to field "a" as an ordinal type (representing categorical data) and the "y" axis mapping to field "b" as a quantitative type (representing numerical data).
+- To visualize this, you can paste this specification into a Vega-Lite editor, such as the online Vega Editor available at https://vega.github.io/editor/.`,
   },
 ];
 
