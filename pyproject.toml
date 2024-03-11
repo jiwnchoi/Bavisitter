@@ -5,11 +5,11 @@ build-backend = "hatchling.build"
 [project]
 name = "llm4vis"
 version = "0.0.0"
-dependencies = ["anywidget"]
+dependencies = ["anywidget", "openai", "pandas"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pyright"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pyright", "vega-datasets"]
 
 # automatically add the dev feature to the default env (e.g., hatch shell)
 [tool.hatch.envs.default]
