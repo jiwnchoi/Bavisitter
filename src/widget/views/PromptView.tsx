@@ -19,7 +19,7 @@ const handleKeyDown = (
   }
 };
 
-export default function ChatView() {
+export default function PromptView() {
   return (
     <Flex
       flexDir={"row"}
@@ -43,6 +43,7 @@ export default function ChatView() {
               {({ field }: FieldProps) => (
                 <Textarea
                   {...field}
+                  fontSize={"sm"}
                   variant={"none"}
                   placeholder="Describe what your visualization would be..."
                   width={"full"}
