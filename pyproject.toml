@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "llm4vis"
+name = "bavisitter"
 version = "0.0.0"
 dependencies = ["anywidget", "openai", "pandas"]
 readme = "README.md"
@@ -18,12 +18,12 @@ features = ["dev"]
 
 [tool.hatch.build]
 only-packages = true
-artifacts = ["src/llm4vis/static/*"]
+artifacts = ["src/bavisitter/static/*"]
 
 [tool.hatch.build.hooks.jupyter-builder]
 build-function = "hatch_jupyter_builder.npm_builder"
-ensured-targets = ["src/llm4vis/static/main.js"]
-skip-if-exists = ["src/llm4vis/static/main.js"]
+ensured-targets = ["src/bavisitter/static/main.js"]
+skip-if-exists = ["src/bavisitter/static/main.js"]
 dependencies = ["hatch-jupyter-builder>=0.5.0"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]

@@ -6,4 +6,4 @@ dist
 __pycache__
 .ipynb_checkpoints
 
-src/llm4vis/static
+src/bavisitter/static

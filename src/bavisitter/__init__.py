@@ -6,13 +6,13 @@ import pandas as pd
 import traitlets
 
 try:
-    __version__ = importlib.metadata.version("llm4vis")
+    __version__ = importlib.metadata.version("bavisitter")
 
 except importlib.metadata.PackageNotFoundError:
     __version__ = "unknown"
 
 
-class LLM4VIS(anywidget.AnyWidget):
+class Bavisitter(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "main.js"
     value = traitlets.Int(0).tag(sync=True)
     api_key: str

@@ -1,6 +1,6 @@
 ## Related Issue
 
-> 이슈 번호를 기록합니다. 예: [#5](https://github.com/jiwnchoi/llm4vis/issues/5)
+> 이슈 번호를 기록합니다. 예: [#5](https://github.com/jiwnchoi/bavisitter/issues/5)
 
 ## Description
 
