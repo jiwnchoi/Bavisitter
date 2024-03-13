@@ -1,5 +1,5 @@
 interface IMessage {
-  type: "system" | "user" | "machine";
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
