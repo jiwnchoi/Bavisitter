@@ -9,7 +9,7 @@ dependencies = ["anywidget", "openai", "pandas"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pyright", "vega-datasets"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pyright", "vega-datasets", "pytest", "pytest-cov"]
 
 # automatically add the dev feature to the default env (e.g., hatch shell)
 [tool.hatch.envs.default]

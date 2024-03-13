@@ -50,6 +50,7 @@
             "prettier --write"
         ],
         "*.{py,ipython,pyi}": [
+            "pytest",
             "pyright",
             "ruff check . --fix",
             "ruff format ."
