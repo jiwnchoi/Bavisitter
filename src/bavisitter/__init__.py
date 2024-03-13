@@ -18,8 +18,7 @@ class Bavisitter(anywidget.AnyWidget):
     api_key: str
     df: pd.DataFrame
 
-    def __init__(self, api_key: str, df: pd.DataFrame, **kwargs):
+    def __init__(self, df: pd.DataFrame, **kwargs):
         super().__init__(**kwargs)
-        self.api_key = api_key
         self.df = df
         self.on_msg(self._handle_msg)
