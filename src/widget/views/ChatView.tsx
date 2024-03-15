@@ -3,16 +3,16 @@ import MOCK_CHAT from "@shared/mock/chat";
 import { IMessage } from "@shared/types";
 import { removeCodeBlocksFromString } from "@shared/utils";
 
-function Message({ type, content }: IMessage) {
+function Message({ role, content }: IMessage) {
   return (
     <Flex dir="row" w="full" p={2}>
       <Avatar
         size="sm"
-        name={type === "user" ? "You" : "Visualization Assistant"}
+        name={role === "user" ? "You" : "Visualization Assistant"}
       />
       <VStack align="flex-start" ml={2}>
         <Text as={"p"} fontSize="sm" fontWeight="bold">
-          {type === "user" ? "You" : "Visualization Assistant"}
+          {role === "user" ? "You" : "Visualization Assistant"}
         </Text>
         <Text
           as={"p"}
@@ -43,9 +43,9 @@ export default function ChatView() {
         },
       }}
     >
-      {MOCK_CHAT.reverse().map(({ type, content }, index) => (
+      {MOCK_CHAT.reverse().map(({ role: type, content }, index) => (
         <>
-          <Message type={type} content={removeCodeBlocksFromString(content)} />
+          <Message role={type} content={removeCodeBlocksFromString(content)} />
           {index < MOCK_CHAT.length - 1 && <Divider color={"gray.200"} />}
         </>
       ))}
