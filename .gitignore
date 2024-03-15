@@ -7,3 +7,6 @@ __pycache__
 .ipynb_checkpoints
 
 src/bavisitter/static
+artifacts
+.env
+*.ipynb
