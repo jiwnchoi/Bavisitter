@@ -1,1 +1,1 @@
-export * from "./removeCodeBlocksFromString";
+export * from "./codeBlock";

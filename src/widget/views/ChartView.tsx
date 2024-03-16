@@ -1,4 +1,5 @@
 import { Center } from "@chakra-ui/react";
+import useMessages from "@hooks/useMessages";
 import { Vega, type VisualizationSpec } from "react-vega";
 
 interface IChartProps {
@@ -7,9 +8,12 @@ interface IChartProps {
 }
 
 export default function ChartView({ spec, width }: IChartProps) {
+  const { currentVisualization } = useMessages();
   return (
-    <Center minH={300}>
-      <Vega mode="vega-lite" spec={spec} actions={false} width={width} />
+    <Center w="full" h="full">
+      {currentVisualization && (
+        <Vega spec={currentVisualization} width={width} actions={false} />
+      )}
     </Center>
   );
 }

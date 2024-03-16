@@ -1,18 +1,19 @@
 import { Avatar, Divider, Flex, Text, VStack } from "@chakra-ui/react";
+import useMessages from "@hooks/useMessages";
 import MOCK_CHAT from "@shared/mock/chat";
 import { IMessage } from "@shared/types";
 import { removeCodeBlocksFromString } from "@shared/utils";
 
-function Message({ role, content }: IMessage) {
+function Message({ message }: { message: IMessage }) {
   return (
     <Flex dir="row" w="full" p={2}>
       <Avatar
         size="sm"
-        name={role === "user" ? "You" : "Visualization Assistant"}
+        name={message.role === "user" ? "You" : "Visualization Assistant"}
       />
       <VStack align="flex-start" ml={2}>
         <Text as={"p"} fontSize="sm" fontWeight="bold">
-          {role === "user" ? "You" : "Visualization Assistant"}
+          {message.role === "user" ? "You" : "Visualization Assistant"}
         </Text>
         <Text
           as={"p"}
@@ -20,7 +21,7 @@ function Message({ role, content }: IMessage) {
           whiteSpace={"pre-line"}
           lineHeight={"20px"}
         >
-          {content}
+          {removeCodeBlocksFromString(message.content)}
         </Text>
       </VStack>
     </Flex>
@@ -28,6 +29,7 @@ function Message({ role, content }: IMessage) {
 }
 
 export default function ChatView() {
+  const { messages } = useMessages();
   return (
     <VStack
       overflow={"auto"}
@@ -43,9 +45,9 @@ export default function ChatView() {
         },
       }}
     >
-      {MOCK_CHAT.reverse().map(({ role: type, content }, index) => (
+      {messages.map((_, index) => (
         <>
-          <Message role={type} content={removeCodeBlocksFromString(content)} />
+          <Message message={messages[messages.length - index - 1]} />
           {index < MOCK_CHAT.length - 1 && <Divider color={"gray.200"} />}
         </>
       ))}

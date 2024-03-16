@@ -1,4 +1,5 @@
 import { Flex, Icon, IconButton, Textarea } from "@chakra-ui/react";
+import useMessages from "@hooks/useMessages";
 import { IPrompt } from "@shared/types";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import { FaArrowUp } from "react-icons/fa6";
@@ -20,6 +21,7 @@ const handleKeyDown = (
 };
 
 export default function PromptView() {
+  const { appendUserMessage } = useMessages();
   return (
     <Flex
       flexDir={"row"}
@@ -33,7 +35,12 @@ export default function PromptView() {
       <Formik
         initialValues={{ prompt: "" }}
         onSubmit={(values, actions) => {
-          console.log(values);
+          appendUserMessage({
+            role: "user",
+            content: values.prompt,
+            type: "message",
+          });
+          actions.resetForm();
           actions.setSubmitting(false);
         }}
       >
