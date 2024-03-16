@@ -1,8 +1,6 @@
-import { Avatar, Divider, Flex, Text, VStack } from "@chakra-ui/react";
-import useMessages from "@hooks/useMessages";
-import MOCK_CHAT from "@shared/mock/chat";
+import { Avatar, Divider, Flex, Spacer, Text, VStack } from "@chakra-ui/react";
 import { IMessage } from "@shared/types";
-import { removeCodeBlocksFromString } from "@shared/utils";
+import { replaceJSONCodeBlocks } from "@shared/utils";
 
 function Message({ message }: { message: IMessage }) {
   return (
@@ -21,19 +19,25 @@ function Message({ message }: { message: IMessage }) {
           whiteSpace={"pre-line"}
           lineHeight={"20px"}
         >
-          {removeCodeBlocksFromString(message.content)}
+          {replaceJSONCodeBlocks(message.content)}
         </Text>
       </VStack>
     </Flex>
   );
 }
 
-export default function ChatView() {
-  const { messages } = useMessages();
+interface IChatViewProps {
+  stream: IMessage;
+  messages: IMessage[];
+}
+
+export default function ChatView({ stream, messages }: IChatViewProps) {
   return (
     <VStack
+      w={"full"}
+      h={"full"}
       overflow={"auto"}
-      flexDir={"column-reverse"}
+      flexDir={"column"}
       // scroll bar background color transparent, width 8px, auto hide
       css={{
         "&::-webkit-scrollbar": {
@@ -45,12 +49,18 @@ export default function ChatView() {
         },
       }}
     >
-      {messages.map((_, index) => (
+      {messages.map((message, index) => (
         <>
-          <Message message={messages[messages.length - index - 1]} />
-          {index < MOCK_CHAT.length - 1 && <Divider color={"gray.200"} />}
+          <Message message={message} />
+          {index < messages.length - 1 && <Divider color={"gray.200"} />}
         </>
       ))}
+      {"content" in stream && (
+        <>
+          <Divider color={"gray.200"} />
+          <Message message={stream} />
+        </>
+      )}
     </VStack>
   );
 }

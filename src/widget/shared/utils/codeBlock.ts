@@ -1,7 +1,13 @@
 export const extractCodeBlocksFromString = (str: string) => {
-  return str.match(/```json[^`]+```/g)?.toString() || "";
+  return (
+    str
+      .match(/```json[^`]+```/g)
+      ?.toString()
+      .replace("```json", "")
+      .replace("```", "") || ""
+  );
 };
 
-export const removeCodeBlocksFromString = (str: string) => {
-  return str.replace(/```json[^`]+```/g, "[Visualization Right]");
+export const replaceJSONCodeBlocks = (str: string) => {
+  return str.replace(/```json[^`]+```/g, "");
 };

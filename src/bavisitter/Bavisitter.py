@@ -31,10 +31,11 @@ except importlib.metadata.PackageNotFoundError:
 
 class Bavisitter(anywidget.AnyWidget, HasTraits):
     _esm = pathlib.Path(__file__).parent / "static" / "main.js"
+    data = Unicode().tag(sync=True)
     messages = List(Dict(value_trait=Unicode(), key_trait=Unicode())).tag(sync=True)
     streaming = Bool(default_value=False).tag(sync=True)
+    stream = Dict(value_trait=Unicode(), key_trait=Unicode()).tag(sync=True)
 
-    stream: StreamChunkModel | None
     api_key: str
     df: pd.DataFrame
 
@@ -52,8 +53,8 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             pathlib.Path("artifacts").mkdir()
 
         df.to_csv("artifacts/data.csv")
+        self.data = df.to_csv(index=False)
         self.model = model
-        self.stream = None
         self.on_msg(self._handle_msg)
         self.messages = []
         self.set_interpreter(model, safe_model, auto_run)
@@ -76,6 +77,10 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     def _default_messages(self):
         return []
 
+    @default("stream")
+    def _default_stream(self):
+        return {}
+
     @validate("messages")
     def _validate_messages(self, proposal):
         try:
@@ -91,7 +96,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         if len(change["new"]) == 0:
             self.messages = []
             self.streaming = False
-            self.stream = None
+            self.stream = {}
 
         if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
             for chunk in interpreter.chat(
@@ -113,24 +118,28 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     def append_chunk(self, chunk: StreamChunkModel):
         if "start" in chunk and not self.streaming:
             self.streaming = True
-            self.stream = {
+            new_message = {
                 "role": chunk["role"],
                 "type": chunk["type"],
                 "content": "",
             }
             if "format" in chunk:
-                self.stream["format"] = chunk["format"]
+                new_message["format"] = chunk["format"]
 
+            self.stream = new_message
         elif (
             self.streaming
             and ("end" not in chunk)
             and ("content" in chunk)
             and isinstance(chunk["content"], str)
         ):
-            self.stream["content"] += chunk["content"]
+            # self.stream["content"] += chunk["content"]
+            new_message = self.stream.copy()
+            new_message["content"] += chunk["content"]
+            self.stream = new_message
 
         elif "end" in chunk and self.streaming:
-            self.stream["content"] += "\n\n"
+            # self.stream["content"] += "\n\n"
             self.append(self.stream)
+            self.stream = {}
             self.streaming = False
-            self.stream = None

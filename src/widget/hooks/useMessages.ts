@@ -1,12 +1,11 @@
 import { useModelState } from "@anywidget/react";
-import { IMessage } from "@shared/types";
+import { IChartSpec, IMessage } from "@shared/types";
 import { extractCodeBlocksFromString } from "@shared/utils";
 import { useCallback, useMemo } from "react";
-import { VisualizationSpec } from "react-vega";
 
 export default function useMessages() {
   const [messages, _setMessages] = useModelState<IMessage[]>("messages");
-  const [streaming] = useModelState<boolean>("streaming");
+  const [stream] = useModelState<IMessage>("stream");
 
   const appendUserMessage = useCallback((message: IMessage) => {
     _setMessages([...messages, message]);
@@ -20,22 +19,26 @@ export default function useMessages() {
     _setMessages([...messages.slice(0, index), message]);
   }, []);
 
-  const currentVisualization = useMemo<VisualizationSpec | null>(() => {
-    const lastVisualization = messages.find(
-      (message) => extractCodeBlocksFromString(message.content) !== "",
-    );
-    if (lastVisualization) {
-      return JSON.parse(
-        extractCodeBlocksFromString(lastVisualization.content),
-      ) as VisualizationSpec;
-    }
-    return null;
+  const specs = useMemo(() => {
+    return messages
+      .map((m, index) => ({
+        chatIndex: index,
+        spec: extractCodeBlocksFromString(m.content),
+      }))
+      .filter((m) => m.spec !== "")
+      .map((m) => {
+        const spec = JSON.parse(m.spec);
+        spec.$schema = "https://vega.github.io/schema/vega-lite/v5.json";
+        spec.data = { name: "table" };
+        spec.autosize = { type: "fit", contains: "padding" };
+        return { ...m, spec } as IChartSpec;
+      });
   }, [messages]);
-
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json";
   return {
     messages,
-    streaming,
-    currentVisualization,
+    stream,
+    specs,
     appendUserMessage,
     clearUserMessages,
     editUserMessage,
