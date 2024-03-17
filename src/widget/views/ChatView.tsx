@@ -1,6 +1,7 @@
-import { Avatar, Divider, Flex, Spacer, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Divider, Flex, Text, VStack } from "@chakra-ui/react";
 import { IMessage } from "@shared/types";
 import { replaceJSONCodeBlocks } from "@shared/utils";
+import Markdown from "react-markdown";
 
 function Message({ message }: { message: IMessage }) {
   return (
@@ -19,7 +20,7 @@ function Message({ message }: { message: IMessage }) {
           whiteSpace={"pre-line"}
           lineHeight={"20px"}
         >
-          {replaceJSONCodeBlocks(message.content)}
+          <Markdown>{replaceJSONCodeBlocks(message.content)}</Markdown>
         </Text>
       </VStack>
     </Flex>
