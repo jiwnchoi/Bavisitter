@@ -9,5 +9,8 @@ export const extractCodeBlocksFromString = (str: string) => {
 };
 
 export const replaceJSONCodeBlocks = (str: string) => {
-  return str.replace(/```json[^`]+```/g, "");
+  const regex = /```json[\s\S]*?(?:```|$)/g;
+
+  // Replace the matched code block with an empty string
+  return str.replace(regex, "");
 };

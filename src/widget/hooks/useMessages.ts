@@ -18,13 +18,9 @@ export default function useMessages() {
     scrollToBottom();
   }, [messages]);
 
-  const appendUserMessage = useCallback(
-    (message: IMessage) => {
-      console.log([...messages, message]);
-      _setMessages([...messages, message]);
-    },
-    [messages, _setMessages],
-  );
+  const appendUserMessage = (message: IMessage) => {
+    _setMessages([...messages, message]);
+  };
 
   const clearUserMessages = useCallback(() => {
     _setMessages([]);
