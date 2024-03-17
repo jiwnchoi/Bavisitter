@@ -34,7 +34,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     data = Unicode().tag(sync=True)
     messages = List(Dict(value_trait=Unicode(), key_trait=Unicode())).tag(sync=True)
     streaming = Bool(default_value=False).tag(sync=True)
-    stream = Dict(value_trait=Unicode(), key_trait=Unicode()).tag(sync=True)
 
     api_key: str
     df: pd.DataFrame
@@ -94,11 +93,11 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     @observe("messages")
     def handle_user_chat(self, change):
         if len(change["new"]) == 0:
-            self.messages = []
+            interpreter.messages = []
             self.streaming = False
-            self.stream = {}
 
         if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
+            interpreter.messages = self.messages
             for chunk in interpreter.chat(
                 change["new"][-1]["content"], display=False, stream=True
             ):
@@ -126,20 +125,16 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             if "format" in chunk:
                 new_message["format"] = chunk["format"]
 
-            self.stream = new_message
+            self.messages = [*self.messages, new_message]
         elif (
             self.streaming
             and ("end" not in chunk)
             and ("content" in chunk)
             and isinstance(chunk["content"], str)
         ):
-            # self.stream["content"] += chunk["content"]
-            new_message = self.stream.copy()
+            new_message = self.messages[-1].copy()
             new_message["content"] += chunk["content"]
-            self.stream = new_message
+            self.messages = [*self.messages[:-1], new_message]
 
         elif "end" in chunk and self.streaming:
-            # self.stream["content"] += "\n\n"
-            self.append(self.stream)
-            self.stream = {}
             self.streaming = False
