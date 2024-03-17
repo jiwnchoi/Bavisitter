@@ -97,7 +97,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             self.streaming = False
 
         if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
-            interpreter.messages = self.messages
             for chunk in interpreter.chat(
                 change["new"][-1]["content"], display=False, stream=True
             ):
