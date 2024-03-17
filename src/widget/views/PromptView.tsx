@@ -1,6 +1,6 @@
-import { Flex, Icon, IconButton, Textarea } from "@chakra-ui/react";
+import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
 import useMessages from "@hooks/useMessages";
-import { IPrompt } from "@shared/types";
+import { IMessage, IPrompt } from "@shared/types";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import { FaArrowUp } from "react-icons/fa6";
 
@@ -20,8 +20,15 @@ const handleKeyDown = (
   }
 };
 
-export default function PromptView() {
-  const { appendUserMessage } = useMessages();
+interface IPromptViewProps {
+  appendUserMessage: (message: IMessage) => void;
+  streaming: boolean;
+}
+
+export default function PromptView({
+  appendUserMessage,
+  streaming,
+}: IPromptViewProps) {
   return (
     <Flex
       flexDir={"row"}
@@ -62,13 +69,15 @@ export default function PromptView() {
                 />
               )}
             </Field>
-            <IconButton
-              type="submit"
-              icon={<Icon as={FaArrowUp} />}
-              isLoading={props.isSubmitting}
-              isDisabled={props.isSubmitting || props.values.prompt === ""}
-              aria-label="Sending Button"
-            />
+            <Flex direction="column" gap={2}>
+              <IconButton
+                type="submit"
+                icon={streaming ? <Spinner /> : <Icon as={FaArrowUp} />}
+                isLoading={props.isSubmitting || streaming}
+                isDisabled={props.isSubmitting || props.values.prompt === ""}
+                aria-label="Sending Button"
+              />
+            </Flex>
           </Form>
         )}
       </Formik>

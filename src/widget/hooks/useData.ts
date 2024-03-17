@@ -1,6 +1,6 @@
 import { useModelState } from "@anywidget/react";
 import Papa from "papaparse";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { PlainObject } from "react-vega";
 
 export default function useData() {
@@ -15,11 +15,6 @@ export default function useData() {
       table: parsed.data as PlainObject[],
     };
   }, [_data]);
-
-  useEffect(() => {
-    console.log("data");
-    console.log(data);
-  }, [data]);
 
   return {
     data,

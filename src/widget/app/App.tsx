@@ -5,27 +5,28 @@ import Providers from "./Providers";
 import useData from "@hooks/useData";
 
 function App() {
-  const { messages, stream, specs } = useMessages();
+  const { messages, streaming, specs, chatBoxRef, appendUserMessage } =
+    useMessages();
   const { data } = useData();
   return (
     <Providers>
-      <Container
-        minW={"100%"}
-        h="600px"
-        margin={0}
-        padding={0}
-        display="flex"
-        flexDir={"column"}
-      >
-        <Flex direction="row" w="full" gap={2}>
-          <Center p={2} flexDir={"column"} h={"500px"} w="full">
-            <ChatView messages={messages} stream={stream} />
+      <Container minW={"100%"} h="600px" margin={0} padding={0}>
+        <Flex direction="row" gap={2} h="500px">
+          <ChatView messages={messages} chatBoxRef={chatBoxRef} />
+          <Center minW={300}>
+            {specs.length > 0 && (
+              <ChartView
+                spec={specs[specs.length - 1]}
+                width={300}
+                data={data}
+              />
+            )}
           </Center>
-          {specs.length && data && (
-            <ChartView spec={specs[specs.length - 1]} width={300} data={data} />
-          )}
         </Flex>
-        <PromptView />
+        <PromptView
+          appendUserMessage={appendUserMessage}
+          streaming={streaming}
+        />
       </Container>
     </Providers>
   );

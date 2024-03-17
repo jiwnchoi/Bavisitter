@@ -1,4 +1,3 @@
-import { Center } from "@chakra-ui/react";
 import { IChartSpec } from "@shared/types";
 import { PlainObject, Vega } from "react-vega";
 
@@ -10,7 +9,7 @@ interface IChartViewProps {
 
 export default function ChartView({ spec, width, data }: IChartViewProps) {
   return (
-    <Center w={width} h={500}>
+    <>
       {spec && (
         <Vega
           mode={"vega-lite"}
@@ -20,6 +19,6 @@ export default function ChartView({ spec, width, data }: IChartViewProps) {
           defaultStyle={true}
         />
       )}
-    </Center>
+    </>
   );
 }
