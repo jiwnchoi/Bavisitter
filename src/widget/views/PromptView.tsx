@@ -1,5 +1,4 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
-import useMessages from "@hooks/useMessages";
 import { IMessage, IPrompt } from "@shared/types";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import { FaArrowUp } from "react-icons/fa6";
@@ -8,6 +7,7 @@ const handleKeyDown = (
   e: React.KeyboardEvent<HTMLTextAreaElement>,
   props: FormikProps<IPrompt>,
 ) => {
+  e.stopPropagation();
   if (e.key === "Enter" && props.values.prompt === "") {
     e.preventDefault();
   } else if (e.key === "Enter" && !e.shiftKey) {
@@ -15,7 +15,6 @@ const handleKeyDown = (
     props.submitForm();
   } else if (e.key === "Enter" && e.shiftKey && props.values.prompt !== "") {
     e.preventDefault();
-    e.stopPropagation();
     props.setFieldValue("prompt", props.values.prompt + "\n");
   }
 };
