@@ -4,8 +4,13 @@ import Providers from "./Providers";
 import { useCharts, useData, useMessages } from "@hooks";
 
 function App() {
-  const { streaming, chatBoxRef, appendUserMessage, messagesWithRef } =
-    useMessages();
+  const {
+    streaming,
+    chatBoxRef,
+    appendUserMessage,
+    messagesWithRef,
+    clearUserMessages,
+  } = useMessages();
   const data = useData();
   const { currentChart, setCurrentChartIndex } = useCharts(
     messagesWithRef,
@@ -29,6 +34,7 @@ function App() {
         </Flex>
         <PromptView
           appendUserMessage={appendUserMessage}
+          clearUserMessages={clearUserMessages}
           streaming={streaming}
         />
       </Container>

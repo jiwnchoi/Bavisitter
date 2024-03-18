@@ -20,11 +20,13 @@ const handleKeyDown = (
 
 interface IPromptViewProps {
   appendUserMessage: (message: IMessage) => void;
+  clearUserMessages: () => void;
   streaming: boolean;
 }
 
 export default function PromptView({
   appendUserMessage,
+  clearUserMessages,
   streaming,
 }: IPromptViewProps) {
   return (
@@ -81,7 +83,11 @@ export default function PromptView({
                 size={"sm"}
                 icon={<Icon as={FaTrash} />}
                 isDisabled={props.isSubmitting || streaming}
-                aria-label="Sending Button"
+                aria-label="Clear Button"
+                onClick={() => {
+                  props.resetForm();
+                  clearUserMessages();
+                }}
               />
             </Flex>
           </Form>
