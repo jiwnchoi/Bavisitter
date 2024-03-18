@@ -52,7 +52,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             pathlib.Path("artifacts").mkdir()
 
         df.to_csv("artifacts/data.csv")
-        self.data = df.to_csv(index=False)
+        self.data = df.to_json()
         self.model = model
         self.on_msg(self._handle_msg)
         self.messages = []
