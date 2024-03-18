@@ -1,25 +1,29 @@
 import { Center, Container, Flex } from "@chakra-ui/react";
-import useMessages from "@hooks/useMessages";
-import { ChartView, ChatView, PromptView } from "@views";
+import { ChartView, Messages, PromptView } from "@views";
 import Providers from "./Providers";
-import useData from "@hooks/useData";
+import { useCharts, useData, useMessages } from "@hooks";
 
 function App() {
-  const { messages, streaming, specs, chatBoxRef, appendUserMessage } =
+  const { streaming, chatBoxRef, appendUserMessage, messagesWithRef } =
     useMessages();
-  const { data } = useData();
+  const data = useData();
+  const { currentChart, setCurrentChartIndex } = useCharts(
+    messagesWithRef,
+    streaming,
+  );
   return (
     <Providers>
-      <Container minW={"100%"} h="600px" margin={0} padding={0}>
+      <Container minW={"100%"} h="600px" m={0} p={0}>
         <Flex direction="row" gap={2} h="500px">
-          <ChatView messages={messages} chatBoxRef={chatBoxRef} />
+          <Messages
+            messagesWithRef={messagesWithRef}
+            chatBoxRef={chatBoxRef}
+            setCurrentChartIndex={setCurrentChartIndex}
+            streaming={streaming}
+          />
           <Center minW={300}>
-            {specs.length > 0 && (
-              <ChartView
-                spec={specs[specs.length - 1]}
-                width={300}
-                data={data}
-              />
+            {currentChart && (
+              <ChartView spec={currentChart} width={300} data={data} />
             )}
           </Center>
         </Flex>

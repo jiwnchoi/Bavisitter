@@ -14,9 +14,10 @@ export default function ChartView({ spec, width, data }: IChartViewProps) {
         <Vega
           mode={"vega-lite"}
           spec={spec.spec}
-          width={width - 40}
           data={data}
-          defaultStyle={true}
+          width={width - 40}
+          height={width - 40}
+          actions={false}
         />
       )}
     </>

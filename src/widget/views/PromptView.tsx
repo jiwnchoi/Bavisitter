@@ -1,13 +1,12 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
 import { IMessage, IPrompt } from "@shared/types";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
-import { FaArrowUp } from "react-icons/fa6";
+import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
 const handleKeyDown = (
   e: React.KeyboardEvent<HTMLTextAreaElement>,
   props: FormikProps<IPrompt>,
 ) => {
-  e.stopPropagation();
   if (e.key === "Enter" && props.values.prompt === "") {
     e.preventDefault();
   } else if (e.key === "Enter" && !e.shiftKey) {
@@ -34,7 +33,7 @@ export default function PromptView({
       gap={2}
       p={2}
       borderWidth={1}
-      borderColor={"gray.100"}
+      borderColor={"gray.300"}
       borderRadius={"md"}
       _focusWithin={{ borderColor: "blue.500" }}
     >
@@ -62,6 +61,7 @@ export default function PromptView({
                   width={"full"}
                   border={"none"}
                   resize={"none"}
+                  background={"transparent"}
                   _focus={{ border: "none", borderWidth: 0 }}
                   _placeholder={{ color: "gray.400" }}
                   onKeyDown={(e) => handleKeyDown(e, props)}
@@ -71,9 +71,16 @@ export default function PromptView({
             <Flex direction="column" gap={2}>
               <IconButton
                 type="submit"
+                size={"sm"}
                 icon={streaming ? <Spinner /> : <Icon as={FaArrowUp} />}
                 isLoading={props.isSubmitting || streaming}
                 isDisabled={props.isSubmitting || props.values.prompt === ""}
+                aria-label="Sending Button"
+              />
+              <IconButton
+                size={"sm"}
+                icon={<Icon as={FaTrash} />}
+                isDisabled={props.isSubmitting || streaming}
                 aria-label="Sending Button"
               />
             </Flex>

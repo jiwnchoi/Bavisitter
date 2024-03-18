@@ -1,41 +1,46 @@
-import { useModelState } from "@anywidget/react";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { IMessage } from "@shared/types";
-import { replaceJSONCodeBlocks } from "@shared/utils";
+import { Box, Text } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 
 interface IMessageContentProps {
-  message: IMessage;
+  content: string;
 }
-export default function MessageContent({ message }: IMessageContentProps) {
-  const replacedMessage = replaceJSONCodeBlocks(message.content);
-  const [streaming] = useModelState<boolean>("streaming");
+export default function MessageContent({ content }: IMessageContentProps) {
   return (
     <Box dir="column" w="full">
       <Text as={"p"} fontSize="sm" whiteSpace={"pre-line"} lineHeight={"18px"}>
-        {message.type === "message" && (
-          <Markdown
-            components={{
-              li: ({ node, ...props }) => (
-                <li style={{ marginLeft: 20 }} {...props} />
-              ),
-            }}
-          >
-            {replacedMessage}
-          </Markdown>
-        )}
-      </Text>
-      {replacedMessage !== message.content && (
-        <Button
-          mt={4}
-          size="xs"
-          colorScheme="gray"
-          variant="solid"
-          isLoading={streaming}
+        <Markdown
+          components={{
+            ol: ({ node, ...props }) => (
+              <ol
+                style={{
+                  lineHeight: "8px",
+                }}
+                {...props}
+              />
+            ),
+            ul: ({ node, ...props }) => (
+              <ul
+                style={{
+                  lineHeight: "8px",
+                }}
+                {...props}
+              />
+            ),
+
+            li: ({ node, ...props }) => (
+              <li
+                style={{
+                  marginLeft: 20,
+                  lineHeight: "18px",
+                }}
+                {...props}
+              />
+            ),
+          }}
         >
-          {streaming ? "Generating..." : "Load Visualization"}
-        </Button>
-      )}
+          {content}
+        </Markdown>
+      </Text>
     </Box>
   );
 }

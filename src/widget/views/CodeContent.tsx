@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
-import { IMessage } from "@shared/types";
 import { FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
@@ -20,7 +19,12 @@ const globalScrollbarStyles = css`
   }
 `;
 
-export default function CodeContent({ message }: { message: IMessage }) {
+interface ICodeContentProps {
+  content: string;
+  format?: string;
+}
+
+export default function CodeContent({ content, format }: ICodeContentProps) {
   return (
     <Box dir="row" w="full" gap={0} borderRadius={8} overflow={"clip"}>
       <Flex
@@ -38,7 +42,7 @@ export default function CodeContent({ message }: { message: IMessage }) {
           px={4}
           py={2}
         >
-          {message.format ?? "console"}
+          {format ?? "console"}
         </Text>
         <Button
           color={"#ABB1BF"}
@@ -49,7 +53,7 @@ export default function CodeContent({ message }: { message: IMessage }) {
           py={2}
           leftIcon={<Icon as={FaCopy} />}
           onClick={() => {
-            navigator.clipboard.writeText(message.content);
+            navigator.clipboard.writeText(content);
           }}
           alignSelf={"flex-end"}
         >
@@ -58,7 +62,7 @@ export default function CodeContent({ message }: { message: IMessage }) {
       </Flex>
       <Global styles={globalScrollbarStyles} />
       <SyntaxHighlighter
-        language={message.format}
+        language={format}
         style={oneDark}
         customStyle={{
           width: 600,
@@ -66,7 +70,7 @@ export default function CodeContent({ message }: { message: IMessage }) {
           margin: 0,
         }}
       >
-        {message.content}
+        {content}
       </SyntaxHighlighter>
     </Box>
   );

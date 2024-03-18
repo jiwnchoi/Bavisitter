@@ -1,12 +1,17 @@
 import { useModelState } from "@anywidget/react";
-import { IChartSpec, IMessage } from "@shared/types";
-import { extractCodeBlocksFromString } from "@shared/utils";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { IMessage, IMessageWithRef } from "@shared/types";
+import { createRef, useCallback, useEffect, useMemo, useRef } from "react";
 
 export default function useMessages() {
   const [messages, _setMessages] = useModelState<IMessage[]>("messages");
   const [streaming] = useModelState<boolean>("streaming");
   const chatBoxRef = useRef<HTMLDivElement>(null);
+
+  const messagesWithRef = useMemo(() => {
+    return messages.map((m) => {
+      return { ...m, ref: createRef<HTMLDivElement>() } as IMessageWithRef;
+    });
+  }, [messages]);
 
   const scrollToBottom = useCallback(() => {
     if (chatBoxRef.current) {
@@ -34,28 +39,10 @@ export default function useMessages() {
     _setMessages([...messages.slice(0, index), message]);
   };
 
-  const specs = useMemo(() => {
-    return messages
-      .map((m, index) => ({
-        chatIndex: index,
-        spec: extractCodeBlocksFromString(m.content),
-      }))
-      .filter((m) => m.spec !== "")
-      .map((m) => {
-        const spec = JSON.parse(m.spec);
-        spec.$schema = "https://vega.github.io/schema/vega-lite/v5.json";
-        if (spec.data && spec.data.url === "artifacts/data.csv") {
-          spec.data = { name: "table" };
-        }
-        spec.autosize = { type: "fit", contains: "padding" };
-        return { ...m, spec } as IChartSpec;
-      });
-  }, [messages]);
   return {
-    messages,
     streaming,
-    specs,
     chatBoxRef,
+    messagesWithRef,
     appendUserMessage,
     editUserMessage,
     clearUserMessages,
