@@ -22,16 +22,17 @@ export default function useMessages() {
     _setMessages([...messages, message]);
   };
 
-  const clearUserMessages = useCallback(() => {
-    _setMessages([]);
-  }, [_setMessages]);
+  const sendCurrentMessages = () => {
+    _setMessages([...messages]);
+  };
 
-  const editUserMessage = useCallback(
-    (index: number, message: IMessage) => {
-      _setMessages([...messages.slice(0, index), message]);
-    },
-    [messages, _setMessages],
-  );
+  const clearUserMessages = () => {
+    _setMessages([]);
+  };
+
+  const editUserMessage = (index: number, message: IMessage) => {
+    _setMessages([...messages.slice(0, index), message]);
+  };
 
   const specs = useMemo(() => {
     return messages
@@ -56,7 +57,8 @@ export default function useMessages() {
     specs,
     chatBoxRef,
     appendUserMessage,
-    clearUserMessages,
     editUserMessage,
+    clearUserMessages,
+    sendCurrentMessages,
   };
 }
