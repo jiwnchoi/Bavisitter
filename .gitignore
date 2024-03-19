@@ -10,3 +10,4 @@ src/bavisitter/static
 artifacts
 .env
 *.ipynb
+demo*

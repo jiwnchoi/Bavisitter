@@ -12,12 +12,12 @@ MessageType = Literal["message", "code", "console"]
 
 
 class MessageModel(TypedDict):
-    role: RoleType
-    type: MessageType
-    format: str | None
-    content: str
+  role: RoleType
+  type: MessageType
+  format: str | None
+  content: str
 
 
 class StreamChunkModel(MessageModel):
-    start: bool | None
-    end: bool | None
+  start: bool | None
+  end: bool | None

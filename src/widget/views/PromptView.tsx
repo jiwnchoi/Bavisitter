@@ -1,7 +1,7 @@
-import { Flex, Icon, IconButton, Textarea } from "@chakra-ui/react";
-import { IPrompt } from "@shared/types";
+import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
+import { IMessage, IPrompt } from "@shared/types";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
-import { FaArrowUp } from "react-icons/fa6";
+import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
 const handleKeyDown = (
   e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -14,26 +14,39 @@ const handleKeyDown = (
     props.submitForm();
   } else if (e.key === "Enter" && e.shiftKey && props.values.prompt !== "") {
     e.preventDefault();
-    e.stopPropagation();
     props.setFieldValue("prompt", props.values.prompt + "\n");
   }
 };
 
-export default function PromptView() {
+interface IPromptViewProps {
+  appendUserMessage: (message: IMessage) => void;
+  clearUserMessages: () => void;
+  streaming: boolean;
+}
+
+export default function PromptView({
+  appendUserMessage,
+  clearUserMessages,
+  streaming,
+}: IPromptViewProps) {
   return (
     <Flex
       flexDir={"row"}
       gap={2}
       p={2}
-      borderWidth={1}
-      borderColor={"gray.100"}
+      borderWidth={2}
       borderRadius={"md"}
       _focusWithin={{ borderColor: "blue.500" }}
     >
       <Formik
         initialValues={{ prompt: "" }}
         onSubmit={(values, actions) => {
-          console.log(values);
+          appendUserMessage({
+            role: "user",
+            content: values.prompt,
+            type: "message",
+          });
+          actions.resetForm();
           actions.setSubmitting(false);
         }}
       >
@@ -49,19 +62,33 @@ export default function PromptView() {
                   width={"full"}
                   border={"none"}
                   resize={"none"}
+                  background={"transparent"}
                   _focus={{ border: "none", borderWidth: 0 }}
                   _placeholder={{ color: "gray.400" }}
                   onKeyDown={(e) => handleKeyDown(e, props)}
                 />
               )}
             </Field>
-            <IconButton
-              type="submit"
-              icon={<Icon as={FaArrowUp} />}
-              isLoading={props.isSubmitting}
-              isDisabled={props.isSubmitting || props.values.prompt === ""}
-              aria-label="Sending Button"
-            />
+            <Flex direction="column" gap={2}>
+              <IconButton
+                type="submit"
+                size={"sm"}
+                icon={streaming ? <Spinner /> : <Icon as={FaArrowUp} />}
+                isLoading={props.isSubmitting || streaming}
+                isDisabled={props.isSubmitting || props.values.prompt === ""}
+                aria-label="Sending Button"
+              />
+              <IconButton
+                size={"sm"}
+                icon={<Icon as={FaTrash} />}
+                isDisabled={props.isSubmitting || streaming}
+                aria-label="Clear Button"
+                onClick={() => {
+                  props.resetForm();
+                  clearUserMessages();
+                }}
+              />
+            </Flex>
           </Form>
         )}
       </Formik>
