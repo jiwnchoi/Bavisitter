@@ -1,26 +1,42 @@
-import { ChartView, ChatView, PromptView } from "@views";
-import Providers from "./Providers";
 import { Center, Container, Flex } from "@chakra-ui/react";
-import MOCK_CHART from "@shared/mock/chart";
+import { useCharts, useData, useMessages } from "@hooks";
+import { ChartView, Messages, PromptView } from "@views";
+import Providers from "./Providers";
 
 function App() {
+  const {
+    streaming,
+    chatBoxRef,
+    appendUserMessage,
+    messagesWithRef,
+    clearUserMessages,
+  } = useMessages();
+  const data = useData();
+  const { currentChart, setCurrentChartIndex } = useCharts(
+    messagesWithRef,
+    streaming,
+  );
   return (
     <Providers>
-      <Container
-        minW={"100%"}
-        h="600px"
-        margin={0}
-        padding={0}
-        display="flex"
-        flexDir={"column"}
-      >
-        <Flex direction="row" w="full" gap={2}>
-          <Center p={2} flexDir={"column"} maxH={"500px"} w="full">
-            <ChatView />
+      <Container minW={"100%"} h="600px" m={0} p={0}>
+        <Flex direction="row" gap={2} h="500px">
+          <Messages
+            messagesWithRef={messagesWithRef}
+            chatBoxRef={chatBoxRef}
+            setCurrentChartIndex={setCurrentChartIndex}
+            streaming={streaming}
+          />
+          <Center minW={300}>
+            {currentChart && (
+              <ChartView spec={currentChart} width={300} data={data} />
+            )}
           </Center>
-          <ChartView spec={MOCK_CHART} width={300} />
         </Flex>
-        <PromptView />
+        <PromptView
+          appendUserMessage={appendUserMessage}
+          clearUserMessages={clearUserMessages}
+          streaming={streaming}
+        />
       </Container>
     </Providers>
   );

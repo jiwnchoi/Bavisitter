@@ -1,6 +1,11 @@
+import TMessageRole from "./TMessageRole";
+import TMessageType from "./TMessageType";
+
 interface IMessage {
-  type: "system" | "user" | "machine";
+  role: TMessageRole;
+  type: TMessageType;
   content: string;
+  format?: string;
 }
 
 export default IMessage;

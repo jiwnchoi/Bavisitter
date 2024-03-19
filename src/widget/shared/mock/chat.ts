@@ -2,15 +2,15 @@ import { IMessage } from "@shared/types";
 
 const MOCK_CHAT: IMessage[] = [
   {
-    type: "system",
+    role: "system",
     content: "Welcome to the chat room!",
   },
   {
-    type: "user",
+    role: "user",
     content: "Draw Simple Bar Chart",
   },
   {
-    type: "machine",
+    role: "assistant",
     content: `To visualize the provided data as a simple bar chart using Vega-Lite specification, you can use the following spec. This specification describes a bar chart where the x-axis represents the category (field "a") and the y-axis represents the value (field "b").
 
 \`\`\`json

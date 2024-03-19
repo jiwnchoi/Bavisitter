@@ -5,11 +5,11 @@ build-backend = "hatchling.build"
 [project]
 name = "bavisitter"
 version = "0.0.0"
-dependencies = ["anywidget", "openai", "pandas"]
+dependencies = ["anywidget", "openai", "pandas", "open-interpreter", "open-interpreter[safe]"]
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["watchfiles", "jupyterlab", "ruff", "pyright", "vega-datasets"]
+dev = ["watchfiles", "jupyterlab", "ruff", "pyright", "vega-datasets", "pytest", "pytest-cov"]
 
 # automatically add the dev feature to the default env (e.g., hatch shell)
 [tool.hatch.envs.default]
@@ -62,8 +62,8 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 88
-indent-width = 4
+line-length = 80
+indent-width = 2
 
 # Assume Python 3.8
 target-version = "py38"
