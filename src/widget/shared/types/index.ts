@@ -4,3 +4,4 @@ export type { default as IMessage } from "./IMessage";
 export type { default as IPrompt } from "./IPrompt";
 export type { default as IChartSpec } from "./IChartSpec";
 export type { default as IMessageWithRef } from "./IMessageWithRef";
+export type { default as TColorMode } from "./TColorMode";

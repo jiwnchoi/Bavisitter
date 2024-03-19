@@ -36,6 +36,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     sync=True
   )
   streaming = Bool(default_value=False).tag(sync=True)
+  color_mode = Unicode(default_value="light").tag(sync=True)
 
   df: pd.DataFrame
 
@@ -45,6 +46,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     model: str = "gpt-3.5-turbo",
     safe_model: Literal["auto", "off"] = "auto",
     auto_run: bool = True,
+    color_mode: Literal["light", "dark"] = "light",
     **kwargs,
   ):
     super().__init__(**kwargs)
@@ -58,6 +60,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     self.on_msg(self._handle_msg)
     self.messages = []
     self.interpreter = OpenInterpreter()
+    self.color_mode = color_mode
     self.set_interpreter(model, safe_model, auto_run)
 
   def set_interpreter(

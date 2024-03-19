@@ -1,7 +1,7 @@
 import { Center, Container, Flex } from "@chakra-ui/react";
+import { useCharts, useData, useMessages } from "@hooks";
 import { ChartView, Messages, PromptView } from "@views";
 import Providers from "./Providers";
-import { useCharts, useData, useMessages } from "@hooks";
 
 function App() {
   const {

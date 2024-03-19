@@ -23,6 +23,7 @@ export default function useCharts(
         for (const encodingName in spec.encoding) {
           spec.encoding[encodingName].legend = { orient: "bottom" };
         }
+        spec.background = "transparent";
         spec.autosize = { type: "fit", contains: "padding" };
         return { ...m, spec } as IChartSpec;
       });

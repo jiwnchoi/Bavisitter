@@ -1,3 +1,4 @@
+import { useColorMode } from "@hooks";
 import { IChartSpec } from "@shared/types";
 import { PlainObject, Vega } from "react-vega";
 
@@ -8,6 +9,8 @@ interface IChartViewProps {
 }
 
 export default function ChartView({ spec, width, data }: IChartViewProps) {
+  const { colorMode } = useColorMode();
+
   return (
     <>
       {spec && (
@@ -18,6 +21,7 @@ export default function ChartView({ spec, width, data }: IChartViewProps) {
           width={width - 40}
           height={width - 40}
           actions={false}
+          theme={colorMode === "light" ? undefined : "dark"}
         />
       )}
     </>

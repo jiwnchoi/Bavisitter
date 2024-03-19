@@ -1,17 +1,15 @@
-import { extendTheme } from "@chakra-ui/react";
+import { StyleFunctionProps, extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
-  initialColorMode: "system",
-  useSystemColorMode: true,
-  // body margin padding 0 w max
-  styles: {
-    global: {
-      body: {
-        margin: 0,
-        padding: 0,
-        width: "100%",
-        maxWidth: "100%",
-      },
+  initialColorMode: "light",
+  useSystemColorMode: false,
+  components: {
+    Container: {
+      baseStyle: (props: StyleFunctionProps) => ({
+        background: props.colorMode === "light" ? "gray.50" : "gray.800",
+        color: props.colorMode === "light" ? "gray.800" : "gray.50",
+        borderRadius: "lg",
+      }),
     },
   },
 });
