@@ -3,13 +3,13 @@ import { replaceJSONCodeBlocks } from "@shared/utils";
 import { useMemo } from "react";
 
 export default function useContent(
-  messgagesWithRef: IMessageWithRef[],
+  messagesWithRef: IMessageWithRef[],
   index: number,
   streaming: boolean,
 ) {
   const userName = useMemo(() => {
-    const previousMessage = index > 0 ? messgagesWithRef[index - 1] : null;
-    if (messgagesWithRef[index].role === "user") {
+    const previousMessage = index > 0 ? messagesWithRef[index - 1] : null;
+    if (messagesWithRef[index].role === "user") {
       return "You";
     }
     if (previousMessage && previousMessage.role === "user") {
@@ -19,25 +19,26 @@ export default function useContent(
       return null;
     }
     return null;
-  }, [messgagesWithRef, index]);
+  }, [messagesWithRef, index]);
 
   const contentWithoutCodeblock = useMemo(() => {
-    return replaceJSONCodeBlocks(messgagesWithRef[index].content);
-  }, [messgagesWithRef, index]);
+    return replaceJSONCodeBlocks(messagesWithRef[index].content);
+  }, [messagesWithRef, index]);
+
 
   const streamingMessage = useMemo(() => {
-    return index === messgagesWithRef.length - 1 && streaming;
-  }, [messgagesWithRef, index]);
+    return index === messagesWithRef.length - 1 && streaming;
+  }, [messagesWithRef, index, streaming]);
 
-  const content = messgagesWithRef[index].content;
+  const content = messagesWithRef[index].content;
 
-  const format = messgagesWithRef[index].format;
+  const format = messagesWithRef[index].format;
 
-  const type = messgagesWithRef[index].type;
+  const type = messagesWithRef[index].type;
 
   const codeBlockExistance = contentWithoutCodeblock !== content;
 
-  const ref = messgagesWithRef[index].ref;
+  const ref = messagesWithRef[index].ref;
 
   return {
     userName,
