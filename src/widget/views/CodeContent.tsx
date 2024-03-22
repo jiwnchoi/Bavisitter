@@ -65,7 +65,7 @@ export default function CodeContent({ content, format }: ICodeContentProps) {
         language={format}
         style={oneDark}
         customStyle={{
-          width: 600,
+          width:"100%",
           borderRadius: 0,
           margin: 0,
         }}

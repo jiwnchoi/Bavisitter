@@ -1,5 +1,5 @@
 import { IMessageWithRef } from "@shared/types";
-import { replaceJSONCodeBlocks } from "@shared/utils";
+import { replaceJSONCodeBlocks, extractCodeBlocksFromString } from "@shared/utils";
 import { useMemo } from "react";
 
 export default function useContent(
@@ -25,6 +25,9 @@ export default function useContent(
     return replaceJSONCodeBlocks(messagesWithRef[index].content);
   }, [messagesWithRef, index]);
 
+  const codeBlocks = useMemo(() => {
+    return extractCodeBlocksFromString(messagesWithRef[index].content);
+  }, [messagesWithRef, index]);
 
   const streamingMessage = useMemo(() => {
     return index === messagesWithRef.length - 1 && streaming;
@@ -43,6 +46,7 @@ export default function useContent(
   return {
     userName,
     contentWithoutCodeblock,
+    codeBlocks,
     streamingMessage,
     content,
     format,

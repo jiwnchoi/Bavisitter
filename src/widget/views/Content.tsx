@@ -1,5 +1,6 @@
 import { Avatar, Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import { useContent } from "@hooks";
+import { useState } from "react";
 import { IMessageWithRef } from "@shared/types";
 import CodeContent from "./CodeContent";
 import MessageContent from "./MessageContent";
@@ -20,12 +21,17 @@ export default function Content({
   const {
     userName,
     contentWithoutCodeblock,
+    codeBlocks,
     streamingMessage,
     format,
     codeBlockExistance,
     type,
     ref,
   } = useContent(messagesWithRef, index, streaming);
+
+  const [showCodeBlocks, setShowCodeBlocks] = useState(false);
+  const toggleCodeBlocks = () => setShowCodeBlocks(!showCodeBlocks);
+
   return (
     <Flex dir="row" w="full" key={`content${index}`}>
       <Box minW={"32px"}>
@@ -51,19 +57,38 @@ export default function Content({
             />
           )}
         </Box>
-        {codeBlockExistance && (
-          <Button
-            colorScheme="gray"
-            size="sm"
-            variant="solid"
-            onClick={() => setCurrentChartIndex(index)}
-            isLoading={streamingMessage}
-            loadingText="Loading"
-            mt={4}
-          >
-            Show Chart
-          </Button>
+        <Flex gap={2} w="full">
+          {codeBlockExistance && (
+            <Button
+              colorScheme="gray"
+              size="sm"
+              variant="solid"
+              onClick={() => setCurrentChartIndex(index)}
+              isLoading={streamingMessage}
+              loadingText="Loading"
+            >
+              Show Chart
+            </Button>
+          )}
+          {codeBlockExistance && !streamingMessage &&(
+            <Button
+              colorScheme="gray"
+              size="sm"
+              variant="solid"
+              onClick={toggleCodeBlocks}
+            >
+              {showCodeBlocks ? "Hide Specification" : "Show Specification"}
+            </Button>
+          )}
+        </Flex>
+        {showCodeBlocks && codeBlocks && (
+          <CodeContent
+            content={codeBlocks}
+            format="json"
+            key={`message${index}`}
+          />
         )}
+        
       </VStack>
     </Flex>
   );
