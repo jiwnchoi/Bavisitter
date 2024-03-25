@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.metadata
 import pathlib
+from copy import copy
 from typing import Literal
 
 import anywidget
@@ -20,8 +21,13 @@ from traitlets import (
 )
 
 from bavisitter.DataFrameManager import DataFrameManager
-from bavisitter.model.message_model import MessageModel, StreamChunkModel
-from bavisitter.utils.system_prompt import SYSTEM_PROMPT
+from bavisitter.model import (
+  MessageModel,
+  MessageType,
+  RoleType,
+  StreamChunkModel,
+)
+from bavisitter.utils import get_chunk_type, set_interpreter
 
 try:
   __version__ = importlib.metadata.version("bavisitter")
@@ -39,8 +45,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   streaming = Bool(default_value=False).tag(sync=True)
   color_mode = Unicode(default_value="light").tag(sync=True)
 
-  df: pd.DataFrame
-
   def __init__(
     self,
     df: pd.DataFrame,
@@ -55,31 +59,18 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     if not pathlib.Path("artifacts").exists():
       pathlib.Path("artifacts").mkdir()
 
-    self.df_manager = DataFrameManager(df)
+    # set widget properties
+    self.model = model
+    self.color_mode = color_mode
+    self.on_msg(self._handle_msg)
 
-    # proxy the data from the DataFrameManager
+    # set data
+    self.df_manager = DataFrameManager(df)
     self.data = self.df_manager.data
 
-    self.model = model
-    self.on_msg(self._handle_msg)
-    self.messages = []
+    # initialize the open interpreter
     self.interpreter = OpenInterpreter()
-    self.color_mode = color_mode
-    self.set_interpreter(model, safe_model, auto_run)
-
-  def set_interpreter(
-    self,
-    model: str = "gpt-3.5-turbo",
-    safe_mode: Literal["off", "auto"] = "auto",
-    auto_run: bool = True,
-    system_prompt: str = SYSTEM_PROMPT,
-  ):
-    self.interpreter.llm.max_tokens = 4096
-    self.interpreter.llm.context_window = 128_000
-    self.interpreter.system_message = system_prompt
-    self.interpreter.llm.model = model
-    self.interpreter.safe_mode = safe_mode
-    self.interpreter.auto_run = auto_run
+    set_interpreter(self.interpreter, model, safe_model, auto_run)
 
   def load_messages(self, messages):
     self.messages = messages
@@ -88,9 +79,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def _default_messages(self):
     return []
 
-  @default("stream")
+  @default("streaming")
   def _default_stream(self):
-    return {}
+    return False
 
   @validate("messages")
   def _validate_messages(self, proposal):
@@ -113,30 +104,57 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       for chunk in self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
       ):
-        self.append_chunk(chunk)
+        self.handle_chunk(chunk)
 
-  def append_chunk(self, chunk: StreamChunkModel):
-    if "start" in chunk and not self.streaming:
+  def handle_chunk(self, chunk: StreamChunkModel):
+    chunk_type = get_chunk_type(
+      chunk, self.messages[-1] if len(self.messages) else None
+    )
+
+    if chunk_type == "start":
       self.streaming = True
-      new_message = {
-        "role": chunk["role"],
-        "type": chunk["type"],
-        "content": "",
-      }
-      if "format" in chunk:
-        new_message["format"] = chunk["format"]
+      self.new_message(role=chunk["role"], type=chunk["type"], content="")
 
-      self.messages = [*self.messages, new_message]
-    elif (
-      self.streaming
-      and ("end" not in chunk)
-      and ("content" in chunk)
-      and isinstance(chunk["content"], str)
-    ):
-      new_message = self.messages[-1].copy()
-      new_message["content"] += chunk["content"]
-      self.messages = [*self.messages[:-1], new_message]
+    elif chunk_type == "code_start":
+      self.new_message(
+        role=chunk["role"], type="code", content=chunk["content"]
+      )
 
-    elif "end" in chunk and self.streaming:
+    elif chunk_type == "continue":
+      if (
+        self.messages[-1]["type"] == "code"
+        and self.messages[-1]["content"] == "```"
+        and "format" not in self.messages[-1]
+      ):
+        self.messages[-1]["format"] = chunk["content"]
+
+      self.append_content(chunk["content"])
+
+    elif chunk_type == "end":
       self.streaming = False
       self.df_manager.handle_df_change()
+
+    elif chunk_type == "code_end":
+      self.append_content(chunk["content"])
+      self.new_message(role="assistant", type="message", content="")
+      self.df_manager.handle_df_change()
+
+  def append_content(self, content):
+    new_message = copy(self.messages[-1])
+    new_message["content"] += content
+    self.messages = [*self.messages[:-1], new_message]
+
+  def new_message(
+    self,
+    role: RoleType = "assistant",
+    content: str = "",
+    type: MessageType = "message",
+  ):
+    self.messages = [
+      *self.messages,
+      {
+        "role": role,
+        "type": type,
+        "content": content,
+      },
+    ]
