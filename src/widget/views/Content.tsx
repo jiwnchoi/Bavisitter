@@ -20,12 +20,17 @@ export default function Content({
   const {
     userName,
     contentWithoutCodeblock,
+    codeBlocks,
     streamingMessage,
+    //content,
     format,
     codeBlockExistance,
     type,
     ref,
+    showCodeBlocks, 
+    toggleCodeBlocks, 
   } = useContent(messagesWithRef, index, streaming);
+
   return (
     <Flex dir="row" w="full" key={`content${index}`}>
       <Box minW={"32px"}>
@@ -51,19 +56,38 @@ export default function Content({
             />
           )}
         </Box>
-        {codeBlockExistance && (
-          <Button
-            colorScheme="gray"
-            size="sm"
-            variant="solid"
-            onClick={() => setCurrentChartIndex(index)}
-            isLoading={streamingMessage}
-            loadingText="Loading"
-            mt={4}
-          >
-            Show Chart
-          </Button>
+        <Flex gap={2} w="full">
+          {codeBlockExistance && (
+            <Button
+              colorScheme="gray"
+              size="sm"
+              variant="solid"
+              onClick={() => setCurrentChartIndex(index)}
+              isLoading={streamingMessage}
+              loadingText="Loading"
+            >
+              Show Chart
+            </Button>
+          )}
+          {codeBlockExistance && (
+            <Button
+              colorScheme="gray"
+              size="sm"
+              variant="solid"
+              onClick={toggleCodeBlocks}
+            >
+              {showCodeBlocks ? "Hide Specification" : "Show Specification"}
+            </Button>
+          )}
+        </Flex>
+        {showCodeBlocks && (
+          <CodeContent
+            content={codeBlocks}
+            format="json"
+            key={`message${index}`}
+          />
         )}
+        
       </VStack>
     </Flex>
   );

@@ -26,7 +26,7 @@ interface ICodeContentProps {
 
 export default function CodeContent({ content, format }: ICodeContentProps) {
   return (
-    <Box dir="row" w="full" gap={0} borderRadius={8} overflow={"clip"}>
+    <Box dir="row" w="600px" gap={0} borderRadius={8} overflow={"clip"}>
       <Flex
         dir="column"
         w="full"
@@ -65,7 +65,6 @@ export default function CodeContent({ content, format }: ICodeContentProps) {
         language={format}
         style={oneDark}
         customStyle={{
-          width: 600,
           borderRadius: 0,
           margin: 0,
         }}
