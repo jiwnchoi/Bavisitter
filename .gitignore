@@ -11,3 +11,5 @@ artifacts
 .env
 *.ipynb
 demo*
+
+.DS_Store 
