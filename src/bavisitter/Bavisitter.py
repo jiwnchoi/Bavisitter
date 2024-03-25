@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.metadata
 import pathlib
+import re
 from copy import copy
 from typing import Literal
 
@@ -34,6 +35,8 @@ try:
 
 except importlib.metadata.PackageNotFoundError:
   __version__ = "unknown"
+
+match = re.compile(r"```(\w+)\n")
 
 
 class Bavisitter(anywidget.AnyWidget, HasTraits):
@@ -113,48 +116,68 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     if chunk_type == "start":
       self.streaming = True
-      self.new_message(role=chunk["role"], type=chunk["type"], content="")
+      format = chunk["format"] if "format" in chunk else None
+      self.append_message(
+        role=chunk["role"], type=chunk["type"], content="", format=format
+      )
 
     elif chunk_type == "code_start":
-      self.new_message(
+      self.append_message(
         role=chunk["role"], type="code", content=chunk["content"]
       )
 
     elif chunk_type == "continue":
       if (
         self.messages[-1]["type"] == "code"
-        and self.messages[-1]["content"] == "```"
-        and "format" not in self.messages[-1]
+        and "```" in self.messages[-1]["content"]
+        and match.match(self.messages[-1]["content"])
       ):
-        self.messages[-1]["format"] = chunk["content"]
-
-      self.append_content(chunk["content"])
+        format = match.match(self.messages[-1]["content"]).group(1)
+        code = re.sub(r"```(\w+)\n", "", self.messages[-1]["content"])
+        self.messages = [
+          *self.messages[:-1],
+          {
+            "role": "assistant",
+            "type": "code",
+            "content": code + chunk["content"],
+            "format": format,
+          },
+        ]
+      else:
+        self.append_content(chunk["content"])
 
     elif chunk_type == "end":
       self.streaming = False
+      if self.messages[-1]["content"] == "":
+        self.messages = [*self.messages[:-1]]
       self.df_manager.handle_df_change()
 
     elif chunk_type == "code_end":
-      self.append_content(chunk["content"])
-      self.new_message(role="assistant", type="message", content="")
+      self.append_message(role="assistant", type="message", content="")
       self.df_manager.handle_df_change()
 
-  def append_content(self, content):
+  def append_content(self, content: str):
     new_message = copy(self.messages[-1])
     new_message["content"] += content
     self.messages = [*self.messages[:-1], new_message]
 
-  def new_message(
+  def append_message(
     self,
     role: RoleType = "assistant",
     content: str = "",
+    format: str | None = None,
     type: MessageType = "message",
   ):
+    new_message = {
+      "role": role,
+      "type": type,
+      "content": content,
+    }
+
+    if format:
+      new_message["format"] = format
+
     self.messages = [
       *self.messages,
-      {
-        "role": role,
-        "type": type,
-        "content": content,
-      },
+      new_message,
     ]

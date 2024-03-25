@@ -10,7 +10,7 @@ def get_chunk_type(chunk, previous_message=None) -> ChunkType:
     if (
       previous_message
       and chunk["role"] == "assistant"
-      and "```" in chunk["content"]
+      and chunk["content"] == "```"
     ):
       if previous_message["type"] == "code":
         return "code_end"
