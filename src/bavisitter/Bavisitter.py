@@ -19,6 +19,7 @@ from traitlets import (
   validate,
 )
 
+from bavisitter.DataFrameManager import DataFrameManager
 from bavisitter.model.message_model import MessageModel, StreamChunkModel
 from bavisitter.utils.system_prompt import SYSTEM_PROMPT
 
@@ -54,8 +55,11 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     if not pathlib.Path("artifacts").exists():
       pathlib.Path("artifacts").mkdir()
 
-    df.to_csv("artifacts/data.csv")
-    self.data = df.to_json(orient="records")
+    self.df_manager = DataFrameManager(df)
+
+    # proxy the data from the DataFrameManager
+    self.data = self.df_manager.data
+
     self.model = model
     self.on_msg(self._handle_msg)
     self.messages = []
@@ -71,7 +75,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     system_prompt: str = SYSTEM_PROMPT,
   ):
     self.interpreter.llm.max_tokens = 4096
-    self.interpreter.llm.context_window = 12800
+    self.interpreter.llm.context_window = 128_000
     self.interpreter.system_message = system_prompt
     self.interpreter.llm.model = model
     self.interpreter.safe_mode = safe_mode
@@ -102,6 +106,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def handle_user_chat(self, change):
     if len(change["new"]) == 0:
       self.interpreter.messages = []
+      self.df_manager.init_df()
       self.streaming = False
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
@@ -134,3 +139,4 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     elif "end" in chunk and self.streaming:
       self.streaming = False
+      self.df_manager.handle_df_change()
