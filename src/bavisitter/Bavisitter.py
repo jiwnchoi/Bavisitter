@@ -71,7 +71,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     system_prompt: str = SYSTEM_PROMPT,
   ):
     self.interpreter.llm.max_tokens = 4096
-    self.interpreter.llm.context_window = 128_000
+    self.interpreter.llm.context_window = 12800
     self.interpreter.system_message = system_prompt
     self.interpreter.llm.model = model
     self.interpreter.safe_mode = safe_mode
@@ -104,13 +104,11 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       self.interpreter.messages = []
       self.streaming = False
 
-    if len(change["new"]) > 0:
-      self.interpreter.messages = change["new"]
-      if change["new"][-1]["role"] == "user":
-        for chunk in self.interpreter.chat(
-          change["new"][-1]["content"], display=False, stream=True
-        ):
-          self.append_chunk(chunk)
+    if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
+      for chunk in self.interpreter.chat(
+        change["new"][-1]["content"], display=False, stream=True
+      ):
+        self.append_chunk(chunk)
 
   def append_chunk(self, chunk: StreamChunkModel):
     if "start" in chunk and not self.streaming:
