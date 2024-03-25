@@ -1,6 +1,7 @@
 import { IMessageWithRef } from "@shared/types";
-import { replaceJSONCodeBlocks, extractCodeBlocksFromString } from "@shared/utils";
-import { useMemo } from "react";
+import { splitCodeBlockAndContent } from "@shared/utils";
+import { useMemo, useState } from "react";
+
 
 export default function useContent(
   messagesWithRef: IMessageWithRef[],
@@ -20,18 +21,17 @@ export default function useContent(
     }
     return null;
   }, [messagesWithRef, index]);
-
-  const contentWithoutCodeblock = useMemo(() => {
-    return replaceJSONCodeBlocks(messagesWithRef[index].content);
-  }, [messagesWithRef, index]);
-
-  const codeBlocks = useMemo(() => {
-    return extractCodeBlocksFromString(messagesWithRef[index].content);
-  }, [messagesWithRef, index]);
-
+  
   const streamingMessage = useMemo(() => {
     return index === messagesWithRef.length - 1 && streaming;
   }, [messagesWithRef, index, streaming]);
+  
+  const [codeBlocks, contentWithoutCodeblock ] = useMemo(() => {
+    return splitCodeBlockAndContent(messagesWithRef[index].content);
+  }, [messagesWithRef, index]);
+
+  const [showCodeBlocks, setShowCodeBlocks] = useState(false);
+  const toggleCodeBlocks = () => setShowCodeBlocks(!showCodeBlocks);
 
   const content = messagesWithRef[index].content;
 
@@ -53,5 +53,7 @@ export default function useContent(
     type,
     ref,
     codeBlockExistance,
+    showCodeBlocks,
+    toggleCodeBlocks,
   };
 }

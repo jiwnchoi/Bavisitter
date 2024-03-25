@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import { useContent } from "@hooks";
-import { useState } from "react";
 import { IMessageWithRef } from "@shared/types";
 import CodeContent from "./CodeContent";
 import MessageContent from "./MessageContent";
@@ -23,14 +22,14 @@ export default function Content({
     contentWithoutCodeblock,
     codeBlocks,
     streamingMessage,
+    //content,
     format,
     codeBlockExistance,
     type,
     ref,
+    showCodeBlocks, 
+    toggleCodeBlocks, 
   } = useContent(messagesWithRef, index, streaming);
-
-  const [showCodeBlocks, setShowCodeBlocks] = useState(false);
-  const toggleCodeBlocks = () => setShowCodeBlocks(!showCodeBlocks);
 
   return (
     <Flex dir="row" w="full" key={`content${index}`}>
@@ -70,7 +69,7 @@ export default function Content({
               Show Chart
             </Button>
           )}
-          {codeBlockExistance && !streamingMessage &&(
+          {codeBlockExistance && (
             <Button
               colorScheme="gray"
               size="sm"
@@ -81,7 +80,7 @@ export default function Content({
             </Button>
           )}
         </Flex>
-        {showCodeBlocks && codeBlocks && (
+        {showCodeBlocks && (
           <CodeContent
             content={codeBlocks}
             format="json"
