@@ -20,7 +20,7 @@ from traitlets import (
   validate,
 )
 
-from bavisitter.DataFrameManager import DataFrameManager
+from bavisitter.df_manager import DataFrameManager
 from bavisitter.model import (
   MessageModel,
   MessageType,
