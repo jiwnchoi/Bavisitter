@@ -1,8 +1,8 @@
-import { VStack } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
+import { useColorMode } from "@hooks";
 import { IMessageWithRef } from "@shared/types";
 import { RefObject } from "react";
 import Content from "./Content";
-import { useColorMode } from "@hooks";
 
 interface IChatViewProps {
   messagesWithRef: IMessageWithRef[];
@@ -19,7 +19,7 @@ const Messages = ({
 }: IChatViewProps) => {
   const { colorMode } = useColorMode();
   return (
-    <VStack
+    <Flex
       w={"full"}
       h={"full"}
       overflowY={"auto"}
@@ -49,7 +49,7 @@ const Messages = ({
           setCurrentChartIndex={setCurrentChartIndex}
         />
       ))}
-    </VStack>
+    </Flex>
   );
 };
 

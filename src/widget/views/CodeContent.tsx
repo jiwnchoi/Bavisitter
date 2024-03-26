@@ -1,15 +1,15 @@
 import {
   Box,
   Button,
+  ButtonProps,
   Collapse,
   Flex,
   Icon,
-  IconButton,
-  Text,
+  Spacer,
+  Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
-import { useMemo, useState } from "react";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
@@ -32,9 +32,27 @@ const globalScrollbarStyles = css`
 interface ICodeContentProps {
   index: number;
   content: string;
-  format?: string;
+  format: string;
   streamingMessage: boolean;
+  chartContent: boolean;
   setCurrentChartIndex: (index: number) => void;
+}
+
+function CodeBlockButton(proos: ButtonProps) {
+  return (
+    <Button
+      color={"#ABB1BF"}
+      size="xs"
+      fontWeight={"light"}
+      variant="link"
+      py={2}
+      px={2}
+      _hover={{ textDecoration: "none" }}
+      {...proos}
+    >
+      {proos.children}
+    </Button>
+  );
 }
 
 export default function CodeContent({
@@ -42,89 +60,54 @@ export default function CodeContent({
   content,
   format,
   streamingMessage,
+  chartContent,
   setCurrentChartIndex,
 }: ICodeContentProps) {
-  if (!format) {
-    format = "console";
-  }
   const { isOpen, onToggle } = useDisclosure({
-    defaultIsOpen: !["json", "html"].includes(format),
+    defaultIsOpen: false,
   });
 
-  const chartContent = useMemo(() => {
-    return format === "json" && content.includes("$schema");
-  }, [content, format]);
-
   return (
-    <Box dir="row" w="600px" gap={0} borderRadius={8} overflow={"clip"}>
+    <Box dir="row" w={"full"} gap={0} borderRadius={8} overflow={"clip"}>
       <Flex
         dir="column"
         w="full"
-        justify={"space-between"}
         backgroundColor={"#505661"}
+        px={2}
+        onClick={onToggle}
       >
-        <Flex>
-          <IconButton
-            color={"#ABB1BF"}
-            size="sm"
-            fontWeight={"light"}
-            variant="link"
-            py={2}
-            icon={<Icon as={isOpen ? FaAngleUp : FaAngleDown} />}
-            aria-label="Fold"
-            onClick={() => {
-              onToggle();
+        <CodeBlockButton
+          leftIcon={
+            streamingMessage ? (
+              <Spinner size="xs" />
+            ) : (
+              <Icon as={isOpen ? FaAngleUp : FaAngleDown} />
+            )
+          }
+        >
+          {chartContent ? "Vega-Lite" : format}
+        </CodeBlockButton>
+        <Spacer />
+        {chartContent && !streamingMessage && (
+          <CodeBlockButton
+            leftIcon={<Icon as={FaChartBar} />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentChartIndex(index);
             }}
-            alignSelf={"flex-end"}
-          />
-          <Text
-            as={"p"}
-            fontSize="sm"
-            whiteSpace={"pre-line"}
-            lineHeight={"18px"}
-            color={"#ABB1BF"}
-            py={2}
           >
-            {chartContent ? "Vega-Lite" : format}
-          </Text>
-        </Flex>
-
-        <Flex>
-          {chartContent && (
-            <Button
-              color={"#ABB1BF"}
-              size="sm"
-              fontWeight={"light"}
-              variant="link"
-              px={1}
-              py={2}
-              leftIcon={<Icon as={FaChartBar} />}
-              onClick={() => {
-                setCurrentChartIndex(index);
-              }}
-              alignSelf={"flex-end"}
-              isLoading={streamingMessage}
-              loadingText={"Loading..."}
-            >
-              Load Chart
-            </Button>
-          )}
-          <Button
-            color={"#ABB1BF"}
-            size="sm"
-            fontWeight={"light"}
-            variant="link"
-            px={4}
-            py={2}
-            leftIcon={<Icon as={FaCopy} />}
-            onClick={() => {
-              navigator.clipboard.writeText(content);
-            }}
-            alignSelf={"flex-end"}
-          >
-            Copy Code
-          </Button>
-        </Flex>
+            Load Chart
+          </CodeBlockButton>
+        )}
+        <CodeBlockButton
+          leftIcon={<Icon as={FaCopy} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(content);
+          }}
+        >
+          Copy Code
+        </CodeBlockButton>
       </Flex>
       <Collapse in={isOpen} animateOpacity unmountOnExit>
         <Global styles={globalScrollbarStyles} />
@@ -134,6 +117,7 @@ export default function CodeContent({
           customStyle={{
             borderRadius: 0,
             margin: 0,
+            overflow: "auto",
           }}
         >
           {content}

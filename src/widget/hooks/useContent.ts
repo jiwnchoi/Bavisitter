@@ -30,7 +30,16 @@ export default function useContent(
     [messagesWithRef, index],
   );
 
-  const format = messagesWithRef[index].format;
+  const format = useMemo(
+    () => messagesWithRef[index].format ?? "console",
+    [messagesWithRef, index],
+  );
+
+  const chartContent = useMemo(
+    () =>
+      format === "json" && messagesWithRef[index].content.includes("$schema"),
+    [format, messagesWithRef, index],
+  );
 
   const type = messagesWithRef[index].type;
 
@@ -40,6 +49,7 @@ export default function useContent(
     userName,
     contentWithoutCodeblock,
     streamingMessage,
+    chartContent,
     format,
     type,
     ref,
