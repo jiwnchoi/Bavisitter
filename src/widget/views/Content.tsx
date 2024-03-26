@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { useContent } from "@hooks";
 import { IMessageWithRef } from "@shared/types";
 import CodeContent from "./CodeContent";
@@ -20,23 +20,19 @@ export default function Content({
   const {
     userName,
     contentWithoutCodeblock,
-    codeBlocks,
     streamingMessage,
-    //content,
     format,
-    codeBlockExistance,
     type,
     ref,
-    showCodeBlocks, 
-    toggleCodeBlocks, 
+    chartContent,
   } = useContent(messagesWithRef, index, streaming);
 
   return (
-    <Flex dir="row" w="full" key={`content${index}`}>
+    <Flex direction="row" w="full" key={`content${index}`}>
       <Box minW={"32px"}>
         {userName && <Avatar size="sm" name={userName} />}
       </Box>
-      <VStack align="flex-start" ml={2} gap={2}>
+      <Flex direction="column" width="full" align="flex-start" ml={2} gap={2}>
         {userName && (
           <Text as={"p"} fontSize="sm" fontWeight="bold">
             {userName}
@@ -50,45 +46,17 @@ export default function Content({
             />
           ) : (
             <CodeContent
+              index={index}
               content={contentWithoutCodeblock}
+              chartContent={chartContent}
               format={format}
               key={`message${index}`}
+              streamingMessage={streamingMessage}
+              setCurrentChartIndex={setCurrentChartIndex}
             />
           )}
         </Box>
-        <Flex gap={2} w="full">
-          {codeBlockExistance && (
-            <Button
-              colorScheme="gray"
-              size="sm"
-              variant="solid"
-              onClick={() => setCurrentChartIndex(index)}
-              isLoading={streamingMessage}
-              loadingText="Loading"
-            >
-              Show Chart
-            </Button>
-          )}
-          {codeBlockExistance && (
-            <Button
-              colorScheme="gray"
-              size="sm"
-              variant="solid"
-              onClick={toggleCodeBlocks}
-            >
-              {showCodeBlocks ? "Hide Specification" : "Show Specification"}
-            </Button>
-          )}
-        </Flex>
-        {showCodeBlocks && (
-          <CodeContent
-            content={codeBlocks}
-            format="json"
-            key={`message${index}`}
-          />
-        )}
-        
-      </VStack>
+      </Flex>
     </Flex>
   );
 }

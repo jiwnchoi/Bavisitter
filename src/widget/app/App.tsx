@@ -18,7 +18,7 @@ function App() {
   );
   return (
     <Providers>
-      <Container minW={"100%"} h="600px" m={0} p={0}>
+      <Container minW={"full"} h="600px" m={0} p={0}>
         <Flex direction="row" gap={2} h="500px">
           <Messages
             messagesWithRef={messagesWithRef}
@@ -26,9 +26,9 @@ function App() {
             setCurrentChartIndex={setCurrentChartIndex}
             streaming={streaming}
           />
-          <Center minW={300}>
+          <Center w={400}>
             {currentChart && (
-              <ChartView spec={currentChart} width={300} data={data} />
+              <ChartView spec={currentChart} width={400} data={data} />
             )}
           </Center>
         </Flex>
