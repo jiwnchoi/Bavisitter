@@ -7,14 +7,14 @@ const handleKeyDown = (
   e: React.KeyboardEvent<HTMLTextAreaElement>,
   props: FormikProps<IPrompt>,
 ) => {
-  if (e.key === "Enter" && props.values.prompt === "") {
+  if (props.values.prompt !== "" && e.key === "Enter") {
     e.preventDefault();
-  } else if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    props.submitForm();
-  } else if (e.key === "Enter" && e.shiftKey && props.values.prompt !== "") {
-    e.preventDefault();
-    props.setFieldValue("prompt", props.values.prompt + "\n");
+    e.stopPropagation();
+    if (e.shiftKey) {
+      props.setFieldValue("prompt", props.values.prompt + "\n");
+    } else {
+      props.submitForm();
+    }
   }
 };
 

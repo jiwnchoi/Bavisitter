@@ -1,7 +1,6 @@
 import { IMessageWithRef } from "@shared/types";
-import { splitCodeBlockAndContent } from "@shared/utils";
-import { useMemo, useState } from "react";
-
+import { replaceJSONCodeBlocks } from "@shared/utils";
+import { useMemo } from "react";
 
 export default function useContent(
   messagesWithRef: IMessageWithRef[],
@@ -21,39 +20,38 @@ export default function useContent(
     }
     return null;
   }, [messagesWithRef, index]);
-  
+
   const streamingMessage = useMemo(() => {
     return index === messagesWithRef.length - 1 && streaming;
   }, [messagesWithRef, index, streaming]);
-  
-  const [codeBlocks, contentWithoutCodeblock ] = useMemo(() => {
-    return splitCodeBlockAndContent(messagesWithRef[index].content);
-  }, [messagesWithRef, index]);
 
-  const [showCodeBlocks, setShowCodeBlocks] = useState(false);
-  const toggleCodeBlocks = () => setShowCodeBlocks(!showCodeBlocks);
+  const contentWithoutCodeblock = useMemo(
+    () => replaceJSONCodeBlocks(messagesWithRef[index].content),
+    [messagesWithRef, index],
+  );
 
-  const content = messagesWithRef[index].content;
+  const format = useMemo(
+    () => messagesWithRef[index].format ?? "console",
+    [messagesWithRef, index],
+  );
 
-  const format = messagesWithRef[index].format;
+  const chartContent = useMemo(
+    () =>
+      format === "json" && messagesWithRef[index].content.includes("$schema"),
+    [format, messagesWithRef, index],
+  );
 
   const type = messagesWithRef[index].type;
-
-  const codeBlockExistance = contentWithoutCodeblock !== content;
 
   const ref = messagesWithRef[index].ref;
 
   return {
     userName,
     contentWithoutCodeblock,
-    codeBlocks,
     streamingMessage,
-    content,
+    chartContent,
     format,
     type,
     ref,
-    codeBlockExistance,
-    showCodeBlocks,
-    toggleCodeBlocks,
   };
 }
