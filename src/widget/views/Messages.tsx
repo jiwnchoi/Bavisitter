@@ -1,4 +1,5 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, IconButton } from "@chakra-ui/react";
+import { FaArrowDown } from "react-icons/fa";
 import { useColorMode } from "@hooks";
 import { IMessageWithRef } from "@shared/types";
 import { RefObject } from "react";
@@ -9,6 +10,7 @@ interface IChatViewProps {
   chatBoxRef: RefObject<HTMLDivElement>;
   streaming: boolean;
   setCurrentChartIndex: (index: number) => void;
+  scrollToBottom: () => void;
 }
 
 const Messages = ({
@@ -16,6 +18,7 @@ const Messages = ({
   chatBoxRef,
   streaming,
   setCurrentChartIndex,
+  scrollToBottom,
 }: IChatViewProps) => {
   const { colorMode } = useColorMode();
   return (
@@ -49,6 +52,17 @@ const Messages = ({
           setCurrentChartIndex={setCurrentChartIndex}
         />
       ))}
+      {
+        <IconButton
+          icon={<FaArrowDown />}
+          onClick={scrollToBottom}
+          position="absolute"
+          bottom="104"
+          left="calc(50% - 200px)"
+          zIndex="1" 
+          aria-label={'scroll to bottom'}     
+        />
+      }
     </Flex>
   );
 };

@@ -13,15 +13,24 @@ export default function useMessages() {
     });
   }, [messages]);
 
+  const scrollToBottomIfNearBottom = useCallback(() => {
+    if (chatBoxRef.current) {
+      const isAtBottom = chatBoxRef.current.scrollHeight - chatBoxRef.current.scrollTop - chatBoxRef.current.clientHeight <= 100;
+      if (isAtBottom) {
+        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      }
+    }
+  }, [chatBoxRef]);
+
+  useEffect(() => {
+    scrollToBottomIfNearBottom();
+  }, [messages]);
+
   const scrollToBottom = useCallback(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [chatBoxRef]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const appendUserMessage = (message: IMessage) => {
     _setMessages([...messages, message]);
@@ -47,5 +56,6 @@ export default function useMessages() {
     editUserMessage,
     clearUserMessages,
     sendCurrentMessages,
+    scrollToBottom,
   };
 }

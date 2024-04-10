@@ -10,6 +10,7 @@ function App() {
     appendUserMessage,
     messagesWithRef,
     clearUserMessages,
+    scrollToBottom,
   } = useMessages();
   const data = useData();
   const { currentChart, setCurrentChartIndex } = useCharts(
@@ -25,6 +26,7 @@ function App() {
             chatBoxRef={chatBoxRef}
             setCurrentChartIndex={setCurrentChartIndex}
             streaming={streaming}
+            scrollToBottom={scrollToBottom}
           />
           <Center w={400}>
             {currentChart && (
