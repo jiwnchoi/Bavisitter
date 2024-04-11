@@ -12,10 +12,7 @@ function App() {
     clearUserMessages,
   } = useMessages();
   const data = useData();
-  const { currentChart, setCurrentChart } = useCharts(
-    messagesWithRef,
-    streaming,
-  );
+  const { currentChart } = useCharts(messagesWithRef, streaming);
   return (
     <Providers>
       <Container minW={"full"} h="600px" m={0} p={0}>
@@ -23,7 +20,6 @@ function App() {
           <Messages
             messagesWithRef={messagesWithRef}
             chatBoxRef={chatBoxRef}
-            setCurrentChart={setCurrentChart}
             streaming={streaming}
           />
           <Center w={400}>

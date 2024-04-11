@@ -8,7 +8,8 @@ interface ChartState {
 
 interface ChartAction {
   setCharts: (charts: IChartSpec[]) => void;
-  setCurrentChart: (index: number) => void;
+  setCurrentChartByChartIndex: (index: number) => void;
+  setCurrentChartByChatIndex: (chatIndex: number) => void;
   getChartByChartIndex: (chartIndex: number) => IChartSpec | undefined;
   getChartByChatIndex: (chatIndex: number) => IChartSpec | undefined;
 }
@@ -17,7 +18,12 @@ const useChartStore = create<ChartState & ChartAction>((set, get) => ({
   charts: [],
   currentChartIndex: -1,
   setCharts: (charts) => set({ charts }),
-  setCurrentChart: (index) => set({ currentChartIndex: index }),
+  setCurrentChartByChartIndex: (index) =>
+    set({ currentChartIndex: index < 0 ? get().charts.length - 1 : index }),
+  setCurrentChartByChatIndex: (chatIndex) => {
+    const chartIndex = get().charts.findIndex((c) => c.chatIndex === chatIndex);
+    set({ currentChartIndex: chartIndex });
+  },
   getChartByChartIndex: (chartIndex) => get().charts[chartIndex] ?? undefined,
   getChartByChatIndex: (chatIndex) =>
     get().charts.find((c) => c.chatIndex === chatIndex) ?? undefined,

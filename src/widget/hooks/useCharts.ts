@@ -12,7 +12,12 @@ export default function useCharts(
 ) {
   const charts = useChartStore((state) => state.charts);
   const setCharts = useChartStore((state) => state.setCharts);
-  const setCurrentChart = useChartStore((state) => state.setCurrentChart);
+  const setCurrentChartByChartIndex = useChartStore(
+    (state) => state.setCurrentChartByChartIndex,
+  );
+  const setCurrentChartByChatIndex = useChartStore(
+    (state) => state.setCurrentChartByChatIndex,
+  );
 
   const [currentChart, _setCurrentChart] = useState<IChartSpec | null>(null);
   useChartStore.subscribe((state) => {
@@ -32,18 +37,14 @@ export default function useCharts(
           spec: parseVegaLite(m.content),
         }));
       setCharts(newCharts);
+      setCurrentChartByChartIndex(-1);
     }
   }, [streaming, messagesWithRef]);
-
-  useEffect(() => {
-    if (streaming === false) {
-      setCurrentChart(-1);
-    }
-  }, [streaming]);
 
   return {
     charts,
     currentChart,
-    setCurrentChart,
+    setCurrentChartByChartIndex,
+    setCurrentChartByChatIndex,
   };
 }
