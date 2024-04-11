@@ -9,7 +9,6 @@ interface IChatViewProps {
   messagesWithRef: IMessageWithRef[];
   chatBoxRef: RefObject<HTMLDivElement>;
   streaming: boolean;
-  setCurrentChartIndex: (index: number) => void;
   scrollToBottom: () => void;
   chatBoxAtBottom: boolean | null;
 }

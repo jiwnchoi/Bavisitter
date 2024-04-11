@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
-import { useChartStore } from "@store";
+import { useChartStore } from "@stores";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";

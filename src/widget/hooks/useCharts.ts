@@ -1,6 +1,6 @@
 import { IChartSpec, IMessageWithRef } from "@shared/types";
 import { parseVegaLite } from "@shared/utils";
-import { useChartStore } from "@store";
+import { useChartStore } from "@stores";
 import { useEffect, useState } from "react";
 
 const isMessageWithChart = (m: IMessageWithRef) =>
