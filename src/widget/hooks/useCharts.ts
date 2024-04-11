@@ -1,68 +1,49 @@
 import { IChartSpec, IMessageWithRef } from "@shared/types";
-import { useEffect, useMemo, useState } from "react";
+import { parseVegaLite } from "@shared/utils";
+import { useChartStore } from "@store";
+import { useEffect, useState } from "react";
+
+const isMessageWithChart = (m: IMessageWithRef) =>
+  m.type === "code" && m.format === "json" && m.content.includes("$schema");
 
 export default function useCharts(
-  messages: IMessageWithRef[],
+  messagesWithRef: IMessageWithRef[],
   streaming: boolean,
 ) {
-  const [currentChartIndex, setCurrentChartIndex] = useState(-1);
-  const [charts, setCharts] = useState<IChartSpec[]>([]);
+  const charts = useChartStore((state) => state.charts);
+  const setCharts = useChartStore((state) => state.setCharts);
+  const setCurrentChart = useChartStore((state) => state.setCurrentChart);
 
-  useEffect(() => {
-    if (streaming === true) {
-      return;
-    }
-    const specs = messages
-      .map((m, i) => ({
-        ...m,
-        chatIndex: i,
-      }))
-      .filter(
-        (m) =>
-          m.type === "code" &&
-          m.format === "json" &&
-          m.content.includes("$schema"),
-      );
-    const _charts = specs.map((m) => {
-      let spec;
-      try {
-        if (m.content.includes("```")) {
-          spec = JSON.parse(m.content.split("```")[0]);
-        } else {
-          spec = JSON.parse(m.content);
-        }
-      } catch (e) {
-        spec = {};
-      }
-
-      if (spec.data && spec.data.url === "artifacts/data.csv") {
-        spec.data = { name: "table" };
-      }
-      for (const encodingName in spec.encoding) {
-        spec.encoding[encodingName].legend = { orient: "bottom" };
-      }
-      spec.background = "transparent";
-      spec.autosize = { type: "fit", contains: "padding" };
-      return { chatIndex: m.chatIndex, spec } as IChartSpec;
-    });
-    setCharts(_charts);
-  }, [messages]);
-
-  const currentChart = useMemo(() => {
+  const [currentChart, _setCurrentChart] = useState<IChartSpec | null>(null);
+  useChartStore.subscribe((state) => {
     const currentIndex =
-      currentChartIndex === -1 ? messages.length - 1 : currentChartIndex;
-    return charts.find((c) => c.chatIndex === currentIndex);
-  }, [charts, currentChartIndex]);
+      state.currentChartIndex === -1
+        ? state.charts.length - 1
+        : state.currentChartIndex;
+    _setCurrentChart(state.charts[currentIndex] ?? null);
+  });
 
   useEffect(() => {
-    if (streaming !== true) {
-      setCurrentChartIndex(-1);
+    if (streaming === false) {
+      const newCharts = messagesWithRef
+        .filter((m) => isMessageWithChart(m))
+        .map((m) => ({
+          chatIndex: m.chatIndex,
+          spec: parseVegaLite(m.content),
+        }));
+      setCharts(newCharts);
+    }
+  }, [streaming, messagesWithRef]);
+
+  useEffect(() => {
+    if (streaming === false) {
+      setCurrentChart(-1);
     }
   }, [streaming]);
 
   return {
     charts,
     currentChart,
-    setCurrentChartIndex,
+    setCurrentChart,
   };
 }

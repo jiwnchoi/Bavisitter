@@ -35,7 +35,7 @@ interface ICodeContentProps {
   format: string;
   streamingMessage: boolean;
   chartContent: boolean;
-  setCurrentChartIndex: (index: number) => void;
+  setCurrentChart: (index: number) => void;
 }
 
 function CodeBlockButton(proos: ButtonProps) {
@@ -61,7 +61,7 @@ export default function CodeContent({
   format,
   streamingMessage,
   chartContent,
-  setCurrentChartIndex,
+  setCurrentChart,
 }: ICodeContentProps) {
   const { isOpen, onToggle } = useDisclosure({
     defaultIsOpen: false,
@@ -93,7 +93,7 @@ export default function CodeContent({
             leftIcon={<Icon as={FaChartBar} />}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentChartIndex(index);
+              setCurrentChart(index);
             }}
           >
             Load Chart

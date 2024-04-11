@@ -8,8 +8,12 @@ export default function useMessages() {
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   const messagesWithRef = useMemo(() => {
-    return messages.map((m) => {
-      return { ...m, ref: createRef<HTMLDivElement>() } as IMessageWithRef;
+    return messages.map((m, i) => {
+      return {
+        ...m,
+        ref: createRef<HTMLDivElement>(),
+        chatIndex: i,
+      } as IMessageWithRef;
     });
   }, [messages]);
 

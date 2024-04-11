@@ -28,7 +28,8 @@
     "react-vega": "^7.6.0",
     "remark-gfm": "^4.0.0",
     "vega": "^5.28.0",
-    "vega-lite": "^5.17.0"
+    "vega-lite": "^5.17.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
