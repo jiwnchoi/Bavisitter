@@ -8,14 +8,12 @@ type IContentProps = {
   index: number;
   messagesWithRef: IMessageWithRef[];
   streaming: boolean;
-  setCurrentChart: (index: number) => void;
 };
 
 export default function Content({
   index,
   messagesWithRef,
   streaming,
-  setCurrentChart,
 }: IContentProps) {
   const {
     userName,
@@ -52,7 +50,6 @@ export default function Content({
               format={format}
               key={`message${index}`}
               streamingMessage={streamingMessage}
-              setCurrentChart={setCurrentChart}
             />
           )}
         </Box>

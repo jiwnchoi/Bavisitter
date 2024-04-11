@@ -10,6 +10,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
+import { useChartStore } from "@store";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
@@ -35,7 +36,6 @@ interface ICodeContentProps {
   format: string;
   streamingMessage: boolean;
   chartContent: boolean;
-  setCurrentChart: (index: number) => void;
 }
 
 function CodeBlockButton(proos: ButtonProps) {
@@ -61,11 +61,13 @@ export default function CodeContent({
   format,
   streamingMessage,
   chartContent,
-  setCurrentChart,
 }: ICodeContentProps) {
   const { isOpen, onToggle } = useDisclosure({
     defaultIsOpen: false,
   });
+  const setCurrentChartByChatIndex = useChartStore(
+    (state) => state.setCurrentChartByChatIndex,
+  );
 
   return (
     <Box dir="row" w={"full"} gap={0} borderRadius={8} overflow={"clip"}>
@@ -93,7 +95,7 @@ export default function CodeContent({
             leftIcon={<Icon as={FaChartBar} />}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentChart(index);
+              setCurrentChartByChatIndex(index);
             }}
           >
             Load Chart
