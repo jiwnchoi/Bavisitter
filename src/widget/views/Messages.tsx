@@ -11,6 +11,7 @@ interface IChatViewProps {
   streaming: boolean;
   setCurrentChartIndex: (index: number) => void;
   scrollToBottom: () => void;
+  chatBoxAtBottom: boolean | null;
 }
 
 const Messages = ({
@@ -19,6 +20,7 @@ const Messages = ({
   streaming,
   setCurrentChartIndex,
   scrollToBottom,
+  chatBoxAtBottom,
 }: IChatViewProps) => {
   const { colorMode } = useColorMode();
   return (
@@ -52,17 +54,17 @@ const Messages = ({
           setCurrentChartIndex={setCurrentChartIndex}
         />
       ))}
-      {
+      {!chatBoxAtBottom && (
         <IconButton
           icon={<FaArrowDown />}
           onClick={scrollToBottom}
           position="absolute"
           bottom="104"
           left="calc(50% - 200px)"
-          zIndex="1" 
-          aria-label={'scroll to bottom'}     
+          zIndex="1"
+          aria-label={"scroll to bottom"}
         />
-      }
+      )}
     </Flex>
   );
 };

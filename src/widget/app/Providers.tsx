@@ -32,6 +32,7 @@ function Providers({ children }: PropsWithChildren<{}>) {
         justifyContent: "center",
         alignItems: "center",
         display: "flex",
+        scrollBehavior: "smooth",
       }}
     >
       <ChakraProvider theme={theme}>

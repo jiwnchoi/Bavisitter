@@ -1,11 +1,19 @@
 import { useModelState } from "@anywidget/react";
 import { IMessage, IMessageWithRef } from "@shared/types";
-import { createRef, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  createRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export default function useMessages() {
   const [messages, _setMessages] = useModelState<IMessage[]>("messages");
   const [streaming] = useModelState<boolean>("streaming");
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean | null>(true);
 
   const messagesWithRef = useMemo(() => {
     return messages.map((m) => {
@@ -13,12 +21,24 @@ export default function useMessages() {
     });
   }, [messages]);
 
+  const setChatBoxAtBottom = useCallback(() => {
+    _setChatBoxAtBottom(
+      chatBoxRef.current &&
+        chatBoxRef.current.scrollHeight -
+          chatBoxRef.current.scrollTop -
+          chatBoxRef.current.clientHeight <=
+          100,
+    );
+  }, [chatBoxRef, _setChatBoxAtBottom]);
+
+  chatBoxRef.current?.addEventListener("scroll", setChatBoxAtBottom);
+
   const scrollToBottomIfNearBottom = useCallback(() => {
-    if (chatBoxRef.current) {
-      const isAtBottom = chatBoxRef.current.scrollHeight - chatBoxRef.current.scrollTop - chatBoxRef.current.clientHeight <= 100;
-      if (isAtBottom) {
-        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-      }
+    if (chatBoxRef.current && chatBoxAtBottom) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [chatBoxRef]);
 
@@ -28,7 +48,10 @@ export default function useMessages() {
 
   const scrollToBottom = useCallback(() => {
     if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [chatBoxRef]);
 
@@ -57,5 +80,6 @@ export default function useMessages() {
     clearUserMessages,
     sendCurrentMessages,
     scrollToBottom,
+    chatBoxAtBottom,
   };
 }
