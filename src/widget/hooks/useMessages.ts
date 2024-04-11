@@ -1,11 +1,19 @@
 import { useModelState } from "@anywidget/react";
 import { IMessage, IMessageWithRef } from "@shared/types";
-import { createRef, useEffect, useMemo, useRef } from "react";
+import {
+  createRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export default function useMessages() {
   const [messages, _setMessages] = useModelState<IMessage[]>("messages");
   const [streaming] = useModelState<boolean>("streaming");
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean | null>(true);
 
   const messagesWithRef = useMemo(() => {
     return messages.map((m, i) => {
@@ -17,13 +25,37 @@ export default function useMessages() {
     });
   }, [messages]);
 
-  const scrollToBottom = () => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  };
+  const setChatBoxAtBottom = useCallback(() => {
+    _setChatBoxAtBottom(
+      chatBoxRef.current &&
+        chatBoxRef.current.scrollHeight -
+          chatBoxRef.current.scrollTop -
+          chatBoxRef.current.clientHeight <=
+          100,
+    );
+  }, [chatBoxRef, _setChatBoxAtBottom]);
 
-  useEffect(scrollToBottom, [messages]);
+  chatBoxRef.current?.addEventListener("scroll", setChatBoxAtBottom);
+
+  const scrollToBottomIfNearBottom = useCallback(() => {
+    if (chatBoxRef.current && chatBoxAtBottom) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [chatBoxRef, chatBoxAtBottom]);
+
+  useEffect(scrollToBottomIfNearBottom, [messages]);
+
+  const scrollToBottom = useCallback(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [chatBoxRef]);
 
   const appendUserMessage = (message: IMessage) => {
     _setMessages([...messages, message]);
@@ -49,5 +81,7 @@ export default function useMessages() {
     editUserMessage,
     clearUserMessages,
     sendCurrentMessages,
+    scrollToBottom,
+    chatBoxAtBottom,
   };
 }
