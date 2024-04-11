@@ -1,6 +1,6 @@
 import { useModelState } from "@anywidget/react";
 import { IMessage, IMessageWithRef } from "@shared/types";
-import { createRef, useCallback, useEffect, useMemo, useRef } from "react";
+import { createRef, useEffect, useMemo, useRef } from "react";
 
 export default function useMessages() {
   const [messages, _setMessages] = useModelState<IMessage[]>("messages");
@@ -13,15 +13,13 @@ export default function useMessages() {
     });
   }, [messages]);
 
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = () => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-  }, [chatBoxRef]);
+  };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(scrollToBottom, [messages]);
 
   const appendUserMessage = (message: IMessage) => {
     _setMessages([...messages, message]);

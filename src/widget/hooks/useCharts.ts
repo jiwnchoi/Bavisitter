@@ -24,8 +24,17 @@ export default function useCharts(
           m.content.includes("$schema"),
       );
     const _charts = specs.map((m) => {
-      let spec = JSON.parse(m.content);
-      spec.$schema = "https://vega.github.io/schema/vega-lite/v5.json";
+      let spec;
+      try {
+        if (m.content.includes("```")) {
+          spec = JSON.parse(m.content.split("```")[0]);
+        } else {
+          spec = JSON.parse(m.content);
+        }
+      } catch (e) {
+        spec = {};
+      }
+
       if (spec.data && spec.data.url === "artifacts/data.csv") {
         spec.data = { name: "table" };
       }

@@ -21,9 +21,10 @@ export default function useContent(
     return null;
   }, [messagesWithRef, index]);
 
-  const streamingMessage = useMemo(() => {
-    return index === messagesWithRef.length - 1 && streaming;
-  }, [messagesWithRef, index, streaming]);
+  const streamingMessage = useMemo(
+    () => index === messagesWithRef.length - 1 && streaming,
+    [messagesWithRef, index, streaming],
+  );
 
   const contentWithoutCodeblock = useMemo(
     () => replaceJSONCodeBlocks(messagesWithRef[index].content),
