@@ -8,14 +8,14 @@ interface IChatViewProps {
   messagesWithRef: IMessageWithRef[];
   chatBoxRef: RefObject<HTMLDivElement>;
   streaming: boolean;
-  setCurrentChartIndex: (index: number) => void;
+  setCurrentChart: (index: number) => void;
 }
 
 const Messages = ({
   messagesWithRef,
   chatBoxRef,
   streaming,
-  setCurrentChartIndex,
+  setCurrentChart,
 }: IChatViewProps) => {
   const { colorMode } = useColorMode();
   return (
@@ -46,7 +46,7 @@ const Messages = ({
           index={index}
           messagesWithRef={messagesWithRef}
           streaming={streaming}
-          setCurrentChartIndex={setCurrentChartIndex}
+          setCurrentChart={setCurrentChart}
         />
       ))}
     </Flex>
