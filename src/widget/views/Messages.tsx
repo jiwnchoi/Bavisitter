@@ -3,6 +3,7 @@ import { useColorMode, useMessages } from "@hooks";
 import { useMessageStore } from "@stores";
 import { FaArrowDown } from "react-icons/fa";
 import Content from "./Content";
+import TeacherView from "./TeacherView";
 
 const Messages = (props: FlexProps) => {
   const { colorMode } = useColorMode();
@@ -29,6 +30,8 @@ const Messages = (props: FlexProps) => {
       {messages.map((_, index) => (
         <Content key={index} index={index} />
       ))}
+      <TeacherView />
+
       <IconButton
         icon={<FaArrowDown />}
         onClick={scrollToBottom}
