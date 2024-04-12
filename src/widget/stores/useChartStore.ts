@@ -10,13 +10,20 @@ interface ChartAction {
   setCharts: (charts: IChartSpec[]) => void;
   setCurrentChartByChartIndex: (index: number) => void;
   setCurrentChartByChatIndex: (chatIndex: number) => void;
+
+  appendChart: (chart: IChartSpec) => void;
+
   getChartByChartIndex: (chartIndex: number) => IChartSpec | undefined;
   getChartByChatIndex: (chatIndex: number) => IChartSpec | undefined;
+
+  updateChart: (chartIndex: number, chart: IChartSpec) => void;
+  updateCurrentChart: (chart: IChartSpec) => void;
 }
 
 const useChartStore = create<ChartState & ChartAction>((set, get) => ({
   charts: [],
   currentChartIndex: -1,
+  appendChart: (chart) => set({ charts: [...get().charts, chart] }),
   setCharts: (charts) => set({ charts }),
   setCurrentChartByChartIndex: (index) =>
     set({ currentChartIndex: index < 0 ? get().charts.length - 1 : index }),
@@ -27,6 +34,20 @@ const useChartStore = create<ChartState & ChartAction>((set, get) => ({
   getChartByChartIndex: (chartIndex) => get().charts[chartIndex] ?? undefined,
   getChartByChatIndex: (chatIndex) =>
     get().charts.find((c) => c.chatIndex === chatIndex) ?? undefined,
+
+  updateChart: (chartIndex, chart) => {
+    const charts = get().charts;
+    charts[chartIndex] = chart;
+    set({ charts });
+  },
+  updateCurrentChart: (chart) => {
+    const chartIndex = get().currentChartIndex;
+    if (chartIndex !== -1) {
+      const charts = get().charts;
+      charts[chartIndex] = chart;
+      set({ charts });
+    }
+  },
 }));
 
 export default useChartStore;

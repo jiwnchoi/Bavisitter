@@ -1,3 +1,4 @@
+from .ipc_model import IPCModel
 from .message_model import (
   ChunkType,
   MessageModel,
@@ -12,4 +13,5 @@ __all__ = [
   "RoleType",
   "StreamChunkModel",
   "ChunkType",
+  "IPCModel",
 ]

@@ -1,26 +1,14 @@
 import { Flex, IconButton } from "@chakra-ui/react";
+import { useColorMode, useMessages } from "@hooks";
+import { useMessageStore } from "@stores";
 import { FaArrowDown } from "react-icons/fa";
-import { useColorMode } from "@hooks";
-import { IMessageWithRef } from "@shared/types";
-import { RefObject } from "react";
 import Content from "./Content";
 
-interface IChatViewProps {
-  messagesWithRef: IMessageWithRef[];
-  chatBoxRef: RefObject<HTMLDivElement>;
-  streaming: boolean;
-  scrollToBottom: () => void;
-  chatBoxAtBottom: boolean | null;
-}
-
-const Messages = ({
-  messagesWithRef,
-  chatBoxRef,
-  streaming,
-  scrollToBottom,
-  chatBoxAtBottom,
-}: IChatViewProps) => {
+const Messages = () => {
   const { colorMode } = useColorMode();
+  const messages = useMessageStore((state) => state.messages);
+  const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = useMessages();
+
   return (
     <Flex
       w={"full"}
@@ -29,6 +17,7 @@ const Messages = ({
       flexDir={"column"}
       gap={8}
       p={4}
+      ref={chatBoxRef}
       css={{
         "&::-webkit-scrollbar": {
           backgroundColor: "transparent",
@@ -41,15 +30,9 @@ const Messages = ({
               : "rgba(255, 255, 255, 0.1)",
         },
       }}
-      ref={chatBoxRef}
     >
-      {messagesWithRef.map((_, index) => (
-        <Content
-          key={index}
-          index={index}
-          messagesWithRef={messagesWithRef}
-          streaming={streaming}
-        />
+      {messages.map((_, index) => (
+        <Content key={index} index={index} />
       ))}
       {!chatBoxAtBottom && (
         <IconButton

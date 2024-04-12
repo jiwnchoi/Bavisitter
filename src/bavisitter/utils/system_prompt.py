@@ -39,10 +39,6 @@ The visualization **must** written with vega-lite in json code blocks like below
 }
 ```
 
-`data` property should be always `artifacts/data.csv`.
-
-If you transform the data, save it to `artifacts/data.csv` and use it for visualization.
-
 Never use other visualization libraries like matplotlib, seaborn, plotly, etc. Only use vega-lite.
 
 Carefully analyze and visualize `artifacts/data.csv`. If you write vega-lite specification, then I will render it for visualization.

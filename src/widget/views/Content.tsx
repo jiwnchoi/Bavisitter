@@ -1,20 +1,13 @@
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { useContent } from "@hooks";
-import { IMessageWithRef } from "@shared/types";
 import CodeContent from "./CodeContent";
 import MessageContent from "./MessageContent";
 
 type IContentProps = {
   index: number;
-  messagesWithRef: IMessageWithRef[];
-  streaming: boolean;
 };
 
-export default function Content({
-  index,
-  messagesWithRef,
-  streaming,
-}: IContentProps) {
+export default function Content({ index }: IContentProps) {
   const {
     userName,
     contentWithoutCodeblock,
@@ -23,7 +16,7 @@ export default function Content({
     type,
     ref,
     chartContent,
-  } = useContent(messagesWithRef, index, streaming);
+  } = useContent(index);
 
   return (
     <Flex direction="row" w="full" key={`content${index}`}>

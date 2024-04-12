@@ -1,15 +1,14 @@
-import { IMessageWithRef } from "@shared/types";
 import { replaceJSONCodeBlocks } from "@shared/utils";
+import { useMessageStore } from "@stores";
 import { useMemo } from "react";
 
-export default function useContent(
-  messagesWithRef: IMessageWithRef[],
-  index: number,
-  streaming: boolean,
-) {
+export default function useContent(index: number) {
+  const messages = useMessageStore((state) => state.messages);
+  const streaming = useMessageStore((state) => state.streaming);
+
   const userName = useMemo(() => {
-    const previousMessage = index > 0 ? messagesWithRef[index - 1] : null;
-    if (messagesWithRef[index].role === "user") {
+    const previousMessage = index > 0 ? messages[index - 1] : null;
+    if (messages[index].role === "user") {
       return "You";
     }
     if (previousMessage && previousMessage.role === "user") {
@@ -19,32 +18,31 @@ export default function useContent(
       return null;
     }
     return null;
-  }, [messagesWithRef, index]);
+  }, [messages, index]);
 
   const streamingMessage = useMemo(
-    () => index === messagesWithRef.length - 1 && streaming,
-    [messagesWithRef, index, streaming],
+    () => index === messages.length - 1 && streaming,
+    [messages, index, streaming],
   );
 
   const contentWithoutCodeblock = useMemo(
-    () => replaceJSONCodeBlocks(messagesWithRef[index].content),
-    [messagesWithRef, index],
+    () => replaceJSONCodeBlocks(messages[index].content),
+    [messages, index],
   );
 
   const format = useMemo(
-    () => messagesWithRef[index].format ?? "console",
-    [messagesWithRef, index],
+    () => messages[index].format ?? "console",
+    [messages, index],
   );
 
   const chartContent = useMemo(
-    () =>
-      format === "json" && messagesWithRef[index].content.includes("$schema"),
-    [format, messagesWithRef, index],
+    () => format === "json" && messages[index].content.includes("$schema"),
+    [format, messages, index],
   );
 
-  const type = messagesWithRef[index].type;
+  const type = messages[index].type;
 
-  const ref = messagesWithRef[index].ref;
+  const ref = messages[index].ref;
 
   return {
     userName,

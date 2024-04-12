@@ -1,5 +1,7 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
-import { IMessage, IPrompt } from "@shared/types";
+import { useModelMessage } from "@hooks";
+import { IPrompt } from "@shared/types";
+import { useMessageStore } from "@stores";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
@@ -18,17 +20,10 @@ const handleKeyDown = (
   }
 };
 
-interface IPromptViewProps {
-  appendUserMessage: (message: IMessage) => void;
-  clearUserMessages: () => void;
-  streaming: boolean;
-}
+export default function PromptView() {
+  const streaming = useMessageStore((state) => state.streaming);
+  const { appendUserMessage, clearUserMessages } = useModelMessage();
 
-export default function PromptView({
-  appendUserMessage,
-  clearUserMessages,
-  streaming,
-}: IPromptViewProps) {
   return (
     <Flex
       flexDir={"row"}

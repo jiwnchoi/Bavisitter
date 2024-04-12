@@ -21,14 +21,14 @@ from traitlets import (
   validate,
 )
 
-from bavisitter.df_manager import DataFrameManager
 from bavisitter.model import (
+  IPCModel,
   MessageModel,
   MessageType,
   RoleType,
   StreamChunkModel,
 )
-from bavisitter.utils import get_chunk_type, set_interpreter
+from bavisitter.utils import get_chunk_type, load_artifact, set_interpreter
 
 try:
   __version__ = importlib.metadata.version("bavisitter")
@@ -41,12 +41,12 @@ match = re.compile(r"```(\w+)\n")
 
 class Bavisitter(anywidget.AnyWidget, HasTraits):
   _esm = pathlib.Path(__file__).parent / "static" / "main.js"
-  data = Unicode().tag(sync=True)
   messages = List(Dict(value_trait=Unicode(), key_trait=Unicode())).tag(
     sync=True
   )
   streaming = Bool(default_value=False).tag(sync=True)
   color_mode = Unicode(default_value="light").tag(sync=True)
+  ipc_queue = List(Dict()).tag(sync=True)
 
   def __init__(
     self,
@@ -62,14 +62,12 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     if not pathlib.Path("artifacts").exists():
       pathlib.Path("artifacts").mkdir()
 
+    df.to_csv("artifacts/data.csv", index=False)
+
     # set widget properties
     self.model = model
+    self.chunks = []
     self.color_mode = color_mode
-    self.on_msg(self._handle_msg)
-
-    # set data
-    self.df_manager = DataFrameManager(df)
-    self.data = self.df_manager.data
 
     # initialize the open interpreter
     self.interpreter = OpenInterpreter()
@@ -86,6 +84,29 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def _default_stream(self):
     return False
 
+  @default("color_mode")
+  def _default_color_mode(self):
+    return "light"
+
+  @default("ipc_queue")
+  def _default_ipc_queue(self):
+    return []
+
+  @validate("color_mode")
+  def _validate_color_mode(self, proposal):
+    if proposal["value"] not in ["light", "dark"]:
+      raise TraitError("Invalid color mode. Must be 'light' or 'dark'")
+
+    return proposal["value"]
+
+  @validate("ipc_queue")
+  def _validate_ipc_queue(self, proposal):
+    for message in proposal["value"]:
+      if "type" not in message:
+        raise TraitError("Invalid message: 'type' key is missing")
+
+    return proposal["value"]
+
   @validate("messages")
   def _validate_messages(self, proposal):
     try:
@@ -96,11 +117,35 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     return proposal["value"]
 
+  @observe("ipc_queue")
+  def handle_ipc_queue(self, change: list[IPCModel]):
+    if len(change["new"]) and change["new"][-1]["type"] == "request":
+      if change["new"][-1]["endpoint"] == "load_artifact":
+        data = load_artifact(change["new"][-1]["content"])
+        self.ipc_queue = [
+          *self.ipc_queue,
+          {
+            "type": "response",
+            "content": data,
+            "endpoint": change["new"][-1]["endpoint"],
+            "uuid": change["new"][-1]["uuid"],
+          },
+        ]
+      else:
+        self.ipc_queue = [
+          *self.ipc_queue,
+          {
+            "type": "response",
+            "content": None,
+            "endpoint": change["new"][-1]["endpoint"],
+            "uuid": change["new"][-1]["uuid"],
+          },
+        ]
+
   @observe("messages")
   def handle_user_chat(self, change):
     if len(change["new"]) == 0:
       self.interpreter.messages = []
-      self.df_manager.init_df()
       self.streaming = False
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
@@ -110,6 +155,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         self.handle_chunk(chunk)
 
   def handle_chunk(self, chunk: StreamChunkModel):
+    self.chunks.append(chunk)
     chunk_type = get_chunk_type(
       chunk, self.messages[-1] if len(self.messages) else None
     )
@@ -150,11 +196,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       self.streaming = False
       if self.messages[-1]["content"] == "":
         self.messages = [*self.messages[:-1]]
-      self.df_manager.handle_df_change()
 
     elif chunk_type == "code_end":
       self.append_message(role="assistant", type="message", content="")
-      self.df_manager.handle_df_change()
 
   def append_content(self, content: str):
     new_message = copy(self.messages[-1])

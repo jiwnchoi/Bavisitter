@@ -1,6 +1,6 @@
-import { VisualizationSpec } from "react-vega";
+import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
-export function parseVegaLite(content: string): VisualizationSpec {
+export function parseVegaLite(content: string): TopLevelUnitSpec<string> {
   let spec;
   try {
     if (content.includes("```")) {
@@ -12,8 +12,8 @@ export function parseVegaLite(content: string): VisualizationSpec {
     spec = {};
   }
   // local file controller logic is needed here
-  if (spec.data && spec.data.url === "artifacts/data.csv") {
-    spec.data = { name: "table" };
+  if (spec.data && spec.data.url) {
+    spec.data = { name: spec.data.url };
   }
   for (const encodingName in spec.encoding) {
     spec.encoding[encodingName].legend = { orient: "bottom" };

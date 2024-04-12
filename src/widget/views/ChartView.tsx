@@ -1,29 +1,24 @@
-import { useColorMode } from "@hooks";
-import { IChartSpec } from "@shared/types";
-import { PlainObject, Vega } from "react-vega";
+import { Center, CenterProps } from "@chakra-ui/react";
+import { useCharts, useColorMode } from "@hooks";
+import { Vega } from "react-vega";
 
-interface IChartViewProps {
-  spec: IChartSpec;
-  width: number;
-  data: PlainObject;
-}
-
-export default function ChartView({ spec, width, data }: IChartViewProps) {
+export default function ChartView(props: CenterProps & { width: number }) {
   const { colorMode } = useColorMode();
+  const { currentChart } = useCharts();
 
   return (
-    <>
-      {spec && (
+    <Center {...props}>
+      {currentChart && (
         <Vega
           mode={"vega-lite"}
-          spec={spec.spec}
-          data={data}
-          width={width - 40}
-          height={width - 40}
+          spec={currentChart.spec}
+          data={currentChart.data}
+          width={props.width - 40}
+          height={props.width - 40}
           actions={false}
           theme={colorMode === "light" ? undefined : "dark"}
         />
       )}
-    </>
+    </Center>
   );
 }

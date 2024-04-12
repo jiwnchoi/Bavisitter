@@ -22,6 +22,7 @@ function ColorMode({
 
 function Providers({ children }: PropsWithChildren<{}>) {
   const { colorMode } = useColorMode();
+
   return (
     <ShadowRoot.div
       id="shadow-root"
