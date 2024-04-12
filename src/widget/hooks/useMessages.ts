@@ -4,19 +4,25 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export default function useMessages() {
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const messages = useMessageStore((state) => state.messages);
-  const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean | null>(true);
+  const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean>(true);
 
-  const setChatBoxAtBottom = useCallback(() => {
+  const setChatBoxAtBottom = () => {
     _setChatBoxAtBottom(
-      chatBoxRef.current &&
+      chatBoxRef.current !== null &&
         chatBoxRef.current.scrollHeight -
           chatBoxRef.current.scrollTop -
           chatBoxRef.current.clientHeight <=
-          100,
+          50,
     );
-  }, [chatBoxRef, _setChatBoxAtBottom]);
+  };
 
-  chatBoxRef.current?.addEventListener("scroll", setChatBoxAtBottom);
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.addEventListener("scroll", setChatBoxAtBottom);
+      return () =>
+        chatBoxRef.current?.removeEventListener("scroll", setChatBoxAtBottom);
+    }
+  }, [chatBoxRef, setChatBoxAtBottom]);
 
   const scrollToBottomIfNearBottom = useCallback(() => {
     if (chatBoxRef.current && chatBoxAtBottom) {

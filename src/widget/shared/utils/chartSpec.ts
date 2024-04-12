@@ -1,6 +1,9 @@
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
-export function parseVegaLite(content: string): TopLevelUnitSpec<string> {
+export function parseVegaLite(
+  content: string,
+  size: number,
+): TopLevelUnitSpec<string> {
   let spec;
   try {
     if (content.includes("```")) {
@@ -18,6 +21,8 @@ export function parseVegaLite(content: string): TopLevelUnitSpec<string> {
   for (const encodingName in spec.encoding) {
     spec.encoding[encodingName].legend = { orient: "bottom" };
   }
+  spec.width = size;
+  spec.height = size;
   spec.background = "transparent";
   spec.autosize = { type: "fit", contains: "padding" };
   return spec;

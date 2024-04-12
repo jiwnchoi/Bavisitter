@@ -1,22 +1,17 @@
-import { Flex, IconButton } from "@chakra-ui/react";
+import { Flex, FlexProps, IconButton } from "@chakra-ui/react";
 import { useColorMode, useMessages } from "@hooks";
 import { useMessageStore } from "@stores";
 import { FaArrowDown } from "react-icons/fa";
 import Content from "./Content";
 
-const Messages = () => {
+const Messages = (props: FlexProps) => {
   const { colorMode } = useColorMode();
   const messages = useMessageStore((state) => state.messages);
   const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = useMessages();
 
   return (
     <Flex
-      w={"full"}
-      h={"full"}
-      overflowY={"auto"}
-      flexDir={"column"}
-      gap={8}
-      p={4}
+      {...props}
       ref={chatBoxRef}
       css={{
         "&::-webkit-scrollbar": {
@@ -34,17 +29,17 @@ const Messages = () => {
       {messages.map((_, index) => (
         <Content key={index} index={index} />
       ))}
-      {!chatBoxAtBottom && (
-        <IconButton
-          icon={<FaArrowDown />}
-          onClick={scrollToBottom}
-          position="absolute"
-          bottom="104"
-          left="calc(50% - 200px)"
-          zIndex="1"
-          aria-label={"scroll to bottom"}
-        />
-      )}
+      <IconButton
+        icon={<FaArrowDown />}
+        onClick={scrollToBottom}
+        position="absolute"
+        top={650}
+        left={"calc(50% - 300px)"}
+        display={chatBoxAtBottom ? "none" : "flex"}
+        isDisabled={chatBoxAtBottom!}
+        zIndex={100}
+        aria-label={"scroll to bottom"}
+      />
     </Flex>
   );
 };

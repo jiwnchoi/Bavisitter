@@ -1,17 +1,25 @@
-import { Container, Flex } from "@chakra-ui/react";
+import { Center, Container } from "@chakra-ui/react";
+import { useModelMessageEffect } from "@hooks";
 import { ChartView, Messages, PromptView } from "@views";
 import Providers from "./Providers";
-import { useModelMessageEffect } from "@hooks";
 
 const App = () => {
   useModelMessageEffect();
   return (
     <Providers>
-      <Container minW={"full"} h="600px" m={0} p={0}>
-        <Flex direction="row" gap={2} h="500px">
-          <Messages />
-          <ChartView width={400} />
-        </Flex>
+      <Container minW={"full"} m={0} p={0}>
+        <Center flexDir="row" gap={2} h="700px">
+          <Messages
+            maxW={"full"}
+            h={"full"}
+            overflowY={"auto"}
+            overflowX={"hidden"}
+            flexDir={"column"}
+            gap={8}
+            p={4}
+          />
+          <ChartView width={500} chartSize={400} />
+        </Center>
         <PromptView />
       </Container>
     </Providers>

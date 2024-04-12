@@ -19,7 +19,7 @@ export default function Content({ index }: IContentProps) {
   } = useContent(index);
 
   return (
-    <Flex direction="row" w="full" key={`content${index}`}>
+    <Flex direction="row" maxW="full" key={`content${index}`}>
       <Box minW={"32px"}>
         {userName && <Avatar size="sm" name={userName} />}
       </Box>
@@ -29,7 +29,7 @@ export default function Content({ index }: IContentProps) {
             {userName}
           </Text>
         )}
-        <Box w={"full"} overflow={"auto"} ref={ref}>
+        <Box w="full" maxW={"container.lg"} overflow={"auto"} ref={ref}>
           {type === "message" ? (
             <MessageContent
               content={contentWithoutCodeblock}

@@ -7,10 +7,11 @@ import useIPC from "./useIPC";
 const isMessageWithChart = (m: IMessageWithRef) =>
   m.type === "code" && m.format === "json" && m.content.includes("$schema");
 
-export default function useCharts() {
+export default function useCharts(size: number) {
   const [currentChart, _setCurrentChart] = useState<IChartSpec | null>(null);
   const { fetchModel } = useIPC();
   const charts = useChartStore((state) => state.charts);
+  const setCharts = useChartStore((state) => state.setCharts);
   const setCurrentChartByChartIndex = useChartStore(
     (state) => state.setCurrentChartByChartIndex,
   );
@@ -27,19 +28,24 @@ export default function useCharts() {
   const messages = useMessageStore((state) => state.messages);
 
   const handleChartLoaded = async () => {
+    if (messages.length === 0) {
+      setCharts([]);
+      setCurrentChartByChartIndex(-1);
+    }
+
     let chartAppended = false;
     for (let i = 0; i < messages.length; i++) {
       if (
         isMessageWithChart(messages[i]) &&
         getChartByChatIndex(i) === undefined
       ) {
-        const spec = parseVegaLite(messages[i].content);
+        const spec = parseVegaLite(messages[i].content, size);
         const name = spec.data.name!;
         const _data = await fetchModel<TData>("load_artifact", name);
         chartAppended = true;
         appendChart({
           chatIndex: i,
-          spec: parseVegaLite(messages[i].content),
+          spec: parseVegaLite(messages[i].content, size),
           data: { [name]: _data },
         });
       }
