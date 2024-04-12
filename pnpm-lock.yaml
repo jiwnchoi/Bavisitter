@@ -20,21 +20,15 @@ dependencies:
   '@emotion/styled':
     specifier: ^11.11.0
     version: 11.11.0(@emotion/react@11.11.4)(@types/react@18.2.66)(react@18.2.0)
-  '@types/papaparse':
-    specifier: ^5.3.14
-    version: 5.3.14
-  '@types/react-syntax-highlighter':
-    specifier: ^15.5.11
-    version: 15.5.11
   formik:
     specifier: ^2.4.5
     version: 2.4.5(react@18.2.0)
   framer-motion:
     specifier: ^11.0.14
     version: 11.0.14(react-dom@18.2.0)(react@18.2.0)
-  papaparse:
-    specifier: ^5.4.1
-    version: 5.4.1
+  paper:
+    specifier: ^0.12.17
+    version: 0.12.17
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -59,9 +53,21 @@ dependencies:
   remark-gfm:
     specifier: ^4.0.0
     version: 4.0.0
+  simple-statistics:
+    specifier: ^7.8.3
+    version: 7.8.3
+  snapsvg:
+    specifier: ^0.5.1
+    version: 0.5.1
+  snapsvg-cjs-ts:
+    specifier: ^0.0.6
+    version: 0.0.6(eve@0.5.4)
   vega:
     specifier: ^5.28.0
     version: 5.28.0
+  vega-embed:
+    specifier: ^6.25.0
+    version: 6.25.0(vega-lite@5.17.0)(vega@5.28.0)
   vega-lite:
     specifier: ^5.17.0
     version: 5.17.0(vega@5.28.0)
@@ -73,12 +79,21 @@ devDependencies:
   '@types/jest':
     specifier: ^29.5.12
     version: 29.5.12
+  '@types/papaparse':
+    specifier: ^5.3.14
+    version: 5.3.14
   '@types/react':
     specifier: ^18.2.66
     version: 18.2.66
   '@types/react-dom':
     specifier: ^18.2.22
     version: 18.2.22
+  '@types/react-syntax-highlighter':
+    specifier: ^15.5.11
+    version: 15.5.11
+  '@types/snapsvg':
+    specifier: ^0.5.8
+    version: 0.5.8
   '@typescript-eslint/eslint-plugin':
     specifier: ^7.2.0
     version: 7.2.0(@typescript-eslint/parser@7.2.0)(eslint@8.57.0)(typescript@5.4.2)
@@ -2635,6 +2650,10 @@ packages:
       '@types/unist': 3.0.2
     dev: false
 
+  /@types/mina@0.4.5:
+    resolution: {integrity: sha512-rKJ8aoYqsP9jGtMstbcR8Z75mq0yGXkkFu8581olgRIkpoHCM6UXcpkX1TctknQInTlHE7zV9wkhqdN6fgntpA==}
+    dev: true
+
   /@types/ms@0.7.34:
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
     dev: false
@@ -2643,12 +2662,13 @@ packages:
     resolution: {integrity: sha512-M/GPWVS2wLkSkNHVeLkrF2fD5Lx5UC4PxA0uZcKc6QqbIQUJyW1jVjueJYi1z8n0I5PxYrtpnPnWglE+y9A0KA==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
 
   /@types/papaparse@5.3.14:
     resolution: {integrity: sha512-LxJ4iEFcpqc6METwp9f6BV6VVc43m6MfH0VqFosHvrUgfXiFe6ww7R3itkOQ+TCK6Y+Iv/+RnnvtRZnkc5Kc9g==}
     dependencies:
       '@types/node': 20.11.28
-    dev: false
+    dev: true
 
   /@types/parse-json@4.0.2:
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -2666,7 +2686,7 @@ packages:
     resolution: {integrity: sha512-ZqIJl+Pg8kD+47kxUjvrlElrraSUrYa4h0dauY/U/FTUuprSCqvUj+9PNQNQzVc6AJgIWUUxn87/gqsMHNbRjw==}
     dependencies:
       '@types/react': 18.2.66
-    dev: false
+    dev: true
 
   /@types/react@18.2.66:
     resolution: {integrity: sha512-OYTmMI4UigXeFMF/j4uv0lBBEbongSgptPrHBxqME44h9+yNov+oL6Z3ocJKo0WyXR84sQUNeyIp9MRfckvZpg==}
@@ -2685,6 +2705,12 @@ packages:
   /@types/sizzle@2.3.8:
     resolution: {integrity: sha512-0vWLNK2D5MT9dg0iOo8GlKguPAU02QjmZitPEsXRuJXU/OGIOt9vT9Fc26wtYuavLxtO45v9PGleoL9Z0k1LHg==}
     dev: false
+
+  /@types/snapsvg@0.5.8:
+    resolution: {integrity: sha512-pQOX8vkOkXM956ahW7iiSgvDcNd8lSAObrIGZndoaze1dDLwhEQoa2YRHyxmY1r2hvUHntGOhP5XyhF5SPg7Zg==}
+    dependencies:
+      '@types/mina': 0.4.5
+    dev: true
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -4386,6 +4412,10 @@ packages:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /eve@0.5.4:
+    resolution: {integrity: sha512-aqprQ9MAOh1t66PrHxDFmMXPlgNO6Uv1uqvxmwjprQV50jaQ2RqO7O1neY4PJwC+hMnkyMDphu2AQPOPZdjQog==}
+    dev: false
 
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
@@ -6596,8 +6626,9 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /papaparse@5.4.1:
-    resolution: {integrity: sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==}
+  /paper@0.12.17:
+    resolution: {integrity: sha512-oCe+e1C2w8hKIcGoAqUjD0GGxGPv+itrRXlEFUmp3H8tY/NTnHOkYgpJFPGw6OJ8Q1Wa6+RgzlY7Dx/2WWHtkA==}
+    engines: {node: '>=8.0.0'}
     dev: false
 
   /parent-module@1.0.1:
@@ -6952,7 +6983,7 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       vega: 5.28.0
-      vega-embed: 6.24.0(vega-lite@5.17.0)(vega@5.28.0)
+      vega-embed: 6.25.0(vega-lite@5.17.0)(vega@5.28.0)
       vega-lite: 5.17.0(vega@5.28.0)
     dev: false
 
@@ -7226,6 +7257,10 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
+  /simple-statistics@7.8.3:
+    resolution: {integrity: sha512-JFvMY00t6SBGtwMuJ+nqgsx9ylkMiJ5JlK9bkj8AdvniIe5615wWQYkKHXe84XtSuc40G/tlrPu0A5/NlJvv8A==}
+    dev: false
+
   /sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
     dev: true
@@ -7250,6 +7285,21 @@ packages:
       ansi-styles: 6.2.1
       is-fullwidth-code-point: 5.0.0
     dev: true
+
+  /snapsvg-cjs-ts@0.0.6(eve@0.5.4):
+    resolution: {integrity: sha512-RfsEAfWAEJu3sV8BUOXZxje2UL0Y6FA10pQ5UPdzIMqgdBbwdDCeWCQO1Ai0ku7GStwufjCKHqWxV78Ji0JniQ==}
+    peerDependencies:
+      eve: ~0.5.1
+    dependencies:
+      eve: 0.5.4
+      snapsvg: 0.5.1
+    dev: false
+
+  /snapsvg@0.5.1:
+    resolution: {integrity: sha512-CjwWYsL7+CCk1vCk9BBKGYS4WJVDfJAOMWU+Zhzf8wf6pAm/xT34wnpaMPAgcgCNkxuU6OkQPPd8wGuRCY9aNw==}
+    dependencies:
+      eve: 0.5.4
+    dev: false
 
   /source-map-support@0.5.13:
     resolution: {integrity: sha512-SHSKFHadjVA5oR4PPqhtAVdcBWwRYVd6g6cAXnIbRiIwc2EhPrTuKUBdSLvlEKyIP3GCf89fltvcZiP9MMFA1w==}
@@ -7660,6 +7710,7 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+    dev: true
 
   /unified@11.0.4:
     resolution: {integrity: sha512-apMPnyLjAX+ty4OrNap7yumyVAMlKx5IWU2wlzzUdYJO9A8f1p9m/gywF/GM2ZDFcjQPrx59Mc90KwmxsoklxQ==}
@@ -7833,8 +7884,8 @@ packages:
       - encoding
     dev: false
 
-  /vega-embed@6.24.0(vega-lite@5.17.0)(vega@5.28.0):
-    resolution: {integrity: sha512-ANCksO3lXhdLzQn7Mfistm1dsRwQhxTYICVpru7TMc+Ywe7C4vOLWuaVv9Qvem2IgQyuVCal0EoTMKvIVYykFg==}
+  /vega-embed@6.25.0(vega-lite@5.17.0)(vega@5.28.0):
+    resolution: {integrity: sha512-pK99jEhZPNYgx4daiYDyNZ7f1h2ep5PyzMYN/qKzJNxzcaNf8wgmUjHrWeJSeMh8RNyw89VRphIleeg7LNLhDA==}
     peerDependencies:
       vega: ^5.21.0
       vega-lite: '*'
@@ -7850,8 +7901,6 @@ packages:
       vega-themes: 2.14.0(vega-lite@5.17.0)(vega@5.28.0)
       vega-tooltip: 0.34.0
     dev: false
-    bundledDependencies:
-      - yallist
 
   /vega-encode@4.9.2:
     resolution: {integrity: sha512-c3J0LYkgYeXQxwnYkEzL15cCFBYPRaYUon8O2SZ6O4PhH4dfFTXBzSyT8+gh8AhBd572l2yGDfxpEYA6pOqdjg==}
