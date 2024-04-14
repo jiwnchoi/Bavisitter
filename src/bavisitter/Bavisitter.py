@@ -121,16 +121,27 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def handle_ipc_queue(self, change: list[IPCModel]):
     if len(change["new"]) and change["new"][-1]["type"] == "request":
       if change["new"][-1]["endpoint"] == "load_artifact":
-        data = load_artifact(change["new"][-1]["content"])
-        self.ipc_queue = [
-          *self.ipc_queue,
-          {
-            "type": "response",
-            "content": data,
-            "endpoint": change["new"][-1]["endpoint"],
-            "uuid": change["new"][-1]["uuid"],
-          },
-        ]
+        try:
+          data = load_artifact(change["new"][-1]["content"])
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": data,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception as e:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
       else:
         self.ipc_queue = [
           *self.ipc_queue,
