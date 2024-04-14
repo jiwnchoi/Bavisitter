@@ -10,7 +10,7 @@ const App = () => {
       <Container minW={"full"} m={0} p={0}>
         <Center flexDir="row" gap={2} h="700px">
           <Messages
-            maxW={"full"}
+            w={"full"}
             h={"full"}
             overflowY={"auto"}
             overflowX={"hidden"}
