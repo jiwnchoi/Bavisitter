@@ -1,12 +1,12 @@
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { State } from "./model";
 import manifests from "./manifests";
-interface IPrompt {
+export interface IPrompt {
   problem: string;
   solution: string;
 }
 
-interface ITeachResult {
+export interface ITeachResult {
   prompts: IPrompt[];
   state: State;
 }

@@ -1,10 +1,10 @@
 import { State } from "teach/model";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
-
+import { cloneDeep } from "lodash-es";
 export function convertPieToBar(state: State) {
   const { spec } = state;
   const newSpec = {
-    ...spec,
+    ...cloneDeep(spec),
     mark: "bar",
     encoding: {
       x: spec.encoding?.color,
@@ -18,7 +18,7 @@ export function convertPieToBar(state: State) {
 export function convertScatterToHeatmap(state: State) {
   const { spec } = state;
   const newSpec = {
-    ...spec,
+    ...cloneDeep(spec),
     mark: "rect",
     encoding: {
       x: { ...spec.encoding?.x, bin: true },
