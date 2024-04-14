@@ -7,13 +7,17 @@ import {
   Icon,
   Spacer,
   Spinner,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
 import { useChartStore } from "@stores";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
+import {
+  coldarkCold,
+  coldarkDark,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const globalScrollbarStyles = css`
   *::-webkit-scrollbar {
@@ -37,11 +41,11 @@ interface ICodeContentProps {
   streamingMessage: boolean;
   chartContent: boolean;
 }
-
 function CodeBlockButton(proos: ButtonProps) {
+  const { colorMode } = useColorMode();
   return (
     <Button
-      color={"#ABB1BF"}
+      color={colorMode === "light" ? "gray.600" : "gray.400"}
       size="xs"
       fontWeight={"light"}
       variant="link"
@@ -54,7 +58,6 @@ function CodeBlockButton(proos: ButtonProps) {
     </Button>
   );
 }
-
 export default function CodeContent({
   index,
   content,
@@ -68,13 +71,14 @@ export default function CodeContent({
   const setCurrentChartByChatIndex = useChartStore(
     (state) => state.setCurrentChartByChatIndex,
   );
+  const { colorMode } = useColorMode();
 
   return (
     <Box dir="row" w={"full"} gap={0} borderRadius={8} overflow={"clip"}>
       <Flex
         dir="column"
         w="full"
-        backgroundColor={"#505661"}
+        backgroundColor={colorMode === "dark" ? "gray.700" : "gray.100"}
         px={2}
         onClick={onToggle}
       >
@@ -115,7 +119,8 @@ export default function CodeContent({
         <Global styles={globalScrollbarStyles} />
         <SyntaxHighlighter
           language={format}
-          style={oneDark}
+          wrapLongLines={true}
+          style={colorMode === "light" ? coldarkCold : coldarkDark}
           customStyle={{
             borderRadius: 0,
             margin: 0,
