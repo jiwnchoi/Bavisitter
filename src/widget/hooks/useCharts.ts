@@ -1,6 +1,6 @@
 import { TData } from "@shared/types";
 import { isCodeVegaLite, parseVegaLite } from "@shared/utils";
-import { useChartStore, useMessageStore } from "@stores";
+import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect } from "react";
 import useIPC from "./useIPC";
 
@@ -24,6 +24,7 @@ export default function useCharts(size: number) {
   const messages = useMessageStore((state) => state.messages);
 
   const currentChart = charts.at(currentChartIndex);
+  const getArtifact = useArtifactStore((state) => state.getArtifact);
 
   const handleChartLoaded = async () => {
     if (messages.length === 0) {
@@ -36,7 +37,10 @@ export default function useCharts(size: number) {
       if (isCodeVegaLite(messages[i]) && getChartByChatIndex(i) === undefined) {
         const spec = parseVegaLite(messages[i].content, size);
         const name = spec.data.name!;
-        const _data = await fetchModel<TData>("load_artifact", name);
+        let _data = getArtifact(name);
+        if (!_data) {
+          _data = await fetchModel<TData>("load_artifact", name);
+        }
         chartAppended = true;
         appendChart({
           chatIndex: i,

@@ -27,7 +27,6 @@ function useIPC() {
       ...ipcQueue,
       { type: "request", endpoint: type, content: data, uuid },
     ]);
-    console.log("Sent message", type, data, uuid);
 
     return new Promise<T>((resolve, reject) => {
       pendingRequests.set(uuid, (data: T) => {
@@ -44,7 +43,6 @@ function useIPC() {
       return;
     }
 
-    console.log("Received message", lastMessage);
     handleMessage(lastMessage);
   }, [ipcQueue]);
 

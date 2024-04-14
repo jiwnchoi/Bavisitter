@@ -16,7 +16,6 @@ export function parseVegaLite(
   } catch (e) {
     spec = {};
   }
-  // local file controller logic is needed here
   if (spec.data && spec.data.url) {
     spec.data = { name: spec.data.url };
   }
@@ -32,10 +31,13 @@ export function parseVegaLite(
 
 export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
   const newSpec = cloneDeep(spec);
+  if (newSpec.data && newSpec.data.name) {
+    newSpec.data = { url: newSpec.data.name };
+  }
   delete newSpec.width;
   delete newSpec.height;
   delete newSpec.config;
-  return JSON.stringify(newSpec, null, 4);
+  return JSON.stringify(newSpec, null, 2);
 }
 
 export const isCodeVegaLite = (m: IMessageWithRef) =>

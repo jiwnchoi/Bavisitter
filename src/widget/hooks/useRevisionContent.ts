@@ -3,7 +3,7 @@ import {
   isCodeVegaLite,
   stringfyVegaLite,
 } from "@shared/utils";
-import { useChartStore, useMessageStore } from "@stores";
+import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect, useMemo, useState } from "react";
 import { detect, revise, type IDetectResult } from "teach/index";
 import { useModelMessage } from "./useModelMessage";
@@ -16,7 +16,7 @@ export default function useRevisionContent() {
   const messages = useMessageStore((state) => state.messages);
   const streaming = useMessageStore((state) => state.streaming);
   const { appendMessages } = useModelMessage();
-
+  const appendArtifact = useArtifactStore((state) => state.appendArtifact);
   const [detecting, setDetecting] = useState(false);
   const [detectResult, setDetectResult] = useState<
     IDetectResultWithSelection[]
@@ -40,6 +40,7 @@ export default function useRevisionContent() {
       const records = data[spec.data.name!] as any[];
       setDetecting(true);
       detect(spec, records).then((prompts) => {
+        console.log(lastChart);
         setDetectResult(
           prompts.map((p) => ({
             ...p,
@@ -53,14 +54,15 @@ export default function useRevisionContent() {
 
   const reviseLastChartWithAction = () => {
     const { spec, data } = lastChart;
+
     if (spec && data) {
       const records = Object.values(data)[0] as Record<any, any>[];
-      console.log(spec, records, detectResult);
       const { spec: revisedSpec, data: revisedData } = revise(
         spec,
         records,
         detectResult.filter((r) => r.selected),
       );
+      appendArtifact(revisedSpec.data.name!, revisedData);
       appendMessages([
         {
           role: "user",
