@@ -1,4 +1,4 @@
-import { replaceJSONCodeBlocks } from "@shared/utils";
+import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
 import { useMessageStore } from "@stores";
 import { useMemo } from "react";
 
@@ -20,25 +20,15 @@ export default function useContent(index: number) {
     return null;
   }, [messages, index]);
 
-  const streamingMessage = useMemo(
-    () => index === messages.length - 1 && streaming,
-    [messages, index, streaming],
+  const streamingMessage = index === messages.length - 1 && streaming;
+
+  const contentWithoutCodeblock = replaceJSONCodeBlocks(
+    messages[index].content,
   );
 
-  const contentWithoutCodeblock = useMemo(
-    () => replaceJSONCodeBlocks(messages[index].content),
-    [messages, index],
-  );
+  const format = messages[index].format ?? "console";
 
-  const format = useMemo(
-    () => messages[index].format ?? "console",
-    [messages, index],
-  );
-
-  const chartContent = useMemo(
-    () => format === "json" && messages[index].content.includes("$schema"),
-    [format, messages, index],
-  );
+  const chartContent = isCodeVegaLite(messages[index]);
 
   const type = messages[index].type;
 

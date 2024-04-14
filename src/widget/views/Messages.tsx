@@ -1,9 +1,9 @@
-import { Flex, FlexProps, IconButton } from "@chakra-ui/react";
-import { useColorMode, useMessages } from "@hooks";
+import { Flex, FlexProps, IconButton, useColorMode } from "@chakra-ui/react";
+import { useMessages } from "@hooks";
 import { useMessageStore } from "@stores";
 import { FaArrowDown } from "react-icons/fa";
 import Content from "./Content";
-import TeacherView from "./TeacherView";
+import RevisionContent from "./RevisionContent";
 
 const Messages = (props: FlexProps) => {
   const { colorMode } = useColorMode();
@@ -30,11 +30,13 @@ const Messages = (props: FlexProps) => {
       {messages.map((_, index) => (
         <Content key={index} index={index} />
       ))}
-      <TeacherView />
+      <RevisionContent scrollToBottom={scrollToBottom} />
 
       <IconButton
         icon={<FaArrowDown />}
-        onClick={scrollToBottom}
+        onClick={() => {
+          scrollToBottom("smooth");
+        }}
         position="absolute"
         top={650}
         left={"calc(50% - 300px)"}

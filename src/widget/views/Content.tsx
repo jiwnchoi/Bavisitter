@@ -2,12 +2,13 @@ import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { useContent } from "@hooks";
 import CodeContent from "./CodeContent";
 import MessageContent from "./MessageContent";
+import { PropsWithChildren } from "react";
 
 type IContentProps = {
   index: number;
 };
 
-export default function Content({ index }: IContentProps) {
+export default function Content({ index }: PropsWithChildren<IContentProps>) {
   const {
     userName,
     contentWithoutCodeblock,
@@ -29,7 +30,7 @@ export default function Content({ index }: IContentProps) {
             {userName}
           </Text>
         )}
-        <Box w="full" maxW={"container.lg"} overflow={"auto"} ref={ref}>
+        <Box w="full" overflow={"auto"} ref={ref}>
           {type === "message" ? (
             <MessageContent
               content={contentWithoutCodeblock}

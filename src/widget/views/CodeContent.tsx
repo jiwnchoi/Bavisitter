@@ -25,7 +25,6 @@ const globalScrollbarStyles = css`
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #505661;
     border-radius: 8px;
   }
 
@@ -41,6 +40,7 @@ interface ICodeContentProps {
   streamingMessage: boolean;
   chartContent: boolean;
 }
+
 function CodeBlockButton(proos: ButtonProps) {
   const { colorMode } = useColorMode();
   return (

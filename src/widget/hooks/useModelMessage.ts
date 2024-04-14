@@ -2,12 +2,13 @@ import { useModelState } from "@anywidget/react";
 import { IMessage } from "@shared/types";
 import { useMessageStore } from "@stores";
 import { createRef, useEffect } from "react";
+
 export function useModelMessage() {
   const [modelMessages, setModelMessages] =
     useModelState<IMessage[]>("messages");
 
-  const appendUserMessage = (message: IMessage) => {
-    setModelMessages([...modelMessages, message]);
+  const appendMessages = (messages: IMessage[]) => {
+    setModelMessages([...modelMessages, ...messages]);
   };
 
   const sendCurrentMessages = () => {
@@ -24,7 +25,7 @@ export function useModelMessage() {
 
   return {
     setModelMessages,
-    appendUserMessage,
+    appendMessages,
     editUserMessage,
     clearUserMessages,
     sendCurrentMessages,

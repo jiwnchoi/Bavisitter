@@ -7,6 +7,7 @@ interface ChartState {
 }
 
 interface ChartAction {
+  getCurrentChart: () => IChartSpec | null;
   setCharts: (charts: IChartSpec[]) => void;
   setCurrentChartByChartIndex: (index: number) => void;
   setCurrentChartByChatIndex: (chatIndex: number) => void;
@@ -23,6 +24,9 @@ interface ChartAction {
 const useChartStore = create<ChartState & ChartAction>((set, get) => ({
   charts: [],
   currentChartIndex: -1,
+
+  getCurrentChart: () => get().charts.at(get().currentChartIndex) ?? null,
+
   appendChart: (chart) => set({ charts: [...get().charts, chart] }),
   setCharts: (charts) => set({ charts }),
   setCurrentChartByChartIndex: (index) =>

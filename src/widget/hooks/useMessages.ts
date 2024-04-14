@@ -24,24 +24,23 @@ export default function useMessages() {
     }
   }, [chatBoxRef, setChatBoxAtBottom]);
 
-  const scrollToBottomIfNearBottom = useCallback(() => {
+  useEffect(() => {
     if (chatBoxRef.current && chatBoxAtBottom) {
-      chatBoxRef.current.scrollTo({
-        top: chatBoxRef.current.scrollHeight,
-      });
+      scrollToBottom();
     }
-  }, [chatBoxRef, chatBoxAtBottom]);
+  }, [messages]);
 
-  useEffect(scrollToBottomIfNearBottom, [messages]);
-
-  const scrollToBottom = useCallback(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTo({
-        top: chatBoxRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [chatBoxRef]);
+  const scrollToBottom = useCallback(
+    (behavior: ScrollBehavior = "instant") => {
+      if (chatBoxRef.current) {
+        chatBoxRef.current.scrollTo({
+          top: chatBoxRef.current.scrollHeight,
+          behavior,
+        });
+      }
+    },
+    [chatBoxRef],
+  );
 
   return {
     chatBoxRef,

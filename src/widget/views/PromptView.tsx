@@ -22,7 +22,7 @@ const handleKeyDown = (
 
 export default function PromptView() {
   const streaming = useMessageStore((state) => state.streaming);
-  const { appendUserMessage, clearUserMessages } = useModelMessage();
+  const { appendMessages, clearUserMessages } = useModelMessage();
 
   return (
     <Flex
@@ -36,11 +36,13 @@ export default function PromptView() {
       <Formik
         initialValues={{ prompt: "" }}
         onSubmit={(values, actions) => {
-          appendUserMessage({
-            role: "user",
-            content: values.prompt,
-            type: "message",
-          });
+          appendMessages([
+            {
+              role: "user",
+              content: values.prompt,
+              type: "message",
+            },
+          ]);
           actions.resetForm();
           actions.setSubmitting(false);
         }}
