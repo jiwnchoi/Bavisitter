@@ -1,22 +1,22 @@
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { State } from "./model";
 import manifests from "./manifests";
-export interface IPrompt {
+export interface IDetectResult {
   problem: string;
   solution: string;
 }
 
-export interface ITeachResult {
-  prompts: IPrompt[];
-  state: State;
+export interface IRevisionResult {
+  spec: TopLevelUnitSpec<string>;
+  data: Record<any, any>[];
 }
 
-export async function teach(
+export async function detect(
   spec: TopLevelUnitSpec<string>,
   data: Record<any, any>[],
-): Promise<ITeachResult> {
+): Promise<IDetectResult[]> {
   let state = new State(spec, {}, data);
-  const prompts: IPrompt[] = [];
+  const prompts: IDetectResult[] = [];
 
   for (const { trigger, linter, actuator } of manifests) {
     if (!trigger(state)) continue;
@@ -33,8 +33,31 @@ export async function teach(
       solution: actuator.description,
     });
   }
+  return prompts;
+}
+
+export function revise(
+  spec: TopLevelUnitSpec<string>,
+  data: Record<any, any>[],
+  prompts: IDetectResult[],
+) {
+  console.log(spec, data, prompts);
+  let state = new State(spec, {}, data);
+  for (const { trigger, linter, actuator } of manifests) {
+    if (!trigger(state)) continue;
+    const problemDescription =
+      prompts.findIndex((prompt) => prompt.problem === linter.description) !==
+      -1;
+    if (!problemDescription) continue;
+
+    let actions = actuator.action;
+    for (const action of actions) {
+      state = action(state);
+    }
+  }
+
   return {
-    prompts,
-    state,
+    spec: state.spec,
+    data: state.data,
   };
 }

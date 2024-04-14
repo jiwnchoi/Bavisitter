@@ -34,7 +34,6 @@ class State {
       background: "transparent",
     };
     this.data = data;
-    this.spec.data = { values: data };
   }
 
   getFieldFromChannel(channelName: keyof Encoding<string>) {
@@ -45,7 +44,13 @@ class State {
   }
 
   async getPaper() {
-    const compiledSpec = compile(this.spec, { config: this.specConfig }).spec;
+    const compiledSpec = compile(
+      {
+        ...this.spec,
+        data: { values: this.data },
+      },
+      { config: this.specConfig },
+    ).spec;
     return this.paper ?? (await getPaperFromVega(compiledSpec));
   }
 

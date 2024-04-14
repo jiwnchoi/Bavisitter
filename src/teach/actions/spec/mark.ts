@@ -35,18 +35,18 @@ const MIN_OPACITY = 0.2;
 
 export const reduceOpacity = (state: State) => {
   const { spec } = state;
+  const newSpec = cloneDeep(spec);
 
   let currentOpacity = 0.7;
-
-  if (state.specConfig.mark && state.specConfig.mark.opacity) {
-    currentOpacity = state.specConfig.mark.opacity as number;
-  } else if (typeof spec.mark !== "string" && spec.mark.opacity) {
-    currentOpacity = spec.mark.opacity as number;
+  if (typeof newSpec.mark === "string") {
+    newSpec.mark = {
+      type: newSpec.mark,
+      opacity: MIN_OPACITY + (0.7 - MIN_OPACITY) / 2,
+    };
+  } else {
+    currentOpacity = newSpec.mark.opacity as number;
+    newSpec.mark.opacity = MIN_OPACITY + (currentOpacity - MIN_OPACITY) / 2;
   }
 
-  return state.updateSpec(spec, {
-    mark: {
-      opacity: (currentOpacity + MIN_OPACITY) / 2,
-    },
-  });
+  return state.updateSpec(newSpec);
 };
