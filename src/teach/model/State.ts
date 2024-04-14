@@ -12,6 +12,7 @@ import {
   getMarksFromPaper,
   getPaperFromVega,
 } from "../utils";
+import { cloneDeep } from "lodash-es";
 
 class State {
   public spec: TopLevelUnitSpec<string>;
@@ -95,6 +96,20 @@ class State {
       config ?? this.specConfig,
       data ?? this.data,
     );
+  }
+
+  export() {
+    const spec = cloneDeep(this.spec);
+    const data = cloneDeep(this.data);
+    const filePath = spec.data.name!;
+    const [fileName, fileExt] = filePath.split(".");
+    const newFileName = `${fileName}-${Date.now()}.${fileExt}`;
+    spec.data.name = newFileName;
+
+    return {
+      spec,
+      data,
+    };
   }
 }
 

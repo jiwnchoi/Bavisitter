@@ -18,8 +18,7 @@ export async function detect(
   let state = new State(spec, {}, data);
   const prompts: IDetectResult[] = [];
 
-  for (const { trigger, linter, actuator } of manifests) {
-    if (!trigger(state)) continue;
+  for (const { linter, actuator } of manifests) {
     let hasToFix = await linter.lint(state);
     if (!hasToFix) continue;
 
@@ -41,10 +40,8 @@ export function revise(
   data: Record<any, any>[],
   prompts: IDetectResult[],
 ) {
-  console.log(spec, data, prompts);
   let state = new State(spec, {}, data);
-  for (const { trigger, linter, actuator } of manifests) {
-    if (!trigger(state)) continue;
+  for (const { linter, actuator } of manifests) {
     const problemDescription =
       prompts.findIndex((prompt) => prompt.problem === linter.description) !==
       -1;
@@ -56,8 +53,5 @@ export function revise(
     }
   }
 
-  return {
-    spec: state.spec,
-    data: state.data,
-  };
+  return state.export();
 }
