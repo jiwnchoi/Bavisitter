@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypedDict
-
-from altair import Literal
+from typing import Any, Literal, TypedDict
 
 IPCType = Literal["reqest", "resonse"]
 
