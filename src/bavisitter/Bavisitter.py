@@ -184,14 +184,19 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @observe("messages")
   def handle_user_chat(self, change):
+    if self.streaming:
+      return
+
     if deep_equal(change["new"], change["old"]):
       return
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
+      self.streaming = True
       for chunk in self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
       ):
         self.handle_chunk(chunk)
+      self.streaming = False
 
     if len(change["new"]) == 0 or (
       len(change["new"]) > 0 and change["new"][-1]["role"] == "assistant"
@@ -205,7 +210,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     self.chunks.append({**chunk, "chunk_type": chunk_type})
 
     if chunk_type == "start":
-      self.streaming = True
       format = chunk["format"] if "format" in chunk else None
       format = "output" if chunk["type"] == "console" else format
       self.append_message(
@@ -238,7 +242,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         self.append_content(chunk["content"])
 
     elif chunk_type == "end":
-      self.streaming = False
       if self.messages[-1]["content"] == "":
         self.messages = [*self.messages[:-1]]
 
@@ -289,4 +292,3 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def load_messages(self, messages):
     self.messages = messages
     self.interpreter.messages = messages
-    self.streaming = False

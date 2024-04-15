@@ -1,13 +1,9 @@
-import {
-  detectResultToContent,
-  isCodeVegaLite,
-  stringfyVegaLite,
-} from "@shared/utils";
+import { detectResultToContent, stringfyVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { detect, revise, type IDetectorResult } from "videre/index";
-import { useModelMessage } from "./useModelMessage";
 import useIPC from "./useIPC";
+import { useModelMessage } from "./useModelMessage";
 
 type IDetectorResultWithSelection = IDetectorResult & {
   selected: boolean;
@@ -24,15 +20,9 @@ export default function useRevisionContent() {
     IDetectorResultWithSelection[]
   >([]);
 
-  const charts = useChartStore((state) => state.charts);
-
-  const lastChart = useMemo(() => {
-    return charts[charts.length - 1];
-  }, [charts]);
-
+  const lastChart = useChartStore((state) => state.computed.lastChart);
   const lastUserMessage = messages.findLastIndex((m) => m.role === "user");
   const lastChartIndex = lastChart ? lastChart.chatIndex : 0;
-
   const revisionViewDisplayed =
     !streaming &&
     messages.length > 0 &&
@@ -59,6 +49,7 @@ export default function useRevisionContent() {
   }, [lastChart]);
 
   const reviseLastChartWithAction = () => {
+    if (!lastChart) return;
     const { spec, data } = lastChart;
 
     if (spec && data) {

@@ -13,7 +13,7 @@ export default function useContent(index: number) {
   const messages = useMessageStore((state) => state.messages);
   const streaming = useMessageStore((state) => state.streaming);
 
-  const userName = useMemo(() => {
+  const userName = (() => {
     const previousMessage = index > 0 ? messages[index - 1] : null;
     if (isUserMessageBySystem(messages[index])) {
       return "Bavisitter";
@@ -28,7 +28,7 @@ export default function useContent(index: number) {
       return null;
     }
     return null;
-  }, [messages, index]);
+  })();
 
   const streamingMessage = index === messages.length - 1 && streaming;
 
