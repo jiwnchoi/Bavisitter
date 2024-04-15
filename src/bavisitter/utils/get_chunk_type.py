@@ -12,7 +12,6 @@ def get_chunk_type(chunk, previous_message=None) -> ChunkType:
       and chunk["role"] == "assistant"
       and "```" in (previous_message["content"] + chunk["content"])
     ):
-      print("check_code", previous_message["content"], chunk["content"])
       if previous_message["type"] == "message":
         return "code_start"
       elif (

@@ -180,6 +180,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     if chunk_type == "start":
       self.streaming = True
       format = chunk["format"] if "format" in chunk else None
+      format = "output" if chunk["type"] == "console" else format
       self.append_message(
         role=chunk["role"], type=chunk["type"], content="", format=format
       )
