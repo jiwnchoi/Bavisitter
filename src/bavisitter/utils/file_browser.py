@@ -13,7 +13,7 @@ def load_artifact(path: str):
   if path.endswith((".csv", ".json", ".xlsx", ".html", ".parquet", ".feather")):
     file_extension = pathlib.Path(path).suffix
     read_method = f"read_{file_extension[1:]}"
-    df: pd.DataFrame = getattr(pd, read_method)(path)
+    df: pd.DataFrame = getattr(pd, read_method)(path, keep_default_na=False)
     return df.to_dict(orient="records")
 
   return None
