@@ -12,3 +12,4 @@ artifacts
 *.ipynb
 demo*
 
+.coverage*
