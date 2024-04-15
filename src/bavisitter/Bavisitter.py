@@ -28,7 +28,13 @@ from bavisitter.model import (
   RoleType,
   StreamChunkModel,
 )
-from bavisitter.utils import get_chunk_type, load_artifact, set_interpreter
+from bavisitter.utils import (
+  deep_equal,
+  get_chunk_type,
+  load_artifact,
+  save_artifact,
+  set_interpreter,
+)
 
 try:
   __version__ = importlib.metadata.version("bavisitter")
@@ -72,9 +78,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     # initialize the open interpreter
     self.interpreter = OpenInterpreter()
     set_interpreter(self.interpreter, model, safe_model, auto_run)
-
-  def load_messages(self, messages):
-    self.messages = messages
 
   @default("messages")
   def _default_messages(self):
@@ -121,16 +124,53 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def handle_ipc_queue(self, change: list[IPCModel]):
     if len(change["new"]) and change["new"][-1]["type"] == "request":
       if change["new"][-1]["endpoint"] == "load_artifact":
-        data = load_artifact(change["new"][-1]["content"])
-        self.ipc_queue = [
-          *self.ipc_queue,
-          {
-            "type": "response",
-            "content": data,
-            "endpoint": change["new"][-1]["endpoint"],
-            "uuid": change["new"][-1]["uuid"],
-          },
-        ]
+        try:
+          data = load_artifact(change["new"][-1]["content"])
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": data,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+
+      if change["new"][-1]["endpoint"] == "save_artifact":
+        try:
+          path = change["new"][-1]["content"]["path"]
+          records = change["new"][-1]["content"]["records"]
+          save_artifact(records, path)
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": "success",
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+
       else:
         self.ipc_queue = [
           *self.ipc_queue,
@@ -144,9 +184,8 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @observe("messages")
   def handle_user_chat(self, change):
-    if len(change["new"]) == 0:
-      self.interpreter.messages = []
-      self.streaming = False
+    if deep_equal(change["new"], change["old"]):
+      return
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
       for chunk in self.interpreter.chat(
@@ -154,15 +193,21 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       ):
         self.handle_chunk(chunk)
 
+    if len(change["new"]) == 0 or (
+      len(change["new"]) > 0 and change["new"][-1]["role"] == "assistant"
+    ):
+      self.load_messages(change["new"])
+
   def handle_chunk(self, chunk: StreamChunkModel):
-    self.chunks.append(chunk)
     chunk_type = get_chunk_type(
       chunk, self.messages[-1] if len(self.messages) else None
     )
+    self.chunks.append({**chunk, "chunk_type": chunk_type})
 
     if chunk_type == "start":
       self.streaming = True
       format = chunk["format"] if "format" in chunk else None
+      format = "output" if chunk["type"] == "console" else format
       self.append_message(
         role=chunk["role"], type=chunk["type"], content="", format=format
       )
@@ -198,7 +243,22 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         self.messages = [*self.messages[:-1]]
 
     elif chunk_type == "code_end":
-      self.append_message(role="assistant", type="message", content="")
+      content: str = self.messages[-1]["content"] + chunk["content"]
+      code = content.split("```")[0]
+      self.messages = [
+        *self.messages[:-1],
+        {
+          "role": "assistant",
+          "type": "code",
+          "content": code,
+          "format": self.messages[-1]["format"],
+        },
+        {
+          "role": "assistant",
+          "type": "message",
+          "content": "",
+        },
+      ]
 
   def append_content(self, content: str):
     new_message = copy(self.messages[-1])
@@ -225,3 +285,8 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       *self.messages,
       new_message,
     ]
+
+  def load_messages(self, messages):
+    self.messages = messages
+    self.interpreter.messages = messages
+    self.streaming = False

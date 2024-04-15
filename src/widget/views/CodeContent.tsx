@@ -25,7 +25,6 @@ const globalScrollbarStyles = css`
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #505661;
     border-radius: 8px;
   }
 

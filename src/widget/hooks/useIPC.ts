@@ -21,13 +21,12 @@ function useIPC() {
     setIPCQueue(ipcQueue.filter((m) => m.uuid !== uuid));
   };
 
-  async function fetchModel<T>(type: string, data: string) {
+  async function fetchModel<T>(type: string, data: any) {
     const uuid = Math.random().toString(36).substring(7);
     setIPCQueue([
       ...ipcQueue,
       { type: "request", endpoint: type, content: data, uuid },
     ]);
-    console.log("Sent message", type, data, uuid);
 
     return new Promise<T>((resolve, reject) => {
       pendingRequests.set(uuid, (data: T) => {
@@ -44,7 +43,6 @@ function useIPC() {
       return;
     }
 
-    console.log("Received message", lastMessage);
     handleMessage(lastMessage);
   }, [ipcQueue]);
 

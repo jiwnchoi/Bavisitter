@@ -1,3 +1,5 @@
+import { IMessageWithRef } from "@shared/types";
+import { cloneDeep } from "lodash-es";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
 export function parseVegaLite(
@@ -14,16 +16,29 @@ export function parseVegaLite(
   } catch (e) {
     spec = {};
   }
-  // local file controller logic is needed here
   if (spec.data && spec.data.url) {
     spec.data = { name: spec.data.url };
   }
-  for (const encodingName in spec.encoding) {
-    spec.encoding[encodingName].legend = { orient: "bottom" };
-  }
   spec.width = size;
   spec.height = size;
-  spec.background = "transparent";
-  spec.autosize = { type: "fit", contains: "padding" };
+  spec.config = {
+    background: "transparent",
+    autosize: { type: "fit", contains: "padding" },
+    legend: { orient: "bottom" },
+  };
   return spec;
 }
+
+export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
+  const newSpec = cloneDeep(spec);
+  if (newSpec.data && newSpec.data.name) {
+    newSpec.data = { url: newSpec.data.name };
+  }
+  delete newSpec.width;
+  delete newSpec.height;
+  delete newSpec.config;
+  return JSON.stringify(newSpec, null, 2);
+}
+
+export const isCodeVegaLite = (m: IMessageWithRef) =>
+  m.type === "code" && m.format === "json" && m.content.includes("$schema");
