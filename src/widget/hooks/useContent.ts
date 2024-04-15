@@ -1,6 +1,13 @@
+import { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
 import { useMessageStore } from "@stores";
 import { useMemo } from "react";
+
+const isUserMessageBySystem = (message: IMessageWithRef) =>
+  message.role === "user" &&
+  message.content.startsWith(
+    "**Current Vega Lite visualization has following issues",
+  );
 
 export default function useContent(index: number) {
   const messages = useMessageStore((state) => state.messages);
@@ -8,6 +15,9 @@ export default function useContent(index: number) {
 
   const userName = useMemo(() => {
     const previousMessage = index > 0 ? messages[index - 1] : null;
+    if (isUserMessageBySystem(messages[index])) {
+      return "Bavisitter";
+    }
     if (messages[index].role === "user") {
       return "You";
     }
