@@ -1,6 +1,7 @@
 # Bavisitter: Babysitting LLMs for Visualization
 
-<img width="1097" alt="image" src="https://github.com/jiwnchoi/Bavisitter/assets/2310571/086c3b72-7950-4dac-a8e2-79e53b01f3df">
+<img width="1347" alt="image" src="https://github.com/jiwnchoi/Bavisitter/assets/2310571/6947496e-4275-4765-8d7b-f176740a6cad">
+
 
 ```python
 import os

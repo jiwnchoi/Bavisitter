@@ -1,9 +1,9 @@
 {
-  "include": ["src/widget"],
+  "include": ["src/widget", "src/videre"],
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -17,7 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
     "paths": {
-      "@*": ["src/widget/*"]
+      "@*": ["src/widget/*"],
+      "videre/*": ["src/videre/*"],
     }
   }
 }

@@ -1,31 +1,19 @@
-import { VStack } from "@chakra-ui/react";
-import { IMessageWithRef } from "@shared/types";
-import { RefObject } from "react";
+import { Flex, FlexProps, IconButton, useColorMode } from "@chakra-ui/react";
+import { useMessages } from "@hooks";
+import { useMessageStore } from "@stores";
+import { FaArrowDown } from "react-icons/fa";
 import Content from "./Content";
-import { useColorMode } from "@hooks";
+import RevisionContent from "./RevisionContent";
 
-interface IChatViewProps {
-  messagesWithRef: IMessageWithRef[];
-  chatBoxRef: RefObject<HTMLDivElement>;
-  streaming: boolean;
-  setCurrentChartIndex: (index: number) => void;
-}
-
-const Messages = ({
-  messagesWithRef,
-  chatBoxRef,
-  streaming,
-  setCurrentChartIndex,
-}: IChatViewProps) => {
+const Messages = (props: FlexProps) => {
   const { colorMode } = useColorMode();
+  const messages = useMessageStore((state) => state.messages);
+  const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = useMessages();
+
   return (
-    <VStack
-      w={"full"}
-      h={"full"}
-      overflowY={"auto"}
-      flexDir={"column"}
-      gap={8}
-      p={4}
+    <Flex
+      {...props}
+      ref={chatBoxRef}
       css={{
         "&::-webkit-scrollbar": {
           backgroundColor: "transparent",
@@ -38,18 +26,26 @@ const Messages = ({
               : "rgba(255, 255, 255, 0.1)",
         },
       }}
-      ref={chatBoxRef}
     >
-      {messagesWithRef.map((_, index) => (
-        <Content
-          key={index}
-          index={index}
-          messagesWithRef={messagesWithRef}
-          streaming={streaming}
-          setCurrentChartIndex={setCurrentChartIndex}
-        />
+      {messages.map((_, index) => (
+        <Content key={index} index={index} />
       ))}
-    </VStack>
+      <RevisionContent scrollToBottom={scrollToBottom} />
+
+      <IconButton
+        icon={<FaArrowDown />}
+        onClick={() => {
+          scrollToBottom("smooth");
+        }}
+        position="absolute"
+        top={550}
+        left={"calc(50% - 300px)"}
+        display={chatBoxAtBottom ? "none" : "flex"}
+        isDisabled={chatBoxAtBottom!}
+        zIndex={100}
+        aria-label={"scroll to bottom"}
+      />
+    </Flex>
   );
 };
 

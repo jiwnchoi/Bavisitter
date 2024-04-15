@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import Literal, TypedDict
+from typing import Literal, Optional, TypedDict, Union
 
 AssistantRoleType = Literal["assistant"]
 UserRoleType = Literal["user"]
 SystemRoleType = Literal["computer"]
-
-RoleType = AssistantRoleType | UserRoleType | SystemRoleType
-
 MessageType = Literal["message", "code", "console"]
+ChunkType = Literal["start", "continue", "end", "code_start", "code_end"]
+
+RoleType = Union[AssistantRoleType, UserRoleType, SystemRoleType]
 
 
 class MessageModel(TypedDict):
@@ -18,6 +18,6 @@ class MessageModel(TypedDict):
   content: str
 
 
-class StreamChunkModel(MessageModel):
-  start: bool | None
-  end: bool | None
+class StreamChunkModel(MessageModel, total=False):
+  start: Optional[bool]
+  end: Optional[bool]

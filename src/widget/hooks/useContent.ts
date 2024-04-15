@@ -1,15 +1,24 @@
 import { IMessageWithRef } from "@shared/types";
-import { replaceJSONCodeBlocks } from "@shared/utils";
+import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
+import { useMessageStore } from "@stores";
 import { useMemo } from "react";
 
-export default function useContent(
-  messgagesWithRef: IMessageWithRef[],
-  index: number,
-  streaming: boolean,
-) {
+const isUserMessageBySystem = (message: IMessageWithRef) =>
+  message.role === "user" &&
+  message.content.startsWith(
+    "**Current Vega Lite visualization has following issues",
+  );
+
+export default function useContent(index: number) {
+  const messages = useMessageStore((state) => state.messages);
+  const streaming = useMessageStore((state) => state.streaming);
+
   const userName = useMemo(() => {
-    const previousMessage = index > 0 ? messgagesWithRef[index - 1] : null;
-    if (messgagesWithRef[index].role === "user") {
+    const previousMessage = index > 0 ? messages[index - 1] : null;
+    if (isUserMessageBySystem(messages[index])) {
+      return "Bavisitter";
+    }
+    if (messages[index].role === "user") {
       return "You";
     }
     if (previousMessage && previousMessage.role === "user") {
@@ -19,34 +28,29 @@ export default function useContent(
       return null;
     }
     return null;
-  }, [messgagesWithRef, index]);
+  }, [messages, index]);
 
-  const contentWithoutCodeblock = useMemo(() => {
-    return replaceJSONCodeBlocks(messgagesWithRef[index].content);
-  }, [messgagesWithRef, index]);
+  const streamingMessage = index === messages.length - 1 && streaming;
 
-  const streamingMessage = useMemo(() => {
-    return index === messgagesWithRef.length - 1 && streaming;
-  }, [messgagesWithRef, index]);
+  const contentWithoutCodeblock = replaceJSONCodeBlocks(
+    messages[index].content,
+  );
 
-  const content = messgagesWithRef[index].content;
+  const format = messages[index].format ?? "console";
 
-  const format = messgagesWithRef[index].format;
+  const chartContent = isCodeVegaLite(messages[index]);
 
-  const type = messgagesWithRef[index].type;
+  const type = messages[index].type;
 
-  const codeBlockExistance = contentWithoutCodeblock !== content;
-
-  const ref = messgagesWithRef[index].ref;
+  const ref = messages[index].ref;
 
   return {
     userName,
     contentWithoutCodeblock,
     streamingMessage,
-    content,
+    chartContent,
     format,
     type,
     ref,
-    codeBlockExistance,
   };
 }

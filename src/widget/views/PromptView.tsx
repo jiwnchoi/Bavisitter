@@ -1,5 +1,7 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
-import { IMessage, IPrompt } from "@shared/types";
+import { useModelMessage } from "@hooks";
+import { IPrompt } from "@shared/types";
+import { useMessageStore } from "@stores";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
@@ -7,28 +9,21 @@ const handleKeyDown = (
   e: React.KeyboardEvent<HTMLTextAreaElement>,
   props: FormikProps<IPrompt>,
 ) => {
-  if (e.key === "Enter" && props.values.prompt === "") {
+  if (props.values.prompt !== "" && e.key === "Enter") {
     e.preventDefault();
-  } else if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    props.submitForm();
-  } else if (e.key === "Enter" && e.shiftKey && props.values.prompt !== "") {
-    e.preventDefault();
-    props.setFieldValue("prompt", props.values.prompt + "\n");
+    e.stopPropagation();
+    if (e.shiftKey) {
+      props.setFieldValue("prompt", props.values.prompt + "\n");
+    } else {
+      props.submitForm();
+    }
   }
 };
 
-interface IPromptViewProps {
-  appendUserMessage: (message: IMessage) => void;
-  clearUserMessages: () => void;
-  streaming: boolean;
-}
+export default function PromptView() {
+  const streaming = useMessageStore((state) => state.streaming);
+  const { appendMessages, clearUserMessages } = useModelMessage();
 
-export default function PromptView({
-  appendUserMessage,
-  clearUserMessages,
-  streaming,
-}: IPromptViewProps) {
   return (
     <Flex
       flexDir={"row"}
@@ -41,11 +36,13 @@ export default function PromptView({
       <Formik
         initialValues={{ prompt: "" }}
         onSubmit={(values, actions) => {
-          appendUserMessage({
-            role: "user",
-            content: values.prompt,
-            type: "message",
-          });
+          appendMessages([
+            {
+              role: "user",
+              content: values.prompt,
+              type: "message",
+            },
+          ]);
           actions.resetForm();
           actions.setSubmitting(false);
         }}

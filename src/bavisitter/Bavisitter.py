@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import importlib.metadata
 import pathlib
+import re
+from copy import copy
 from typing import Literal
 
 import anywidget
@@ -19,8 +21,20 @@ from traitlets import (
   validate,
 )
 
-from bavisitter.model.message_model import MessageModel, StreamChunkModel
-from bavisitter.utils.system_prompt import SYSTEM_PROMPT
+from bavisitter.model import (
+  IPCModel,
+  MessageModel,
+  MessageType,
+  RoleType,
+  StreamChunkModel,
+)
+from bavisitter.utils import (
+  deep_equal,
+  get_chunk_type,
+  load_artifact,
+  save_artifact,
+  set_interpreter,
+)
 
 try:
   __version__ = importlib.metadata.version("bavisitter")
@@ -28,17 +42,17 @@ try:
 except importlib.metadata.PackageNotFoundError:
   __version__ = "unknown"
 
+match = re.compile(r"```(\w+)\n")
+
 
 class Bavisitter(anywidget.AnyWidget, HasTraits):
   _esm = pathlib.Path(__file__).parent / "static" / "main.js"
-  data = Unicode().tag(sync=True)
   messages = List(Dict(value_trait=Unicode(), key_trait=Unicode())).tag(
     sync=True
   )
   streaming = Bool(default_value=False).tag(sync=True)
   color_mode = Unicode(default_value="light").tag(sync=True)
-
-  df: pd.DataFrame
+  ipc_queue = List(Dict()).tag(sync=True)
 
   def __init__(
     self,
@@ -54,39 +68,47 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     if not pathlib.Path("artifacts").exists():
       pathlib.Path("artifacts").mkdir()
 
-    df.to_csv("artifacts/data.csv")
-    self.data = df.to_json(orient="records")
+    df.to_csv("artifacts/data.csv", index=False)
+
+    # set widget properties
     self.model = model
-    self.on_msg(self._handle_msg)
-    self.messages = []
-    self.interpreter = OpenInterpreter()
+    self.chunks = []
     self.color_mode = color_mode
-    self.set_interpreter(model, safe_model, auto_run)
 
-  def set_interpreter(
-    self,
-    model: str = "gpt-3.5-turbo",
-    safe_mode: Literal["off", "auto"] = "auto",
-    auto_run: bool = True,
-    system_prompt: str = SYSTEM_PROMPT,
-  ):
-    self.interpreter.llm.max_tokens = 4096
-    self.interpreter.llm.context_window = 12800
-    self.interpreter.system_message = system_prompt
-    self.interpreter.llm.model = model
-    self.interpreter.safe_mode = safe_mode
-    self.interpreter.auto_run = auto_run
-
-  def load_messages(self, messages):
-    self.messages = messages
+    # initialize the open interpreter
+    self.interpreter = OpenInterpreter()
+    set_interpreter(self.interpreter, model, safe_model, auto_run)
 
   @default("messages")
   def _default_messages(self):
     return []
 
-  @default("stream")
+  @default("streaming")
   def _default_stream(self):
-    return {}
+    return False
+
+  @default("color_mode")
+  def _default_color_mode(self):
+    return "light"
+
+  @default("ipc_queue")
+  def _default_ipc_queue(self):
+    return []
+
+  @validate("color_mode")
+  def _validate_color_mode(self, proposal):
+    if proposal["value"] not in ["light", "dark"]:
+      raise TraitError("Invalid color mode. Must be 'light' or 'dark'")
+
+    return proposal["value"]
+
+  @validate("ipc_queue")
+  def _validate_ipc_queue(self, proposal):
+    for message in proposal["value"]:
+      if "type" not in message:
+        raise TraitError("Invalid message: 'type' key is missing")
+
+    return proposal["value"]
 
   @validate("messages")
   def _validate_messages(self, proposal):
@@ -98,39 +120,173 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     return proposal["value"]
 
+  @observe("ipc_queue")
+  def handle_ipc_queue(self, change: list[IPCModel]):
+    if len(change["new"]) and change["new"][-1]["type"] == "request":
+      if change["new"][-1]["endpoint"] == "load_artifact":
+        try:
+          data = load_artifact(change["new"][-1]["content"])
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": data,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+
+      if change["new"][-1]["endpoint"] == "save_artifact":
+        try:
+          path = change["new"][-1]["content"]["path"]
+          records = change["new"][-1]["content"]["records"]
+          save_artifact(records, path)
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": "success",
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+
+      else:
+        self.ipc_queue = [
+          *self.ipc_queue,
+          {
+            "type": "response",
+            "content": None,
+            "endpoint": change["new"][-1]["endpoint"],
+            "uuid": change["new"][-1]["uuid"],
+          },
+        ]
+
   @observe("messages")
   def handle_user_chat(self, change):
-    if len(change["new"]) == 0:
-      self.interpreter.messages = []
-      self.streaming = False
+    if deep_equal(change["new"], change["old"]):
+      return
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
       for chunk in self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
       ):
-        self.append_chunk(chunk)
+        self.handle_chunk(chunk)
 
-  def append_chunk(self, chunk: StreamChunkModel):
-    if "start" in chunk and not self.streaming:
-      self.streaming = True
-      new_message = {
-        "role": chunk["role"],
-        "type": chunk["type"],
-        "content": "",
-      }
-      if "format" in chunk:
-        new_message["format"] = chunk["format"]
-
-      self.messages = [*self.messages, new_message]
-    elif (
-      self.streaming
-      and ("end" not in chunk)
-      and ("content" in chunk)
-      and isinstance(chunk["content"], str)
+    if len(change["new"]) == 0 or (
+      len(change["new"]) > 0 and change["new"][-1]["role"] == "assistant"
     ):
-      new_message = self.messages[-1].copy()
-      new_message["content"] += chunk["content"]
-      self.messages = [*self.messages[:-1], new_message]
+      self.load_messages(change["new"])
 
-    elif "end" in chunk and self.streaming:
+  def handle_chunk(self, chunk: StreamChunkModel):
+    chunk_type = get_chunk_type(
+      chunk, self.messages[-1] if len(self.messages) else None
+    )
+    self.chunks.append({**chunk, "chunk_type": chunk_type})
+
+    if chunk_type == "start":
+      self.streaming = True
+      format = chunk["format"] if "format" in chunk else None
+      format = "output" if chunk["type"] == "console" else format
+      self.append_message(
+        role=chunk["role"], type=chunk["type"], content="", format=format
+      )
+
+    elif chunk_type == "code_start":
+      self.append_message(
+        role=chunk["role"], type="code", content=chunk["content"]
+      )
+
+    elif chunk_type == "continue":
+      if (
+        self.messages[-1]["type"] == "code"
+        and "```" in self.messages[-1]["content"]
+        and match.match(self.messages[-1]["content"])
+      ):
+        format = match.match(self.messages[-1]["content"]).group(1)
+        code = re.sub(r"```(\w+)\n", "", self.messages[-1]["content"])
+        self.messages = [
+          *self.messages[:-1],
+          {
+            "role": "assistant",
+            "type": "code",
+            "content": code + chunk["content"],
+            "format": format,
+          },
+        ]
+      else:
+        self.append_content(chunk["content"])
+
+    elif chunk_type == "end":
       self.streaming = False
+      if self.messages[-1]["content"] == "":
+        self.messages = [*self.messages[:-1]]
+
+    elif chunk_type == "code_end":
+      content: str = self.messages[-1]["content"] + chunk["content"]
+      code = content.split("```")[0]
+      self.messages = [
+        *self.messages[:-1],
+        {
+          "role": "assistant",
+          "type": "code",
+          "content": code,
+          "format": self.messages[-1]["format"],
+        },
+        {
+          "role": "assistant",
+          "type": "message",
+          "content": "",
+        },
+      ]
+
+  def append_content(self, content: str):
+    new_message = copy(self.messages[-1])
+    new_message["content"] += content
+    self.messages = [*self.messages[:-1], new_message]
+
+  def append_message(
+    self,
+    role: RoleType = "assistant",
+    content: str = "",
+    format: str | None = None,
+    type: MessageType = "message",
+  ):
+    new_message = {
+      "role": role,
+      "type": type,
+      "content": content,
+    }
+
+    if format:
+      new_message["format"] = format
+
+    self.messages = [
+      *self.messages,
+      new_message,
+    ]
+
+  def load_messages(self, messages):
+    self.messages = messages
+    self.interpreter.messages = messages
+    self.streaming = False

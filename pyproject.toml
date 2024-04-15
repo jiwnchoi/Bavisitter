@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "bavisitter"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = ["anywidget", "openai", "pandas", "open-interpreter", "open-interpreter[safe]"]
 readme = "README.md"
 
@@ -66,7 +66,7 @@ line-length = 80
 indent-width = 2
 
 # Assume Python 3.8
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
@@ -104,4 +104,13 @@ exclude = ["**/node_modules",
 reportMissingImports = true
 reportMissingTypeStubs = false
 
-pythonVersion = "3.8"
+pythonVersion = "3.9"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.test.scripts]
+cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pkg --cov=tests'

@@ -22,6 +22,7 @@ function ColorMode({
 
 function Providers({ children }: PropsWithChildren<{}>) {
   const { colorMode } = useColorMode();
+
   return (
     <ShadowRoot.div
       id="shadow-root"
@@ -32,6 +33,7 @@ function Providers({ children }: PropsWithChildren<{}>) {
         justifyContent: "center",
         alignItems: "center",
         display: "flex",
+        scrollBehavior: "smooth",
       }}
     >
       <ChakraProvider theme={theme}>

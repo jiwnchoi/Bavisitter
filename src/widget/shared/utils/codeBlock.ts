@@ -3,7 +3,7 @@ export const extractCodeBlocksFromString = (str: string) => {
     str
       .match(/```json[^`]+```/g)
       ?.toString()
-      .replace("```json", "")
+      .replace("```json\n", "")
       .replace("```", "") || ""
   );
 };

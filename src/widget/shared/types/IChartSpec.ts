@@ -1,8 +1,10 @@
-import { type VisualizationSpec } from "react-vega";
+import { PlainObject } from "react-vega";
+import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
 interface IChartSpec {
-  spec: VisualizationSpec;
+  spec: TopLevelUnitSpec<string>;
   chatIndex: number;
+  data?: PlainObject;
 }
 
 export default IChartSpec;

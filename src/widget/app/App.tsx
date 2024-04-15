@@ -1,45 +1,29 @@
-import { Center, Container, Flex } from "@chakra-ui/react";
-import { useCharts, useData, useMessages } from "@hooks";
+import { Center, Container } from "@chakra-ui/react";
+import { useModelMessageEffect } from "@hooks";
 import { ChartView, Messages, PromptView } from "@views";
 import Providers from "./Providers";
 
-function App() {
-  const {
-    streaming,
-    chatBoxRef,
-    appendUserMessage,
-    messagesWithRef,
-    clearUserMessages,
-  } = useMessages();
-  const data = useData();
-  const { currentChart, setCurrentChartIndex } = useCharts(
-    messagesWithRef,
-    streaming,
-  );
+const App = () => {
+  useModelMessageEffect();
   return (
     <Providers>
-      <Container minW={"100%"} h="600px" m={0} p={0}>
-        <Flex direction="row" gap={2} h="500px">
+      <Container minW={"full"} m={0} p={0}>
+        <Center flexDir="row" gap={2} h="600px">
           <Messages
-            messagesWithRef={messagesWithRef}
-            chatBoxRef={chatBoxRef}
-            setCurrentChartIndex={setCurrentChartIndex}
-            streaming={streaming}
+            w={"full"}
+            h={"full"}
+            overflowY={"auto"}
+            overflowX={"hidden"}
+            flexDir={"column"}
+            gap={8}
+            p={4}
           />
-          <Center minW={300}>
-            {currentChart && (
-              <ChartView spec={currentChart} width={300} data={data} />
-            )}
-          </Center>
-        </Flex>
-        <PromptView
-          appendUserMessage={appendUserMessage}
-          clearUserMessages={clearUserMessages}
-          streaming={streaming}
-        />
+          <ChartView width={500} chartSize={400} />
+        </Center>
+        <PromptView />
       </Container>
     </Providers>
   );
-}
+};
 
 export default App;
