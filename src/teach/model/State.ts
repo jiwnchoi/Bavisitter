@@ -103,7 +103,7 @@ class State {
     const data = cloneDeep(this.data);
     const filePath = spec.data.name!;
     const [fileName, fileExt] = filePath.split(".");
-    const newFileName = `${fileName}-${Date.now()}.${fileExt}`;
+    const newFileName = `${fileName}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     spec.data.name = newFileName;
 
     return {

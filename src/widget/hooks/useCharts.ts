@@ -25,7 +25,6 @@ export default function useCharts(size: number) {
 
   const currentChart = charts.at(currentChartIndex);
   const getArtifact = useArtifactStore((state) => state.getArtifact);
-
   const handleChartLoaded = async () => {
     if (messages.length === 0) {
       setCharts([]);

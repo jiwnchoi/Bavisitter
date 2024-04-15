@@ -32,6 +32,7 @@ from bavisitter.utils import (
   deep_equal,
   get_chunk_type,
   load_artifact,
+  save_artifact,
   set_interpreter,
 )
 
@@ -134,7 +135,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
               "uuid": change["new"][-1]["uuid"],
             },
           ]
-        except Exception as e:
+        except Exception:
           self.ipc_queue = [
             *self.ipc_queue,
             {
@@ -144,6 +145,32 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
               "uuid": change["new"][-1]["uuid"],
             },
           ]
+
+      if change["new"][-1]["endpoint"] == "save_artifact":
+        try:
+          path = change["new"][-1]["content"]["path"]
+          records = change["new"][-1]["content"]["records"]
+          save_artifact(records, path)
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": "success",
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+        except Exception:
+          self.ipc_queue = [
+            *self.ipc_queue,
+            {
+              "type": "response",
+              "content": None,
+              "endpoint": change["new"][-1]["endpoint"],
+              "uuid": change["new"][-1]["uuid"],
+            },
+          ]
+
       else:
         self.ipc_queue = [
           *self.ipc_queue,

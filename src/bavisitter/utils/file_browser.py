@@ -19,4 +19,9 @@ def load_artifact(path: str):
   return None
 
 
+def save_artifact(record: list[dict], path: str):
+  df = pd.DataFrame(record)
+  df.to_csv(path, index=False)
+
+
 __all__ = ["load_artifact"]

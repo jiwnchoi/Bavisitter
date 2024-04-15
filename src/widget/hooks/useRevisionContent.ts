@@ -7,6 +7,7 @@ import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect, useMemo, useState } from "react";
 import { detect, revise, type IDetectResult } from "teach/index";
 import { useModelMessage } from "./useModelMessage";
+import useIPC from "./useIPC";
 
 type IDetectResultWithSelection = IDetectResult & {
   selected: boolean;
@@ -16,6 +17,7 @@ export default function useRevisionContent() {
   const messages = useMessageStore((state) => state.messages);
   const streaming = useMessageStore((state) => state.streaming);
   const { appendMessages } = useModelMessage();
+  const { fetchModel } = useIPC();
   const appendArtifact = useArtifactStore((state) => state.appendArtifact);
   const [detecting, setDetecting] = useState(false);
   const [detectResult, setDetectResult] = useState<
@@ -68,6 +70,10 @@ export default function useRevisionContent() {
         detectResult.filter((r) => r.selected),
       );
       appendArtifact(revisedSpec.data.name!, revisedData);
+      fetchModel("save_artifact", {
+        path: revisedSpec.data.name!,
+        records: revisedData,
+      });
       appendMessages([
         {
           role: "user",

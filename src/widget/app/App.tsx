@@ -8,7 +8,7 @@ const App = () => {
   return (
     <Providers>
       <Container minW={"full"} m={0} p={0}>
-        <Center flexDir="row" gap={2} h="700px">
+        <Center flexDir="row" gap={2} h="600px">
           <Messages
             w={"full"}
             h={"full"}
