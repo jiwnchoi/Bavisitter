@@ -41,4 +41,7 @@ export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
 }
 
 export const isCodeVegaLite = (m: IMessageWithRef) =>
-  m.type === "code" && m.format === "json" && m.content.includes("$schema");
+  m.type === "code" &&
+  m.format === "json" &&
+  m.content.trim().endsWith("}") &&
+  m.content.includes("$schema");
