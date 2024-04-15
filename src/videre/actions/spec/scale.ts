@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { PositionFieldDef } from "vega-lite/build/src/channeldef";
 import { cloneDeep } from "lodash-es";
 

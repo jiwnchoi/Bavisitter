@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { sumSimple } from "simple-statistics";
 import { PositionFieldDef } from "vega-lite/build/src/channeldef";
 import { Encoding } from "vega-lite/build/src/encoding";

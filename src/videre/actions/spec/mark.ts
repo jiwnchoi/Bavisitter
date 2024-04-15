@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { cloneDeep } from "lodash-es";
 export function convertPieToBar(state: State) {

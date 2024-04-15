@@ -1,4 +1,4 @@
-# Visteacher
+# Videre
 
 - Lint
   - Check if the input visualization is violating visualization guidelines.

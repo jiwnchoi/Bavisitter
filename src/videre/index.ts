@@ -1,7 +1,7 @@
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { State } from "./model";
 import manifests from "./manifests";
-export interface IDetectResult {
+export interface IDetectorResult {
   problem: string;
   solution: string;
 }
@@ -14,12 +14,12 @@ export interface IRevisionResult {
 export async function detect(
   spec: TopLevelUnitSpec<string>,
   data: Record<any, any>[],
-): Promise<IDetectResult[]> {
+): Promise<IDetectorResult[]> {
   let state = new State(spec, {}, data);
-  const prompts: IDetectResult[] = [];
+  const prompts: IDetectorResult[] = [];
 
-  for (const { linter, actuator } of manifests) {
-    let hasToFix = await linter.lint(state);
+  for (const { detector: linter, actuator } of manifests) {
+    let hasToFix = await linter.detect(state);
     if (!hasToFix) continue;
 
     let actions = actuator.action;
@@ -38,10 +38,10 @@ export async function detect(
 export function revise(
   spec: TopLevelUnitSpec<string>,
   data: Record<any, any>[],
-  prompts: IDetectResult[],
+  prompts: IDetectorResult[],
 ) {
   let state = new State(spec, {}, data);
-  for (const { linter, actuator } of manifests) {
+  for (const { detector: linter, actuator } of manifests) {
     const problemDescription =
       prompts.findIndex((prompt) => prompt.problem === linter.description) !==
       -1;

@@ -5,11 +5,11 @@ import {
 } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect, useMemo, useState } from "react";
-import { detect, revise, type IDetectResult } from "teach/index";
+import { detect, revise, type IDetectorResult } from "videre/index";
 import { useModelMessage } from "./useModelMessage";
 import useIPC from "./useIPC";
 
-type IDetectResultWithSelection = IDetectResult & {
+type IDetectorResultWithSelection = IDetectorResult & {
   selected: boolean;
 };
 
@@ -19,9 +19,9 @@ export default function useRevisionContent() {
   const { appendMessages } = useModelMessage();
   const { fetchModel } = useIPC();
   const appendArtifact = useArtifactStore((state) => state.appendArtifact);
-  const [detecting, setDetecting] = useState(false);
-  const [detectResult, setDetectResult] = useState<
-    IDetectResultWithSelection[]
+  const [detecting, seTDetectoring] = useState(false);
+  const [detectResult, seTDetectorResult] = useState<
+    IDetectorResultWithSelection[]
   >([]);
 
   const charts = useChartStore((state) => state.charts);
@@ -45,16 +45,16 @@ export default function useRevisionContent() {
     const { spec, data } = lastChart;
     if (spec && data) {
       const records = data[spec.data.name!] as any[];
-      setDetecting(true);
+      seTDetectoring(true);
       detect(spec, records).then((prompts) => {
         console.log(lastChart);
-        setDetectResult(
+        seTDetectorResult(
           prompts.map((p) => ({
             ...p,
             selected: true,
           })),
         );
-        setDetecting(false);
+        seTDetectoring(false);
       });
     }
   }, [lastChart]);
@@ -111,7 +111,7 @@ export default function useRevisionContent() {
   };
 
   const toggleDetectResult = (index: number) => {
-    setDetectResult([
+    seTDetectorResult([
       ...detectResult.slice(0, index),
       {
         ...detectResult[index],

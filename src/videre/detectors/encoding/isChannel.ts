@@ -1,14 +1,12 @@
-//@ts-nocheck
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { PositionFieldDef } from "vega-lite/build/src/channeldef";
 import { type Encoding } from "vega-lite/build/src/encoding";
 import { isUnitSpec } from "vega-lite/build/src/spec";
-import { deepEqual } from "vega-lite";
+import { StandardType } from "vega-lite/build/src/type";
 
-export default function isChannelProp(
+export default function isChannel(
   channelName: keyof Encoding<string>,
-  prop: string,
-  value: any,
+  type: StandardType,
 ) {
   return (state: State) => {
     if (!isUnitSpec(state.spec)) {
@@ -20,7 +18,6 @@ export default function isChannelProp(
     }
     const { spec } = state;
     const encoding = spec.encoding![channelName] as PositionFieldDef<string>;
-    console.log(encoding, prop, value, encoding && encoding[prop] === value);
-    return encoding && deepEqual(encoding[prop], value);
+    return encoding && encoding.type === type;
   };
 }

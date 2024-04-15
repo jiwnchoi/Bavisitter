@@ -28,26 +28,26 @@ function RevisionButton({
   reviseLastChartWithProblem,
   reviseLastChartWithPrompt,
 }: IRevisionButtonProps) {
-  const [actionType, setActionType] = useState<number>(0);
+  const [actionType, seTActuatorType] = useState<number>(0);
   const actionTypes = [
     {
       label: "with Actuator",
       Icon: <Icon as={FaTools} />,
-      setActionType: () => setActionType(0),
+      seTActuatorType: () => seTActuatorType(0),
       colorSchenme: "green",
       revise: reviseLastChartWithAction,
     },
     {
       label: "with Action Prompt",
       Icon: <Icon as={FaBabyCarriage} />,
-      setActionType: () => setActionType(1),
+      seTActuatorType: () => seTActuatorType(1),
       colorSchenme: "orange",
       revise: reviseLastChartWithPrompt,
     },
     {
       label: "with LLM Desicion",
       Icon: <Icon as={FaBaby} />,
-      setActionType: () => setActionType(2),
+      seTActuatorType: () => seTActuatorType(2),
       colorSchenme: "red",
       revise: reviseLastChartWithProblem,
     },
@@ -88,7 +88,7 @@ function RevisionButton({
               colorScheme={action.colorSchenme}
               icon={action.Icon}
               key={index}
-              onClick={action.setActionType}
+              onClick={action.seTActuatorType}
             >
               {action.label}
             </MenuItem>

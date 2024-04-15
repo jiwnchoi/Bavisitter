@@ -1,5 +1,5 @@
-import { State } from "teach/model";
-import { getAlphaMapFromCanvas } from "teach/utils";
+import { State } from "videre/model";
+import { getAlphaMapFromCanvas } from "videre/utils";
 
 async function isOverplotted(state: State) {
   const canvas = await state.getMarksCanvas();

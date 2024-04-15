@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { sampleSkewness } from "simple-statistics";
 import { PositionFieldDef } from "vega-lite/build/src/channeldef";
 

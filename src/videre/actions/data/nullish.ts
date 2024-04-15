@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { Encoding } from "vega-lite/build/src/encoding";
 
 export function removeMissingValue(channels: (keyof Encoding<string>)[]) {

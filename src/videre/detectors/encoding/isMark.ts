@@ -1,4 +1,4 @@
-import { State } from "teach/model";
+import { State } from "videre/model";
 import { AnyMark } from "vega-lite/build/src/mark";
 
 export const isScatterplot = (state: State) => {

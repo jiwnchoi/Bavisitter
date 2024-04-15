@@ -2,21 +2,25 @@ import {
   removeMissingValue,
   removeNegativeValues,
   removeZeroValues,
-} from "teach/actions/data";
-import { applyScale, convertPieToBar, reduceOpacity } from "teach/actions/spec";
-import { isDataBalanced, isDataSkewed } from "teach/linters/data";
-import { isChannelProp, isMark } from "teach/linters/encoding";
-import { isOverplotted } from "teach/linters/perception";
-import { IManifest } from "teach/model";
+} from "videre/actions/data";
+import {
+  applyScale,
+  convertPieToBar,
+  reduceOpacity,
+} from "videre/actions/spec";
+import { isDataBalanced, isDataSkewed } from "videre/detectors/data";
+import { isChannelProp, isMark } from "videre/detectors/encoding";
+import { isOverplotted } from "videre/detectors/perception";
+import { IManifest } from "videre/model";
 import { and, not } from "./utils";
 
 const manifest: IManifest[] = [
   {
-    linter: {
+    detector: {
       type: "data",
       level: "soft",
       description: "Values for theta channel are balanced.",
-      lint: and(isMark(["arc"]), isDataBalanced("theta")),
+      detect: and(isMark(["arc"]), isDataBalanced("theta")),
     },
     actuator: {
       type: "spec",
@@ -25,11 +29,11 @@ const manifest: IManifest[] = [
     },
   },
   {
-    linter: {
+    detector: {
       type: "data",
       level: "soft",
       description: "Data on x-axis is skewed positive.",
-      lint: and(
+      detect: and(
         isChannelProp("x", "type", "quantitative"),
         isDataSkewed("x", "positive"),
         not(isChannelProp("x", "scale", { type: "log" })),
@@ -48,11 +52,11 @@ const manifest: IManifest[] = [
     },
   },
   {
-    linter: {
+    detector: {
       type: "data",
       level: "soft",
       description: "Data on y-axis is skewed positive.",
-      lint: and(
+      detect: and(
         isChannelProp("y", "type", "quantitative"),
         isDataSkewed("y", "positive"),
         not(isChannelProp("y", "scale", { type: "log" })),
@@ -71,11 +75,11 @@ const manifest: IManifest[] = [
     },
   },
   {
-    linter: {
+    detector: {
       type: "data",
       level: "soft",
       description: "Data on x-axis is skewed negative.",
-      lint: and(
+      detect: and(
         isChannelProp("x", "type", "quantitative"),
         isDataSkewed("x", "negative"),
         not(isChannelProp("x", "scale", { type: "pow" })),
@@ -88,11 +92,11 @@ const manifest: IManifest[] = [
     },
   },
   {
-    linter: {
+    detector: {
       type: "data",
       level: "soft",
       description: "Data on y-axis is skewed negative.",
-      lint: and(
+      detect: and(
         isChannelProp("y", "type", "quantitative"),
         isDataSkewed("y", "negative"),
         not(isChannelProp("y", "scale", { type: "pow" })),
@@ -105,11 +109,11 @@ const manifest: IManifest[] = [
     },
   },
   {
-    linter: {
+    detector: {
       type: "perception",
       level: "soft",
       description: "Marks are overplotted.",
-      lint: and(isMark(["point", "circle"]), isOverplotted),
+      detect: and(isMark(["point", "circle"]), isOverplotted),
     },
     actuator: {
       type: "spec",

@@ -6,7 +6,7 @@ interface ChartState {
   currentChartIndex: number;
 }
 
-interface ChartAction {
+interface CharTActuator {
   getCurrentChart: () => IChartSpec | null;
   setCharts: (charts: IChartSpec[]) => void;
   setCurrentChartByChartIndex: (index: number) => void;
@@ -21,7 +21,7 @@ interface ChartAction {
   updateCurrentChart: (chart: IChartSpec) => void;
 }
 
-const useChartStore = create<ChartState & ChartAction>((set, get) => ({
+const useChartStore = create<ChartState & CharTActuator>((set, get) => ({
   charts: [],
   currentChartIndex: -1,
 

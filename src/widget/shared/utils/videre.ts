@@ -1,11 +1,11 @@
-import { IDetectResult } from "teach/index";
+import { IDetectorResult } from "videre/index";
 
-type IDetectResultWithSelection = IDetectResult & {
+type IDetectorResultWithSelection = IDetectorResult & {
   selected: boolean;
 };
 
 export function detectResultToContent(
-  detectResult: IDetectResultWithSelection[],
+  detectResult: IDetectorResultWithSelection[],
   giveSolution: boolean,
 ): string {
   const problemString = `**Current Vega Lite visualization has following issues**:
