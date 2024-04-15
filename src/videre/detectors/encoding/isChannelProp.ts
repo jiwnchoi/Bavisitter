@@ -20,7 +20,6 @@ export default function isChannelProp(
     }
     const { spec } = state;
     const encoding = spec.encoding![channelName] as PositionFieldDef<string>;
-    console.log(encoding, prop, value, encoding && encoding[prop] === value);
     return encoding && deepEqual(encoding[prop], value);
   };
 }

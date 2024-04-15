@@ -47,7 +47,6 @@ export default function useRevisionContent() {
       const records = data[spec.data.name!] as any[];
       seTDetectoring(true);
       detect(spec, records).then((prompts) => {
-        console.log(lastChart);
         seTDetectorResult(
           prompts.map((p) => ({
             ...p,
