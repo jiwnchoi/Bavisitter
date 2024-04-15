@@ -1,3 +1,4 @@
+from .deep_equal import deep_equal
 from .file_browser import load_artifact
 from .get_chunk_type import get_chunk_type
 from .set_interpreter import set_interpreter
@@ -8,4 +9,5 @@ __all__ = [
   "get_chunk_type",
   "set_interpreter",
   "load_artifact",
+  "deep_equal",
 ]
