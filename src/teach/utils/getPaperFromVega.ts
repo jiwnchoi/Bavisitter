@@ -1,5 +1,4 @@
 import Snap, { Paper } from "snapsvg";
-import "snapsvg-cjs-ts";
 import { Spec } from "vega";
 import embed from "vega-embed";
 
