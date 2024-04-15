@@ -38,7 +38,7 @@ const Messages = (props: FlexProps) => {
           scrollToBottom("smooth");
         }}
         position="absolute"
-        top={650}
+        top={550}
         left={"calc(50% - 300px)"}
         display={chatBoxAtBottom ? "none" : "flex"}
         isDisabled={chatBoxAtBottom!}
