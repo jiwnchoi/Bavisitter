@@ -22,16 +22,21 @@ export default function useRevisionContent() {
     IDetectResultWithSelection[]
   >([]);
 
-  const revisionViewDisplayed =
-    !streaming &&
-    messages.length > 0 &&
-    isCodeVegaLite(messages[messages.length - 1]);
-
   const charts = useChartStore((state) => state.charts);
 
   const lastChart = useMemo(() => {
     return charts[charts.length - 1];
   }, [charts]);
+
+  const lastUserMessage = messages.findLastIndex((m) => m.role === "user");
+  const lastChartIndex = lastChart ? lastChart.chatIndex : 0;
+
+  const revisionViewDisplayed =
+    !streaming &&
+    messages.length > 0 &&
+    lastChartIndex > lastUserMessage &&
+    !detecting &&
+    detectResult.length > 0;
 
   useEffect(() => {
     if (!lastChart) return;

@@ -137,7 +137,6 @@ export default function RevisionContent({
 }: IRevisionContentProps) {
   const {
     revisionViewDisplayed,
-    detecting,
     detectResult,
     reviseLastChartWithAction,
     reviseLastChartWithProblem,
@@ -146,7 +145,7 @@ export default function RevisionContent({
   } = useRevisionView();
 
   useEffect(scrollToBottom, [detectResult]);
-  if (!revisionViewDisplayed || detecting || !detectResult) return null;
+  if (!revisionViewDisplayed) return null;
 
   return (
     <Flex direction="row" maxW="full">
