@@ -47,7 +47,7 @@ export const isCodeVegaLite = (m: IMessageWithRef) =>
   m.content.trim().endsWith("}") &&
   m.content.includes("$schema");
 
-export async function generateThumbnail(
+export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
   _data: any,
 ): Promise<string> {

@@ -1,9 +1,9 @@
 import { useModelState } from "@anywidget/react";
 import { IChartSpec, IMessage, IMessageWithRef, TData } from "@shared/types";
+import { getThumbnailFromSpec, parseVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { createRef, useEffect } from "react";
 import useIPC from "./useIPC";
-import { isCodeVegaLite, parseVegaLite } from "@shared/utils";
 
 export function useModelMessage() {
   const [modelMessages, setModelMessages] =
@@ -81,14 +81,14 @@ export function useModelMessageEffect() {
       const name = spec.data.name!;
       let _data = getArtifact(name);
       if (!_data) {
-        console.log("fetching artifact");
         _data = await fetchModel<TData>("load_artifact", name);
         _data = JSON.parse(_data);
       }
       newCharts.push({
         chatIndex: message.chatIndex,
-        spec: parseVegaLite(message.content, 500),
+        spec,
         data: { [name]: _data },
+        thumbnail: await getThumbnailFromSpec(spec, _data),
       });
     }
 
