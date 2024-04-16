@@ -13,8 +13,8 @@ export default function isDataSkewed(
       .map((d) => d[encoding.field as string])
       .filter((d) => typeof d === "number")
       .filter((d) => d !== null) as number[];
-    const skewness = sampleSkewness(values);
     if (values.length < 20) return false;
+    const skewness = sampleSkewness(values);
     return direction === "positive" ? skewness > 1 : skewness < -1;
   };
 }

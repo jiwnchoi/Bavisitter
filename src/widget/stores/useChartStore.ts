@@ -4,6 +4,10 @@ import { create } from "zustand";
 interface ChartState {
   charts: IChartSpec[];
   currentChartIndex: number;
+  computed: {
+    currentChart: IChartSpec | null;
+    lastChart: IChartSpec | null;
+  };
 }
 
 interface CharTActuator {
@@ -24,7 +28,14 @@ interface CharTActuator {
 const useChartStore = create<ChartState & CharTActuator>((set, get) => ({
   charts: [],
   currentChartIndex: -1,
-
+  computed: {
+    get currentChart() {
+      return get().charts.at(get().currentChartIndex) ?? null;
+    },
+    get lastChart() {
+      return get().charts.at(get().charts.length - 1) ?? null;
+    },
+  },
   getCurrentChart: () => get().charts.at(get().currentChartIndex) ?? null,
 
   appendChart: (chart) => set({ charts: [...get().charts, chart] }),

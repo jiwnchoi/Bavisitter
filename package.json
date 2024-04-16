@@ -5,7 +5,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
-    "prepare": "lint-staged",
+    "prepare": "husky",
     "test": "jest"
   },
   "dependencies": {
@@ -55,6 +55,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
@@ -63,13 +64,10 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "jest",
       "eslint --fix",
       "prettier --write"
     ],
     "*.{py,ipython,pyi}": [
-      "pytest",
-      "pyright",
       "ruff check . --fix",
       "ruff format ."
     ]

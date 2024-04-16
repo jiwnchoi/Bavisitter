@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from bavisitter.model.message_model import ChunkType
 
 
-def get_chunk_type(chunk, previous_message=None) -> ChunkType:
-  if "start" in chunk:
+def get_chunk_type(chunk, previous_message=None) -> ChunkType | None:
+  if "start" in chunk and chunk["start"]:
     return "start"
-  if "end" in chunk:
+  if "end" in chunk and chunk["end"]:
     return "end"
   if "content" in chunk and isinstance(chunk["content"], str):
     if (

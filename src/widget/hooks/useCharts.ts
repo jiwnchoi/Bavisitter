@@ -1,5 +1,9 @@
 import { TData } from "@shared/types";
-import { isCodeVegaLite, parseVegaLite } from "@shared/utils";
+import {
+  isCodeVegaLite,
+  parseVegaLite,
+  getThumbnailFromSpec,
+} from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect } from "react";
 import useIPC from "./useIPC";
@@ -40,11 +44,13 @@ export default function useCharts(size: number) {
         if (!_data) {
           _data = await fetchModel<TData>("load_artifact", name);
         }
+        const thumbnail = await getThumbnailFromSpec(spec, _data);
         chartAppended = true;
         appendChart({
           chatIndex: i,
-          spec: parseVegaLite(messages[i].content, size),
+          spec: spec,
           data: { [name]: _data },
+          thumbnail: thumbnail,
         });
       }
     }

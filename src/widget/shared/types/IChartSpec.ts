@@ -5,6 +5,7 @@ interface IChartSpec {
   spec: TopLevelUnitSpec<string>;
   chatIndex: number;
   data?: PlainObject;
+  thumbnail?: string;
 }
 
 export default IChartSpec;

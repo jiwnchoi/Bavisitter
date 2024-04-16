@@ -8,13 +8,15 @@ export function detectResultToContent(
   detectResult: IDetectorResultWithSelection[],
   giveSolution: boolean,
 ): string {
+  const filteredResult = detectResult.filter(({ selected }) => selected);
+
   const problemString = `**Current Vega Lite visualization has following issues**:
   
-${detectResult.map(({ problem }) => `  - ${problem}`).join("\n")}
+${filteredResult.map(({ problem }) => `  - ${problem}`).join("\n")}
   `;
   const solutionString = `\n\n**Revise the visualization according to the following suggestions**:
 
-${detectResult.map(({ solution }) => `  - ${solution}`).join("\n")}`;
+${filteredResult.map(({ solution }) => `  - ${solution}`).join("\n")}`;
 
   const commandString = `\n\nBased on the detected issues, revise the Vega-Lite specification and data to improve the visualization.`;
 

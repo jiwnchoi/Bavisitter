@@ -57,7 +57,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def __init__(
     self,
     df: pd.DataFrame,
-    model: str = "gpt-3.5-turbo",
+    model: str = "gpt-4-turbo-preview",
     safe_model: Literal["auto", "off"] = "auto",
     auto_run: bool = True,
     color_mode: Literal["light", "dark"] = "light",
@@ -121,7 +121,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     return proposal["value"]
 
   @observe("ipc_queue")
-  def handle_ipc_queue(self, change: list[IPCModel]):
+  def handle_ipc_queue(
+    self, change: dict[Literal["new", "old"], list[IPCModel]]
+  ):
     if len(change["new"]) and change["new"][-1]["type"] == "request":
       if change["new"][-1]["endpoint"] == "load_artifact":
         try:
@@ -184,14 +186,25 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @observe("messages")
   def handle_user_chat(self, change):
+    if self.streaming:
+      return
+
     if deep_equal(change["new"], change["old"]):
       return
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
+      self.streaming = True
       for chunk in self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
       ):
-        self.handle_chunk(chunk)
+        if (
+          "content" in chunk
+          and "disabled or not supported." in chunk["content"]
+        ):
+          self.interpreter.messages = self.interpreter.messages[:-1]
+          continue
+        self.handle_chunk(chunk)  # type: ignore
+      self.streaming = False
 
     if len(change["new"]) == 0 or (
       len(change["new"]) > 0 and change["new"][-1]["role"] == "assistant"
@@ -205,7 +218,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     self.chunks.append({**chunk, "chunk_type": chunk_type})
 
     if chunk_type == "start":
-      self.streaming = True
       format = chunk["format"] if "format" in chunk else None
       format = "output" if chunk["type"] == "console" else format
       self.append_message(
@@ -223,7 +235,8 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         and "```" in self.messages[-1]["content"]
         and match.match(self.messages[-1]["content"])
       ):
-        format = match.match(self.messages[-1]["content"]).group(1)
+        content_match = match.match(self.messages[-1]["content"])
+        format = content_match.group(1) if content_match else ""
         code = re.sub(r"```(\w+)\n", "", self.messages[-1]["content"])
         self.messages = [
           *self.messages[:-1],
@@ -238,7 +251,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
         self.append_content(chunk["content"])
 
     elif chunk_type == "end":
-      self.streaming = False
       if self.messages[-1]["content"] == "":
         self.messages = [*self.messages[:-1]]
 
@@ -289,4 +301,3 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def load_messages(self, messages):
     self.messages = messages
     self.interpreter.messages = messages
-    self.streaming = False
