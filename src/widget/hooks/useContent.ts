@@ -1,7 +1,6 @@
 import { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
 import { useMessageStore } from "@stores";
-import { useMemo } from "react";
 
 const isUserMessageBySystem = (message: IMessageWithRef) =>
   message.role === "user" &&
