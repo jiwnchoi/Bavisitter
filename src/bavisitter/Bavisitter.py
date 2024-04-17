@@ -196,9 +196,13 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     if len(change["new"]) > 0 and change["new"][-1]["role"] == "user":
       self.streaming = True
-      for chunk in self.interpreter.chat(
+      chats = self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
-      ):
+      )
+      if chats is None:
+        self.streaming = False
+        return
+      for chunk in chats:
         self.chunks.append(chunk)
         if (
           "content" in chunk

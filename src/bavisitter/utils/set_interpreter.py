@@ -24,8 +24,5 @@ def set_interpreter(
   interpreter.auto_run = auto_run
   interpreter.llm.max_tokens = 4096  # type: ignore
   interpreter.llm.context_window = 128_000  # type: ignore
-  [
-    output
-    for script in PRELOAD_SCRIPT
-    for output in interpreter.computer.terminal.run("python", script)
-  ]
+  for script in PRELOAD_SCRIPT:
+    list(interpreter.computer.terminal.run("python", script))

@@ -12,11 +12,11 @@ import { useModelMessage } from "@hooks";
 const EXAMPLE = [
   {
     title: "Request by Chart Type",
-    prompt: "Draw scatterplot with two columns in data",
+    prompt: "Draw scatterplot with two columns in input data",
   },
   {
     title: "Specify Some Analytic Task",
-    prompt: "Show me the distribution of a column in data",
+    prompt: "Show me the distribution of a column in input data",
   },
   {
     title: "Analyze Data with Machine Learning",
