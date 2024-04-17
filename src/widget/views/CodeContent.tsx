@@ -89,6 +89,7 @@ export default function CodeContent({
         backgroundColor={colorMode === "dark" ? "gray.700" : "gray.100"}
         px={2}
         onClick={onToggle}
+        _hover={{ cursor: "pointer" }}
       >
         <CodeBlockButton
           leftIcon={

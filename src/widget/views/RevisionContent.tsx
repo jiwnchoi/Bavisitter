@@ -18,12 +18,14 @@ import { FaTools } from "react-icons/fa";
 import { FaAngleDown, FaBaby, FaBabyCarriage } from "react-icons/fa6";
 
 interface IRevisionButtonProps {
+  disabled: boolean;
   reviseLastChartWithAction: () => void;
   reviseLastChartWithProblem: () => void;
   reviseLastChartWithPrompt: () => void;
 }
 
 function RevisionButton({
+  disabled,
   reviseLastChartWithAction,
   reviseLastChartWithProblem,
   reviseLastChartWithPrompt,
@@ -56,6 +58,7 @@ function RevisionButton({
   return (
     <Flex w="full">
       <Button
+        isDisabled={disabled}
         w={"full"}
         size={"sm"}
         ps={4}
@@ -64,7 +67,7 @@ function RevisionButton({
         variant={"outline"}
         onClick={actionTypes[actionType].revise}
       >
-        Revise Current Visualization
+        {disabled ? "Select Solution to Apply" : "Revise Current Visualization"}
       </Button>
 
       <Menu>
@@ -193,6 +196,7 @@ export default function RevisionContent({
             ))}
           </SimpleGrid>
           <RevisionButton
+            disabled={detectResult.every((result) => !result.selected)}
             reviseLastChartWithAction={reviseLastChartWithAction}
             reviseLastChartWithProblem={reviseLastChartWithProblem}
             reviseLastChartWithPrompt={reviseLastChartWithPrompt}

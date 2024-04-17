@@ -59,6 +59,7 @@ function Placeholder() {
                 ]);
               }}
               _hover={{
+                cursor: "pointer",
                 backgroundColor:
                   colorMode === "light" ? "blackAlpha.50" : "whiteAlpha.50",
                 transition: "background-color 0.2s",
