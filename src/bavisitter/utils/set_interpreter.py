@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 def set_interpreter(
   interpreter: "OpenInterpreter",
-  model: str = "gpt-4-turbo-preview",
+  model: str = "gpt-4-turbo",
   safe_mode: Literal["off", "auto"] = "auto",
   auto_run: bool = True,
   system_prompt: str = SYSTEM_PROMPT,
@@ -17,3 +17,9 @@ def set_interpreter(
   interpreter.llm.model = model
   interpreter.safe_mode = safe_mode
   interpreter.auto_run = auto_run
+  interpreter.llm.max_tokens = 4096  # type: ignore
+  interpreter.llm.context_window = 128_000  # type: ignore
+  interpreter.computer.terminal.run(
+    "python",
+    "import pandas as pd\ndel pd.DataFrame._repr_html_",
+  )

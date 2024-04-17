@@ -61,20 +61,22 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     safe_model: Literal["auto", "off"] = "auto",
     auto_run: bool = True,
     color_mode: Literal["light", "dark"] = "light",
+    artifact_path: str = "artifacts",
+    use_cli: bool = False,
     **kwargs,
   ):
     super().__init__(**kwargs)
 
-    if not pathlib.Path("artifacts").exists():
-      pathlib.Path("artifacts").mkdir()
+    if not pathlib.Path(artifact_path).exists():
+      pathlib.Path(artifact_path).mkdir()
 
-    df.to_csv("artifacts/data.csv", index=False)
+    df.to_csv(f"{artifact_path}/data.csv", index=False)
 
     # set widget properties
     self.model = model
     self.chunks = []
     self.color_mode = color_mode
-
+    self.use_cli = use_cli
     # initialize the open interpreter
     self.interpreter = OpenInterpreter()
     set_interpreter(self.interpreter, model, safe_model, auto_run)
@@ -197,8 +199,10 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       for chunk in self.interpreter.chat(
         change["new"][-1]["content"], display=False, stream=True
       ):
+        self.chunks.append(chunk)
         if (
           "content" in chunk
+          and isinstance(chunk["content"], str)
           and "disabled or not supported." in chunk["content"]
         ):
           self.interpreter.messages = self.interpreter.messages[:-1]
@@ -215,7 +219,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     chunk_type = get_chunk_type(
       chunk, self.messages[-1] if len(self.messages) else None
     )
-    self.chunks.append({**chunk, "chunk_type": chunk_type})
 
     if chunk_type == "start":
       format = chunk["format"] if "format" in chunk else None
@@ -230,6 +233,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       )
 
     elif chunk_type == "continue":
+      if self.use_cli:
+        print(chunk["content"], end="")
+
       if (
         self.messages[-1]["type"] == "code"
         and "```" in self.messages[-1]["content"]
