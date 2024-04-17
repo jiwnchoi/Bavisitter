@@ -36,15 +36,19 @@ export default function useRevisionContent() {
     if (spec && data) {
       const records = data[spec.data.name!] as any[];
       seTDetectoring(true);
-      detect(spec, records).then((prompts) => {
-        seTDetectorResult(
-          prompts.map((p) => ({
-            ...p,
-            selected: true,
-          })),
-        );
-        seTDetectoring(false);
-      });
+      try {
+        detect(spec, records).then((prompts) => {
+          seTDetectorResult(
+            prompts.map((p) => ({
+              ...p,
+              selected: true,
+            })),
+          );
+          seTDetectoring(false);
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [lastChart]);
 
