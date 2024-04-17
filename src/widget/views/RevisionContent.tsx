@@ -176,7 +176,7 @@ export default function RevisionContent({
         <Flex direction={"column"} gap={4} w="full" overflow={"auto"}>
           <Text>{`Current Vega Lite visualization has following issues.`}</Text>
 
-          <SimpleGrid columns={3} gap={2}>
+          <SimpleGrid columns={3} gap={2} minChildWidth={"200px"}>
             {detectResult.map(({ problem, solution, selected }, index) => (
               <Fade
                 in={true}

@@ -4,6 +4,7 @@ import { useMessageStore } from "@stores";
 import { ChartView, Header, Messages, Placeholder, PromptView } from "@views";
 import Providers from "./Providers";
 const CHART_WIDTH = 400;
+
 const App = () => {
   useModelMessageEffect(CHART_WIDTH);
 

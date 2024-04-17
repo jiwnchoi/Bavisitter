@@ -9,7 +9,6 @@ import {
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Global, css } from "@emotion/react";
 import { useChartStore } from "@stores";
 import { useRef } from "react";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
@@ -18,20 +17,6 @@ import {
   coldarkCold,
   coldarkDark,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-
-const globalScrollbarStyles = css`
-  *::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-  }
-
-  *::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-`;
 
 interface ICodeContentProps {
   index: number;
@@ -125,7 +110,6 @@ export default function CodeContent({
         </CodeBlockButton>
       </Flex>
       <Collapse in={isOpen} animateOpacity unmountOnExit>
-        <Global styles={globalScrollbarStyles} />
         <SyntaxHighlighter
           language={format}
           wrapLongLines={false}

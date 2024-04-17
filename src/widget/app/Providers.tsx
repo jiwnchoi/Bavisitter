@@ -9,6 +9,7 @@ import { TColorMode } from "@shared/types";
 import { PropsWithChildren, useEffect } from "react";
 import ShadowRoot from "react-shadow/emotion";
 import theme from "./theme";
+import { Global, css } from "@emotion/react";
 
 function ColorMode({ children }: PropsWithChildren<{}>) {
   const { colorMode } = useColorMode();
@@ -18,9 +19,26 @@ function ColorMode({ children }: PropsWithChildren<{}>) {
   useEffect(() => {
     setColorMode(modelColorMode);
   }, []);
+  const globalStyles = css`
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
 
+    *::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      background-color: ${colorMode === "light"
+        ? "rgba(0, 0, 0, 0.1)"
+        : "rgba(255, 255, 255, 0.1)"};
+    }
+
+    *::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  `;
   return (
     <>
+      <Global styles={globalStyles} />
       {colorMode === "light" ? (
         <LightMode> {children} </LightMode>
       ) : (
