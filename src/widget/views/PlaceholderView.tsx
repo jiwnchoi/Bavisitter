@@ -18,7 +18,7 @@ const EXAMPLE = [
     prompt: "Show me the distribution of a column in data",
   },
   {
-    title: "Machine Learning",
+    title: "Analyze Data with Machine Learning",
     prompt: "Do linear regression on two columns in data and visualize it",
   },
 ];
@@ -40,6 +40,7 @@ function PlaceholderView() {
         {EXAMPLE.map(({ title, prompt }, index) => (
           <Fade in={true} key={`example-${index}`} delay={index * 0.2}>
             <Flex
+              h="full"
               key={`example-${index}`}
               flexDir={"column"}
               borderWidth={2}

@@ -31,20 +31,19 @@ const Messages = (props: FlexProps) => {
         <Content key={index} index={index} />
       ))}
       <RevisionContent scrollToBottom={scrollToBottom} />
-
-      <IconButton
-        icon={<FaArrowDown />}
-        onClick={() => {
-          scrollToBottom("smooth");
-        }}
-        position="absolute"
-        bottom={4}
-        left={`calc((100% - 500px) / 2)`}
-        display={chatBoxAtBottom ? "none" : "flex"}
-        isDisabled={chatBoxAtBottom!}
-        zIndex={100}
-        aria-label={"scroll to bottom"}
-      />
+      {!chatBoxAtBottom && (
+        <IconButton
+          icon={<FaArrowDown />}
+          onClick={() => {
+            scrollToBottom("smooth");
+          }}
+          position="absolute"
+          bottom={4}
+          left={`calc((100% - 500px) / 2)`}
+          zIndex={100}
+          aria-label={"scroll to bottom"}
+        />
+      )}
     </Flex>
   );
 };
