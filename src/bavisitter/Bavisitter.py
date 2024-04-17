@@ -67,6 +67,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   ):
     super().__init__(**kwargs)
 
+    if df is None or not isinstance(df, pd.DataFrame):
+      raise ValueError("Give a valid dataframe to the widget.")
+
     if not pathlib.Path(artifact_path).exists():
       pathlib.Path(artifact_path).mkdir()
 
