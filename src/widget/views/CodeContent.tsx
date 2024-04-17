@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   ButtonProps,
   Collapse,
@@ -14,7 +13,6 @@ import { Global, css } from "@emotion/react";
 import { useChartStore } from "@stores";
 import { useRef } from "react";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
-import ShadowRoot from "react-shadow/emotion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   coldarkCold,

@@ -24,7 +24,7 @@ const EXAMPLE = [
   },
 ];
 
-function PlaceholderView() {
+function Placeholder() {
   const { appendMessages } = useModelMessage();
   const { colorMode } = useColorMode();
   return (
@@ -40,7 +40,7 @@ function PlaceholderView() {
 
       <SimpleGrid columns={3} gap={4} w={"full"}>
         {EXAMPLE.map(({ title, prompt }, index) => (
-          <Fade in={true} key={`example-${index}`} delay={index * 0.2}>
+          <Fade in={true} key={`example-${index}`} delay={(index + 1) * 0.2}>
             <Flex
               h="full"
               key={`example-${index}`}
@@ -74,4 +74,4 @@ function PlaceholderView() {
   );
 }
 
-export default PlaceholderView;
+export default Placeholder;

@@ -175,7 +175,11 @@ export default function RevisionContent({
 
           <SimpleGrid columns={3} gap={2}>
             {detectResult.map(({ problem, solution, selected }, index) => (
-              <Fade in={true} key={`revisionItem-${index}`} delay={index * 0.2}>
+              <Fade
+                in={true}
+                key={`revisionItem-${index}`}
+                delay={(index + 1) * 0.2}
+              >
                 <IssueItem
                   key={`issueItem${index}`}
                   problem={problem}

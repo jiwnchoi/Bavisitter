@@ -1,13 +1,7 @@
 import { Container, Flex } from "@chakra-ui/react";
 import { useModelMessageEffect } from "@hooks";
 import { useMessageStore } from "@stores";
-import {
-  ChartView,
-  Header,
-  Messages,
-  PlaceholderView,
-  PromptView,
-} from "@views";
+import { ChartView, Header, Messages, Placeholder, PromptView } from "@views";
 import Providers from "./Providers";
 const CHART_WIDTH = 400;
 const App = () => {
@@ -32,7 +26,7 @@ const App = () => {
               <ChartView minW={CHART_WIDTH} w={CHART_WIDTH} />
             </>
           ) : (
-            <PlaceholderView />
+            <Placeholder />
           )}
         </Flex>
         <PromptView />
