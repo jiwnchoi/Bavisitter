@@ -5,6 +5,7 @@ import {
   Heading,
   SimpleGrid,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useModelMessage } from "@hooks";
 
@@ -25,6 +26,7 @@ const EXAMPLE = [
 
 function PlaceholderView() {
   const { appendMessages } = useModelMessage();
+  const { colorMode } = useColorMode();
   return (
     <Flex w={"full"} h={"full"} flexDir="column" p={4}>
       <Center flexDir={"column"} h="full">
@@ -32,7 +34,7 @@ function PlaceholderView() {
           Bavisitter
         </Heading>
         <Text fontSize={18} opacity={0.6}>
-          Your LLM Agent for Perfect Visualization
+          Your LLM Agent for Advanved Visual Analytics
         </Text>
       </Center>
 
@@ -43,7 +45,7 @@ function PlaceholderView() {
               h="full"
               key={`example-${index}`}
               flexDir={"column"}
-              borderWidth={2}
+              borderWidth={1}
               gap={2}
               p={4}
               borderRadius={8}
@@ -55,6 +57,11 @@ function PlaceholderView() {
                     type: "message",
                   },
                 ]);
+              }}
+              _hover={{
+                backgroundColor:
+                  colorMode === "light" ? "blackAlpha.50" : "whiteAlpha.50",
+                transition: "background-color 0.2s",
               }}
             >
               <Text fontWeight={700}>{title}</Text>

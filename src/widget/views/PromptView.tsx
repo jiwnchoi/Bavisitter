@@ -55,7 +55,7 @@ export default function PromptView() {
                   {...field}
                   fontSize={"sm"}
                   variant={"none"}
-                  placeholder="Describe what your visualization would be..."
+                  placeholder="Message Bavisitter..."
                   width={"full"}
                   border={"none"}
                   resize={"none"}

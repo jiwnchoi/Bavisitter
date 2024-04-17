@@ -11,22 +11,7 @@ const Messages = (props: FlexProps) => {
   const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = useMessages();
 
   return (
-    <Flex
-      {...props}
-      ref={chatBoxRef}
-      css={{
-        "&::-webkit-scrollbar": {
-          backgroundColor: "transparent",
-          width: "8px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor:
-            colorMode === "light"
-              ? "rgba(0, 0, 0, 0.1)"
-              : "rgba(255, 255, 255, 0.1)",
-        },
-      }}
-    >
+    <Flex {...props} ref={chatBoxRef}>
       {messages.map((_, index) => (
         <Content key={index} index={index} />
       ))}
@@ -42,6 +27,7 @@ const Messages = (props: FlexProps) => {
           left={`calc((100% - 500px) / 2)`}
           zIndex={100}
           aria-label={"scroll to bottom"}
+          opacity={colorMode === "light" ? 0.6 : 0.8}
         />
       )}
     </Flex>

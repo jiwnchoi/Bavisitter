@@ -12,7 +12,9 @@ import {
 } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
 import { useChartStore } from "@stores";
+import { useRef } from "react";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
+import ShadowRoot from "react-shadow/emotion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   coldarkCold,
@@ -71,11 +73,20 @@ export default function CodeContent({
     (state) => state.setCurrentChartByChatIndex,
   );
   const { colorMode } = useColorMode();
+  const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <Box dir="row" w={"full"} gap={0} borderRadius={8} overflow={"clip"}>
+    <Flex
+      flexDir="column"
+      w={"full"}
+      maxW={"100%"}
+      gap={0}
+      borderRadius={8}
+      overflow={"auto"}
+      ref={ref}
+    >
       <Flex
-        dir="column"
+        flexDir="row"
         w="full"
         backgroundColor={colorMode === "dark" ? "gray.700" : "gray.100"}
         px={2}
@@ -118,17 +129,20 @@ export default function CodeContent({
         <Global styles={globalScrollbarStyles} />
         <SyntaxHighlighter
           language={format}
-          wrapLongLines={true}
+          wrapLongLines={false}
           style={colorMode === "light" ? coldarkCold : coldarkDark}
           customStyle={{
             borderRadius: 0,
             margin: 0,
             overflow: "auto",
+            wordBreak: "break-all",
+            whiteSpace: "pre-wrap",
+            maxWidth: ref.current?.clientWidth,
           }}
         >
           {content}
         </SyntaxHighlighter>
       </Collapse>
-    </Box>
+    </Flex>
   );
 }

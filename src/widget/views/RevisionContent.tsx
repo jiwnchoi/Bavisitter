@@ -1,15 +1,15 @@
 import {
   Avatar,
-  Box,
   Button,
   Checkbox,
-  Divider,
+  Fade,
   Flex,
   Icon,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  SimpleGrid,
   Text,
 } from "@chakra-ui/react";
 import { useRevisionView } from "@hooks";
@@ -101,29 +101,44 @@ function RevisionButton({
 
 function IssueItem({
   problem,
+  solution,
   selected,
   onClick,
 }: {
   problem: string;
+  solution: string;
   selected: boolean;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }) {
   return (
     <Flex
-      flexDir={"row"}
-      gap={2}
-      onClick={onClick}
-      _hover={{ cursor: "pointer" }}
+      h="full"
+      flexDir={"column"}
+      borderWidth={2}
+      gap={4}
+      p={4}
+      borderRadius={8}
     >
-      <Checkbox size="md" isChecked={selected} />
-      <Text
-        fontSize="md"
-        fontWeight={500}
-        opacity={selected ? 1.0 : 0.3}
-        transitionDuration={"100ms"}
-      >
+      <Text fontWeight={700} fontSize={"sm"}>
         {problem}
       </Text>
+
+      <Flex
+        flexDir={"row"}
+        gap={2}
+        onClick={onClick}
+        _hover={{ cursor: "pointer" }}
+        align={"start"}
+      >
+        <Checkbox size="sm" isChecked={selected} mt={0.5} />
+        <Text
+          fontSize="sm"
+          opacity={selected ? 0.7 : 0.2}
+          transitionDuration={"0.2s"}
+        >
+          {solution}
+        </Text>
+      </Flex>
     </Flex>
   );
 }
@@ -149,28 +164,30 @@ export default function RevisionContent({
 
   return (
     <Flex direction="row" maxW="full">
-      <Box minW={"32px"}>{<Avatar size="sm" name={"Bavisitter"} />}</Box>
+      <Flex minW={"32px"}>{<Avatar size="sm" name={"Bavisitter"} />}</Flex>
       <Flex direction="column" width="full" align="flex-start" ml={2} gap={2}>
         <Text as={"p"} fontSize="sm" fontWeight="bold">
           {"Bavisitter"}
         </Text>
 
         <Flex direction={"column"} gap={4} w="full" overflow={"auto"}>
-          <Text>{`Current Vega Lite visualization has following issues:`}</Text>
-          <Divider />
-          <Flex flexDir={"column"} gap={2}>
-            {detectResult.map(({ problem, selected }, index) => (
-              <IssueItem
-                key={`issueItem${index}`}
-                problem={problem}
-                selected={selected}
-                onClick={() => {
-                  toggleDetectResult(index);
-                }}
-              />
+          <Text>{`Current Vega Lite visualization has following issues.`}</Text>
+
+          <SimpleGrid columns={3} gap={2}>
+            {detectResult.map(({ problem, solution, selected }, index) => (
+              <Fade in={true} key={`revisionItem-${index}`} delay={index * 0.2}>
+                <IssueItem
+                  key={`issueItem${index}`}
+                  problem={problem}
+                  solution={solution}
+                  selected={selected}
+                  onClick={() => {
+                    toggleDetectResult(index);
+                  }}
+                />
+              </Fade>
             ))}
-          </Flex>
-          <Divider />
+          </SimpleGrid>
           <RevisionButton
             reviseLastChartWithAction={reviseLastChartWithAction}
             reviseLastChartWithProblem={reviseLastChartWithProblem}
