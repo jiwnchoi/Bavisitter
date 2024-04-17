@@ -17,8 +17,14 @@ import { useEffect, useState } from "react";
 import { FaTools } from "react-icons/fa";
 import { FaAngleDown, FaBaby, FaBabyCarriage } from "react-icons/fa6";
 
+const REVISE_WITH_ACTUATOR = 0;
+const REVISE_WITH_SOLUTION = 1;
+const REVISE_WITH_ISSUE = 2;
+
 interface IRevisionButtonProps {
   disabled: boolean;
+  revisionType: number;
+  setRevisionType: (revisionType: number) => void;
   reviseLastChartWithAction: () => void;
   reviseLastChartWithProblem: () => void;
   reviseLastChartWithPrompt: () => void;
@@ -26,30 +32,31 @@ interface IRevisionButtonProps {
 
 function RevisionButton({
   disabled,
+  revisionType,
+  setRevisionType,
   reviseLastChartWithAction,
   reviseLastChartWithProblem,
   reviseLastChartWithPrompt,
 }: IRevisionButtonProps) {
-  const [actionType, seTActuatorType] = useState<number>(0);
   const actionTypes = [
     {
       label: "with Actuator",
       Icon: <Icon as={FaTools} />,
-      seTActuatorType: () => seTActuatorType(0),
+      setRevisionType: () => setRevisionType(REVISE_WITH_ACTUATOR),
       colorSchenme: "green",
       revise: reviseLastChartWithAction,
     },
     {
       label: "with Action Prompt",
       Icon: <Icon as={FaBabyCarriage} />,
-      seTActuatorType: () => seTActuatorType(1),
+      setRevisionType: () => setRevisionType(REVISE_WITH_SOLUTION),
       colorSchenme: "orange",
       revise: reviseLastChartWithPrompt,
     },
     {
       label: "with LLM Desicion",
       Icon: <Icon as={FaBaby} />,
-      seTActuatorType: () => seTActuatorType(2),
+      setRevisionType: () => setRevisionType(REVISE_WITH_ISSUE),
       colorSchenme: "red",
       revise: reviseLastChartWithProblem,
     },
@@ -63,9 +70,9 @@ function RevisionButton({
         size={"sm"}
         ps={4}
         borderRightRadius={0}
-        colorScheme={actionTypes[actionType].colorSchenme}
+        colorScheme={actionTypes[revisionType].colorSchenme}
         variant={"outline"}
-        onClick={actionTypes[actionType].revise}
+        onClick={actionTypes[revisionType].revise}
       >
         {disabled ? "Select Solution to Apply" : "Revise Current Visualization"}
       </Button>
@@ -76,8 +83,8 @@ function RevisionButton({
           size={"sm"}
           variant={"solid"}
           borderLeftRadius={0}
-          leftIcon={actionTypes[actionType].Icon}
-          colorScheme={actionTypes[actionType].colorSchenme}
+          leftIcon={actionTypes[revisionType].Icon}
+          colorScheme={actionTypes[revisionType].colorSchenme}
           rightIcon={<Icon as={FaAngleDown} />}
           aria-label="expand solution"
           onClick={() => {}}
@@ -91,7 +98,7 @@ function RevisionButton({
               colorScheme={action.colorSchenme}
               icon={action.Icon}
               key={index}
-              onClick={action.seTActuatorType}
+              onClick={action.setRevisionType}
             >
               {action.label}
             </MenuItem>
@@ -105,13 +112,15 @@ function RevisionButton({
 function IssueItem({
   problem,
   solution,
+  revisionType,
   selected,
-  onClick,
+  setDetectResult,
 }: {
   problem: string;
   solution: string;
+  revisionType: number;
   selected: boolean;
-  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  setDetectResult: (selected: boolean) => void;
 }) {
   return (
     <Flex
@@ -122,24 +131,36 @@ function IssueItem({
       p={4}
       borderRadius={8}
     >
-      <Text fontWeight={700} fontSize={"sm"}>
+      <Text
+        fontWeight={700}
+        fontSize={"sm"}
+        opacity={selected ? 1 : 0.2}
+        transitionDuration={"0.2s"}
+      >
         {problem}
       </Text>
 
       <Flex
         flexDir={"row"}
         gap={2}
-        onClick={onClick}
+        onClick={() => setDetectResult(!selected)}
         _hover={{ cursor: "pointer" }}
         align={"start"}
       >
-        <Checkbox size="sm" isChecked={selected} mt={0.5} />
+        <Checkbox
+          size="sm"
+          isChecked={selected}
+          mt={0.5}
+          onChange={(e) => {
+            setDetectResult(!e.target.checked);
+          }}
+        />
         <Text
           fontSize="sm"
           opacity={selected ? 0.7 : 0.2}
           transitionDuration={"0.2s"}
         >
-          {solution}
+          {revisionType !== REVISE_WITH_ISSUE ? solution : "Revise this issue"}
         </Text>
       </Flex>
     </Flex>
@@ -159,12 +180,12 @@ export default function RevisionContent({
     reviseLastChartWithAction,
     reviseLastChartWithProblem,
     reviseLastChartWithPrompt,
-    toggleDetectResult,
+    setDetectResult,
   } = useRevisionView();
 
+  const [revisionType, setRevisionType] = useState(0);
   useEffect(scrollToBottom, [detectResult]);
   if (!revisionViewDisplayed) return null;
-
   return (
     <Flex direction="row" maxW="full">
       <Flex minW={"32px"}>{<Avatar size="sm" name={"Bavisitter"} />}</Flex>
@@ -187,15 +208,16 @@ export default function RevisionContent({
                   key={`issueItem${index}`}
                   problem={problem}
                   solution={solution}
+                  revisionType={revisionType}
                   selected={selected}
-                  onClick={() => {
-                    toggleDetectResult(index);
-                  }}
+                  setDetectResult={setDetectResult(index)}
                 />
               </Fade>
             ))}
           </SimpleGrid>
           <RevisionButton
+            revisionType={revisionType}
+            setRevisionType={setRevisionType}
             disabled={detectResult.every((result) => !result.selected)}
             reviseLastChartWithAction={reviseLastChartWithAction}
             reviseLastChartWithProblem={reviseLastChartWithProblem}

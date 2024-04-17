@@ -15,8 +15,8 @@ export default function useRevisionContent() {
   const { appendMessages } = useModelMessage();
   const { fetchModel } = useIPC();
   const appendArtifact = useArtifactStore((state) => state.appendArtifact);
-  const [detecting, seTDetectoring] = useState(false);
-  const [detectResult, seTDetectorResult] = useState<
+  const [detecting, setDetecting] = useState(false);
+  const [detectResult, setDetectorResult] = useState<
     IDetectorResultWithSelection[]
   >([]);
 
@@ -35,16 +35,16 @@ export default function useRevisionContent() {
     const { spec, data } = lastChart;
     if (spec && data) {
       const records = data[spec.data.name!] as any[];
-      seTDetectoring(true);
+      setDetecting(true);
       try {
         detect(spec, records).then((prompts) => {
-          seTDetectorResult(
+          setDetectorResult(
             prompts.map((p) => ({
               ...p,
               selected: true,
             })),
           );
-          seTDetectoring(false);
+          setDetecting(false);
         });
       } catch (e) {
         console.error(e);
@@ -104,12 +104,12 @@ export default function useRevisionContent() {
     ]);
   };
 
-  const toggleDetectResult = (index: number) => {
-    seTDetectorResult([
+  const setDetectResult = (index: number) => (selected: boolean) => {
+    setDetectorResult([
       ...detectResult.slice(0, index),
       {
         ...detectResult[index],
-        selected: !detectResult[index].selected,
+        selected,
       },
       ...detectResult.slice(index + 1),
     ]);
@@ -122,6 +122,6 @@ export default function useRevisionContent() {
     reviseLastChartWithAction,
     reviseLastChartWithPrompt,
     reviseLastChartWithProblem,
-    toggleDetectResult,
+    setDetectResult,
   };
 }
