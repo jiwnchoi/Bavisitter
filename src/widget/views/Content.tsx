@@ -16,7 +16,7 @@ export default function Content({ index }: PropsWithChildren<IContentProps>) {
     format,
     type,
     ref,
-    chartContent,
+    contentIsVegaLite,
   } = useContent(index);
 
   return (
@@ -40,7 +40,7 @@ export default function Content({ index }: PropsWithChildren<IContentProps>) {
             <CodeContent
               index={index}
               content={contentWithoutCodeblock}
-              chartContent={chartContent}
+              contentIsVegaLite={contentIsVegaLite}
               format={format}
               key={`message${index}`}
               streamingMessage={streamingMessage}

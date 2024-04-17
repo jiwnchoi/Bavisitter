@@ -38,7 +38,7 @@ interface ICodeContentProps {
   content: string;
   format: string;
   streamingMessage: boolean;
-  chartContent: boolean;
+  contentIsVegaLite: boolean;
 }
 function CodeBlockButton(proos: ButtonProps) {
   const { colorMode } = useColorMode();
@@ -62,7 +62,7 @@ export default function CodeContent({
   content,
   format,
   streamingMessage,
-  chartContent,
+  contentIsVegaLite,
 }: ICodeContentProps) {
   const { isOpen, onToggle } = useDisclosure({
     defaultIsOpen: false,
@@ -90,10 +90,10 @@ export default function CodeContent({
             )
           }
         >
-          {chartContent ? "Vega-Lite" : format}
+          {contentIsVegaLite ? "Vega-Lite" : format}
         </CodeBlockButton>
         <Spacer />
-        {chartContent && !streamingMessage && (
+        {contentIsVegaLite && !streamingMessage && (
           <CodeBlockButton
             leftIcon={<Icon as={FaChartBar} />}
             onClick={(e) => {

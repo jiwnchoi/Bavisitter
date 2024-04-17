@@ -37,7 +37,7 @@ export default function useContent(index: number) {
 
   const format = messages[index].format ?? "console";
 
-  const chartContent = isCodeVegaLite(messages[index]);
+  const contentIsVegaLite = isCodeVegaLite(messages[index]);
 
   const type = messages[index].type;
 
@@ -47,7 +47,7 @@ export default function useContent(index: number) {
     userName,
     contentWithoutCodeblock,
     streamingMessage,
-    chartContent,
+    contentIsVegaLite,
     format,
     type,
     ref,

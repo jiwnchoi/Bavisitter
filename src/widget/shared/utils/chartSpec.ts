@@ -42,10 +42,16 @@ export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
 }
 
 export const isCodeVegaLite = (m: IMessageWithRef) =>
-  m.type === "code" &&
-  m.format === "json" &&
-  m.content.trim().endsWith("}") &&
-  m.content.includes("$schema");
+  m.type === "code" && m.format === "json" && m.content.includes("$schema");
+
+export const isContentValidJSON = (content: string) => {
+  try {
+    JSON.parse(content);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
 export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
