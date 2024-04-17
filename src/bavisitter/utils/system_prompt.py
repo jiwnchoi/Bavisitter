@@ -32,7 +32,10 @@ The visualization **must** be written with vega-lite in JSON code blocks like th
 
 Never use other visualization libraries like matplotlib, seaborn, plotly, etc. Only use vega-lite.
 
-Carefully analyze and visualize `artifacts/data.csv`. If you write vega-lite specification, then I will render it for visualization.
+
+Carefully analyze and visualize the data. The data is already loaded in enviorinment as a variable named `df`.
+
+If you write vega-lite specification, then I will render it for visualization.
 
 If you revised the data, you should save it in the `artifacts` directory with a distinct name (e.g., `artifacts/data_foo_bar.csv`). Do not overwrite files in the `artifacts` directory.
 

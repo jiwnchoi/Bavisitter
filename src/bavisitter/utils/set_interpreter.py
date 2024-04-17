@@ -5,6 +5,11 @@ from bavisitter.utils.system_prompt import SYSTEM_PROMPT
 if TYPE_CHECKING:
   from interpreter import OpenInterpreter
 
+PRELOAD_SCRIPT = [
+  "import pandas as pd\ndel pd.DataFrame._repr_html_",
+  "df = pd.read_csv('artifacts/data.csv')",
+]
+
 
 def set_interpreter(
   interpreter: "OpenInterpreter",
@@ -19,7 +24,8 @@ def set_interpreter(
   interpreter.auto_run = auto_run
   interpreter.llm.max_tokens = 4096  # type: ignore
   interpreter.llm.context_window = 128_000  # type: ignore
-  interpreter.computer.terminal.run(
-    "python",
-    "import pandas as pd\ndel pd.DataFrame._repr_html_",
-  )
+  [
+    output
+    for script in PRELOAD_SCRIPT
+    for output in interpreter.computer.terminal.run("python", script)
+  ]
