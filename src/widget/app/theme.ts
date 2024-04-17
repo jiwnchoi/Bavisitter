@@ -1,7 +1,7 @@
 import { StyleFunctionProps, extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
-  initialColorMode: "light",
+  initialColorMode: "system",
   useSystemColorMode: true,
   components: {
     Container: {

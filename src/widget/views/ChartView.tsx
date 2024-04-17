@@ -1,5 +1,4 @@
-import { CenterProps, Flex } from "@chakra-ui/react";
-import { useColorMode } from "@hooks";
+import { CenterProps, Flex, useColorMode } from "@chakra-ui/react";
 import { useChartStore } from "@stores";
 import { Vega } from "react-vega";
 

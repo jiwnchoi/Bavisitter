@@ -1,14 +1,24 @@
-import { ChakraProvider, DarkMode, LightMode } from "@chakra-ui/react";
-import { useColorMode } from "@hooks";
+import { useModelState } from "@anywidget/react";
+import {
+  ChakraProvider,
+  DarkMode,
+  LightMode,
+  useColorMode,
+} from "@chakra-ui/react";
 import { TColorMode } from "@shared/types";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import ShadowRoot from "react-shadow/emotion";
 import theme from "./theme";
 
-function ColorMode({
-  colorMode,
-  children,
-}: PropsWithChildren<{ colorMode: TColorMode }>) {
+function ColorMode({ children }: PropsWithChildren<{}>) {
+  const { colorMode } = useColorMode();
+  const [modelColorMode] = useModelState<TColorMode>("color_mode");
+  const { setColorMode } = useColorMode();
+
+  useEffect(() => {
+    setColorMode(modelColorMode);
+  }, []);
+
   return (
     <>
       {colorMode === "light" ? (
@@ -21,8 +31,6 @@ function ColorMode({
 }
 
 function Providers({ children }: PropsWithChildren<{}>) {
-  const { colorMode } = useColorMode();
-
   return (
     <ShadowRoot.div
       id="shadow-root"
@@ -37,7 +45,7 @@ function Providers({ children }: PropsWithChildren<{}>) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <ColorMode colorMode={colorMode}>{children}</ColorMode>
+        <ColorMode>{children}</ColorMode>
       </ChakraProvider>
     </ShadowRoot.div>
   );

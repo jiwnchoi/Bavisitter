@@ -51,7 +51,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     sync=True
   )
   streaming = Bool(default_value=False).tag(sync=True)
-  color_mode = Unicode(default_value="light").tag(sync=True)
+  color_mode = Unicode(default_value="system").tag(sync=True)
   ipc_queue = List(Dict()).tag(sync=True)
 
   def __init__(
@@ -60,7 +60,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     model: str = "gpt-4-turbo-preview",
     safe_model: Literal["auto", "off"] = "auto",
     auto_run: bool = True,
-    color_mode: Literal["light", "dark"] = "light",
+    color_mode: Literal["light", "dark", "system"] = "system",
     artifact_path: str = "artifacts",
     use_cli: bool = False,
     **kwargs,
@@ -91,7 +91,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @default("color_mode")
   def _default_color_mode(self):
-    return "light"
+    return "system"
 
   @default("ipc_queue")
   def _default_ipc_queue(self):
@@ -99,8 +99,10 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @validate("color_mode")
   def _validate_color_mode(self, proposal):
-    if proposal["value"] not in ["light", "dark"]:
-      raise TraitError("Invalid color mode. Must be 'light' or 'dark'")
+    if proposal["value"] not in ["light", "dark", "system"]:
+      raise TraitError(
+        "Invalid color mode. Must be 'light' , 'dark' or 'system'"
+      )
 
     return proposal["value"]
 

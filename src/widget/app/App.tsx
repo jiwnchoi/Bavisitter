@@ -6,6 +6,7 @@ import Providers from "./Providers";
 const CHART_WIDTH = 400;
 const App = () => {
   useModelMessageEffect(CHART_WIDTH);
+
   const messages = useMessageStore((state) => state.messages);
   return (
     <Providers>

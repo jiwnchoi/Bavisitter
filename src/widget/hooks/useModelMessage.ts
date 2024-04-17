@@ -37,6 +37,7 @@ export function useModelMessage() {
 export function useModelMessageEffect(chartSize: number) {
   const [modelMessages] = useModelState<IMessage[]>("messages");
   const [modelStreaming] = useModelState<boolean>("streaming");
+
   const streaming = useMessageStore((state) => state.streaming);
   const setMessages = useMessageStore((state) => state.setMessages);
   const setStreaming = useMessageStore((state) => state.setStreaming);
