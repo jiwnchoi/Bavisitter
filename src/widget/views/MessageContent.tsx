@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 
 interface IMessageContentProps {
@@ -6,7 +6,7 @@ interface IMessageContentProps {
 }
 export default function MessageContent({ content }: IMessageContentProps) {
   return (
-    <Box dir="column" w="full">
+    <Flex flexDir="column" w="full">
       <Text as={"p"} fontSize="sm" whiteSpace={"pre-line"} lineHeight={"18px"}>
         <Markdown
           components={{
@@ -41,6 +41,6 @@ export default function MessageContent({ content }: IMessageContentProps) {
           {content}
         </Markdown>
       </Text>
-    </Box>
+    </Flex>
   );
 }

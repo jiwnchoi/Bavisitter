@@ -34,7 +34,7 @@ export function useModelMessage() {
   };
 }
 
-export function useModelMessageEffect() {
+export function useModelMessageEffect(chartSize: number) {
   const [modelMessages] = useModelState<IMessage[]>("messages");
   const [modelStreaming] = useModelState<boolean>("streaming");
   const streaming = useMessageStore((state) => state.streaming);
@@ -77,7 +77,7 @@ export function useModelMessageEffect() {
     const newCharts: IChartSpec[] = [];
 
     for await (const message of chartMessages) {
-      const spec = parseVegaLite(message.content, 500);
+      const spec = parseVegaLite(message.content, chartSize);
       const name = spec.data.name!;
       let _data = getArtifact(name);
       if (!_data) {

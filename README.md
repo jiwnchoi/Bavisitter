@@ -2,7 +2,6 @@
 
 <img width="1347" alt="image" src="https://github.com/jiwnchoi/Bavisitter/assets/2310571/6947496e-4275-4765-8d7b-f176740a6cad">
 
-
 ```python
 import os
 from bavisitter import Bavisitter

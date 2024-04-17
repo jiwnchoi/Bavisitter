@@ -1,5 +1,5 @@
 import { IMessageWithRef } from "@shared/types";
-import { isCodeVegaLite } from "@shared/utils";
+import { isCodeVegaLite, isContentValidJSON } from "@shared/utils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -23,7 +23,9 @@ const useMessageStore = create(
     streaming: false,
     computed: {
       get chartMessages() {
-        return get().messages.filter(isCodeVegaLite);
+        return get().messages.filter(
+          (m) => isCodeVegaLite(m) && isContentValidJSON(m.content),
+        );
       },
     },
 

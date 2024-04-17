@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "bavisitter"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = ["anywidget", "openai", "pandas", "open-interpreter", "open-interpreter[safe]"]
 readme = "README.md"
 
