@@ -1,4 +1,5 @@
 import { useMessageStore } from "@stores";
+import { Messages } from '@views';
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function useMessages() {
@@ -42,9 +43,18 @@ export default function useMessages() {
     [chatBoxRef],
   );
 
+  const scrollIntoChat = useCallback((chatIndex: number) => {
+    const message = messages.find(m => m.chatIndex === chatIndex);
+    if (message && message.ref.current) {
+      message.ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      
+    }
+  }, [Messages]);
+
   return {
     chatBoxRef,
     scrollToBottom,
     chatBoxAtBottom,
+    scrollIntoChat,
   };
 }

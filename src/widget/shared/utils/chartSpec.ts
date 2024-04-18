@@ -64,6 +64,7 @@ export async function getThumbnailFromSpec(
     ticks: false,
     labels: false,
   };
+
   newSpec.data = { values: _data };
   if (newSpec.encoding) {
     for (const key in newSpec.encoding) {
@@ -76,17 +77,19 @@ export async function getThumbnailFromSpec(
       }
     }
   }
-
+  
   if (newSpec.encoding?.x) {
-    if ("axis" in newSpec.encoding.x && newSpec.encoding.x.axis) {
-      newSpec.encoding.x.axis = thumbnailAxis;
+    if ('title' in newSpec.encoding.x) {
+      newSpec.encoding.x.title = "";
     }
+    newSpec.encoding.x = { ...newSpec.encoding.x, axis: thumbnailAxis };
   }
 
   if (newSpec.encoding?.y) {
-    if ("axis" in newSpec.encoding.y && newSpec.encoding.y.axis) {
-      newSpec.encoding.y.axis = thumbnailAxis;
+    if ('title' in newSpec.encoding.y) {
+      newSpec.encoding.y.title = "";
     }
+    newSpec.encoding.y = { ...newSpec.encoding.y, axis: thumbnailAxis };
   }
 
   const view = await embed(document.createElement("div"), newSpec, {
