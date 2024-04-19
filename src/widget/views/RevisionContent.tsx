@@ -186,6 +186,7 @@ export default function RevisionContent({
   const [revisionType, setRevisionType] = useState(0);
   useEffect(scrollToBottom, [detectResult]);
   if (!revisionViewDisplayed) return null;
+
   return (
     <Flex direction="row" maxW="full">
       <Flex minW={"32px"}>{<Avatar size="sm" name={"Bavisitter"} />}</Flex>

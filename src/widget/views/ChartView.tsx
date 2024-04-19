@@ -4,7 +4,7 @@ import { Vega } from "react-vega";
 
 export default function ChartView(props: CenterProps) {
   const { colorMode } = useColorMode();
-  const currentChart = useChartStore((state) => state.computed.currentChart);
+  const currentChart = useChartStore((state) => state.currentChart.state);
 
   return (
     <Flex {...props}>

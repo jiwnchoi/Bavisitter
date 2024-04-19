@@ -43,7 +43,7 @@ export default function useMessages() {
     const message = messages.find((m) => m.chatIndex === chatIndex);
     if (chatBoxRef.current && message && message.ref.current) {
       chatBoxRef.current.scrollTo({
-        top: message.ref.current.offsetTop,
+        top: message.ref.current.offsetTop - 32,
         behavior: "smooth",
       });
     }

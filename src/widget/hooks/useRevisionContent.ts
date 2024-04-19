@@ -19,8 +19,9 @@ export default function useRevisionContent() {
   const [detectResult, setDetectorResult] = useState<
     IDetectorResultWithSelection[]
   >([]);
-
-  const lastChart = useChartStore((state) => state.computed.lastChart);
+  const charts = useChartStore((state) => state.charts);
+  const [lastDetectedChart, setLastDetectedChart] = useState<number>(-1);
+  const lastChart = charts[charts.length - 1];
   const lastUserMessage = messages.findLastIndex((m) => m.role === "user");
   const lastChartIndex = lastChart ? lastChart.chatIndex : 0;
   const revisionViewDisplayed =
@@ -31,7 +32,8 @@ export default function useRevisionContent() {
     detectResult.length > 0;
 
   useEffect(() => {
-    if (!lastChart) return;
+    if (!lastChart || lastDetectedChart === lastChartIndex) return;
+
     const { spec, data } = lastChart;
     if (spec && data) {
       const records = data[spec.data.name!] as any[];
@@ -45,6 +47,7 @@ export default function useRevisionContent() {
             })),
           );
           setDetecting(false);
+          setLastDetectedChart(lastChartIndex);
         });
       } catch (e) {
         console.error(e);

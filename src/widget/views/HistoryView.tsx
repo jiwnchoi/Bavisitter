@@ -33,9 +33,9 @@ const HistoryView = (props: ThumbnailViewProps) => {
               minW={thumbnailSize}
               minH={thumbnailSize}
               onClick={() => {
-                scrollToContentByIndex(chart.chatIndex);
                 setCurrentChartByChatIndex(chart.chatIndex);
                 toggleCodeBlock(chart.chatIndex)(true);
+                scrollToContentByIndex(chart.chatIndex);
               }}
               cursor="pointer"
               _hover={{ opacity: 0.5 }}
