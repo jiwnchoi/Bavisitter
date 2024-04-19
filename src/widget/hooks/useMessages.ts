@@ -1,6 +1,5 @@
 import { useMessageStore } from "@stores";
-import { Messages } from '@views';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function useMessages() {
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -31,30 +30,29 @@ export default function useMessages() {
     }
   }, [messages]);
 
-  const scrollToBottom = useCallback(
-    (behavior: ScrollBehavior = "instant") => {
-      if (chatBoxRef.current) {
-        chatBoxRef.current.scrollTo({
-          top: chatBoxRef.current.scrollHeight,
-          behavior,
-        });
-      }
-    },
-    [chatBoxRef],
-  );
-
-  const scrollIntoChat = useCallback((chatIndex: number) => {
-    const message = messages.find(m => m.chatIndex === chatIndex);
-    if (message && message.ref.current) {
-      message.ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      
+  const scrollToBottom = (behavior: ScrollBehavior = "instant") => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior,
+      });
     }
-  }, [Messages]);
+  };
+
+  const scrollToContentByIndex = (chatIndex: number) => {
+    const message = messages.find((m) => m.chatIndex === chatIndex);
+    if (chatBoxRef.current && message && message.ref.current) {
+      chatBoxRef.current.scrollTo({
+        top: message.ref.current.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return {
     chatBoxRef,
-    scrollToBottom,
     chatBoxAtBottom,
-    scrollIntoChat,
+    scrollToBottom,
+    scrollToContentByIndex,
   };
 }

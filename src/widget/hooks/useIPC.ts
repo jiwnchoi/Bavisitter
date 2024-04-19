@@ -7,6 +7,7 @@ interface IIPCModel {
   type: "request" | "response";
   endpoint: string;
   content: any;
+  message: string | null;
   uuid: string;
 }
 
@@ -25,7 +26,7 @@ function useIPC() {
     const uuid = Math.random().toString(36).substring(7);
     setIPCQueue([
       ...ipcQueue,
-      { type: "request", endpoint: type, content: data, uuid },
+      { type: "request", endpoint: type, message: null, content: data, uuid },
     ]);
 
     return new Promise<T>((resolve, reject) => {
@@ -38,12 +39,11 @@ function useIPC() {
     });
   }
   useEffect(() => {
-    const lastMessage = ipcQueue[ipcQueue.length - 1];
-    if (!lastMessage || lastMessage.type !== "response") {
-      return;
-    }
-
-    handleMessage(lastMessage);
+    ipcQueue.forEach((message) => {
+      if (message.type === "response") {
+        handleMessage(message);
+      }
+    });
   }, [ipcQueue]);
 
   return { fetchModel };

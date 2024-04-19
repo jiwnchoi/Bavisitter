@@ -7,10 +7,8 @@ import {
   Spacer,
   Spinner,
   useColorMode,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { useChartStore } from "@stores";
-import { useRef } from "react";
+import { useCodeContent } from "@hooks";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
@@ -49,15 +47,9 @@ export default function CodeContent({
   streamingMessage,
   contentIsVegaLite,
 }: ICodeContentProps) {
-  const { isOpen, onToggle } = useDisclosure({
-    defaultIsOpen: false,
-  });
-  const setCurrentChartByChatIndex = useChartStore(
-    (state) => state.setCurrentChartByChatIndex,
-  );
   const { colorMode } = useColorMode();
-  const ref = useRef<HTMLDivElement>(null);
-
+  const { ref, onToggle, isOpen, setCurrentChartByChatIndex } =
+    useCodeContent(index);
   return (
     <Flex
       flexDir="column"
@@ -109,7 +101,7 @@ export default function CodeContent({
           Copy Code
         </CodeBlockButton>
       </Flex>
-      <Collapse in={isOpen} animateOpacity unmountOnExit>
+      <Collapse in={isOpen} unmountOnExit>
         <SyntaxHighlighter
           language={format}
           wrapLongLines={false}
