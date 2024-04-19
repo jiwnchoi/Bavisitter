@@ -140,16 +140,18 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             {
               "type": "response",
               "content": data,
+              "message": "success",
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
           ]
-        except Exception:
+        except Exception as e:
           self.ipc_queue = [
             *self.ipc_queue,
             {
               "type": "response",
               "content": None,
+              "message": str(e),
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
@@ -169,12 +171,13 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
               "uuid": change["new"][-1]["uuid"],
             },
           ]
-        except Exception:
+        except Exception as e:
           self.ipc_queue = [
             *self.ipc_queue,
             {
               "type": "response",
               "content": None,
+              "message": str(e),
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
@@ -186,6 +189,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
           {
             "type": "response",
             "content": None,
+            "message": "Invalid endpoint",
             "endpoint": change["new"][-1]["endpoint"],
             "uuid": change["new"][-1]["uuid"],
           },
