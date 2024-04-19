@@ -1,5 +1,6 @@
 import { IMessageWithRef } from "@shared/types";
 import { cloneDeep } from "lodash-es";
+import style from "react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark";
 import embed from "vega-embed";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
@@ -26,6 +27,11 @@ export function parseVegaLite(
     background: "transparent",
     autosize: { type: "fit", contains: "padding" },
     legend: { orient: "bottom" },
+    style: {
+      cell: {
+        stroke: "transparent",
+      },
+    },
   };
   return spec;
 }
@@ -57,14 +63,27 @@ export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
   _data: any,
 ): Promise<string> {
-  const newSpec = cloneDeep(spec);
+  let newSpec = cloneDeep(spec);
   const thumbnailAxis = {
+    disable: true,
     title: "",
     grid: false,
     ticks: false,
     labels: false,
   };
-  newSpec.data = { values: _data };
+  newSpec = {
+    ...newSpec,
+    width: 80,
+    height: 80,
+    config: {
+      ...newSpec.config,
+      mark: {
+        strokeWidth: 0.1,
+      },
+    },
+    data: { values: _data },
+  };
+
   if (newSpec.encoding) {
     for (const key in newSpec.encoding) {
       if (
@@ -78,15 +97,17 @@ export async function getThumbnailFromSpec(
   }
 
   if (newSpec.encoding?.x) {
-    if ("axis" in newSpec.encoding.x && newSpec.encoding.x.axis) {
-      newSpec.encoding.x.axis = thumbnailAxis;
+    if ("title" in newSpec.encoding.x) {
+      newSpec.encoding.x.title = "";
     }
+    newSpec.encoding.x = { ...newSpec.encoding.x, axis: thumbnailAxis };
   }
 
   if (newSpec.encoding?.y) {
-    if ("axis" in newSpec.encoding.y && newSpec.encoding.y.axis) {
-      newSpec.encoding.y.axis = thumbnailAxis;
+    if ("title" in newSpec.encoding.y) {
+      newSpec.encoding.y.title = "";
     }
+    newSpec.encoding.y = { ...newSpec.encoding.y, axis: thumbnailAxis };
   }
 
   const view = await embed(document.createElement("div"), newSpec, {

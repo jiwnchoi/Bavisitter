@@ -168,7 +168,7 @@ function IssueItem({
 }
 
 interface IRevisionContentProps {
-  scrollToBottom: () => void;
+  scrollToBottom: (behavior?: ScrollBehavior) => void;
 }
 
 export default function RevisionContent({
