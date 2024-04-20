@@ -1,14 +1,9 @@
 from typing import TYPE_CHECKING, Literal
 
-from bavisitter.utils.system_prompt import SYSTEM_PROMPT
+from bavisitter.utils.system_prompt import get_system_prompt
 
 if TYPE_CHECKING:
   from interpreter import OpenInterpreter
-
-PRELOAD_SCRIPT = [
-  "import pandas as pd\ndel pd.DataFrame._repr_html_",
-  "df = pd.read_csv('artifacts/data.csv')",
-]
 
 
 def set_interpreter(
@@ -16,9 +11,15 @@ def set_interpreter(
   model: str = "gpt-4-turbo",
   safe_mode: Literal["off", "auto"] = "auto",
   auto_run: bool = True,
-  system_prompt: str = SYSTEM_PROMPT,
+  artifact_path: str = "artifacts",
 ):
-  interpreter.system_message = system_prompt
+  PRELOAD_SCRIPT = [
+    "import pandas as pd\ndel pd.DataFrame._repr_html_",
+    "df = pd.read_csv('artifact_path/data.csv')".replace(
+      "artifact_path", artifact_path
+    ),
+  ]
+  interpreter.system_message = get_system_prompt(artifact_path)
   interpreter.llm.model = model
   interpreter.safe_mode = safe_mode
   interpreter.auto_run = auto_run

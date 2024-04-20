@@ -82,7 +82,13 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     self.use_cli = use_cli
     # initialize the open interpreter
     self.interpreter = OpenInterpreter()
-    set_interpreter(self.interpreter, model, safe_model, auto_run)
+    set_interpreter(
+      self.interpreter,
+      model,
+      safe_model,
+      auto_run,
+      artifact_path,
+    )
 
   @default("messages")
   def _default_messages(self):

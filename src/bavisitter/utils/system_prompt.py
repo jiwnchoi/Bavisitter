@@ -22,7 +22,7 @@ The visualization **must** be written with vega-lite in JSON code blocks like th
 ```json
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "data": {"url": "artifacts/data.csv"},
+    "data": {"url": "artifact_path/data.csv"},
     "mark": "bar",
     "encoding": {
         "x": {"field": "a", "type": "ordinal"},
@@ -37,9 +37,15 @@ Carefully analyze and visualize the data. The data is already loaded in enviorin
 
 If you write vega-lite specification, then I will render it for visualization.
 
-If you revised the data, you should save it in the `artifacts` directory with a distinct name (e.g., `artifacts/data_foo_bar.csv`). Do not overwrite files in the `artifacts` directory.
+If you revised the data, you should save it in the `artifact_path` directory with a distinct name (e.g., `artifact_path/data_foo_bar.csv`). Do not overwrite files in the `artifact_path` directory.
 
 The user's need is as follows:
 
 """.strip()
-__all__ = ["SYSTEM_PROMPT"]
+
+
+def get_system_prompt(artifact_path: str = "artifact"):
+  return SYSTEM_PROMPT.replace("artifact_path", artifact_path)
+
+
+__all__ = ["get_system_prompt"]
