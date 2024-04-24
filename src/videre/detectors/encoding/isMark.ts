@@ -15,10 +15,15 @@ export const isPieChart = (state: State) => {
   );
 };
 
-export function isMark(mark: AnyMark[]) {
+export function isMark(marks: AnyMark[]) {
   return (state: State) => {
     const { spec } = state;
-    return mark.includes(
+    console.log(
+      marks.includes(
+        typeof spec.mark === "object" ? spec.mark.type : spec.mark,
+      ),
+    );
+    return marks.includes(
       typeof spec.mark === "object" ? spec.mark.type : spec.mark,
     );
   };

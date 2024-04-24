@@ -20,7 +20,7 @@ const manifest: IManifest[] = [
       type: "data",
       level: "soft",
       description: "Values for theta channel are balanced.",
-      detect: and(isMark(["arc"]), isDataBalanced("theta")),
+      detect: await and(isMark(["arc"]), isDataBalanced("theta")),
     },
     actuator: {
       type: "spec",
@@ -33,10 +33,10 @@ const manifest: IManifest[] = [
       type: "data",
       level: "soft",
       description: "Data on x-axis is skewed positive.",
-      detect: and(
+      detect: await and(
         isChannelProp("x", "type", "quantitative"),
         isDataSkewed("x", "positive"),
-        not(isChannelProp("x", "scale", { type: "log" })),
+        await not(isChannelProp("x", "scale", { type: "log" })),
       ),
     },
     actuator: {
@@ -56,10 +56,10 @@ const manifest: IManifest[] = [
       type: "data",
       level: "soft",
       description: "Data on y-axis is skewed positive.",
-      detect: and(
+      detect: await and(
         isChannelProp("y", "type", "quantitative"),
         isDataSkewed("y", "positive"),
-        not(isChannelProp("y", "scale", { type: "log" })),
+        await not(isChannelProp("y", "scale", { type: "log" })),
       ),
     },
     actuator: {
@@ -79,10 +79,10 @@ const manifest: IManifest[] = [
       type: "data",
       level: "soft",
       description: "Data on x-axis is skewed negative.",
-      detect: and(
+      detect: await and(
         isChannelProp("x", "type", "quantitative"),
         isDataSkewed("x", "negative"),
-        not(isChannelProp("x", "scale", { type: "pow" })),
+        await not(isChannelProp("x", "scale", { type: "pow" })),
       ),
     },
     actuator: {
@@ -96,10 +96,10 @@ const manifest: IManifest[] = [
       type: "data",
       level: "soft",
       description: "Data on y-axis is skewed negative.",
-      detect: and(
+      detect: await and(
         isChannelProp("y", "type", "quantitative"),
         isDataSkewed("y", "negative"),
-        not(isChannelProp("y", "scale", { type: "pow" })),
+        await not(isChannelProp("y", "scale", { type: "pow" })),
       ),
     },
     actuator: {
@@ -113,7 +113,7 @@ const manifest: IManifest[] = [
       type: "perception",
       level: "soft",
       description: "Marks are overplotted.",
-      detect: and(isMark(["point", "circle"]), isOverplotted),
+      detect: await and(isMark(["point", "circle"]), isOverplotted),
     },
     actuator: {
       type: "spec",

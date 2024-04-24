@@ -55,7 +55,9 @@ export default function useRevisionContent() {
     }
   }, [lastChart]);
 
-  const reviseLastChartWithAction = () => {
+  const reviseLastChartWithAction = (
+    detectResult: IDetectorResultWithSelection[],
+  ) => {
     if (!lastChart) return;
     const { spec, data } = lastChart;
 
@@ -87,7 +89,9 @@ export default function useRevisionContent() {
     }
   };
 
-  const reviseLastChartWithPrompt = () => {
+  const reviseLastChartWithPrompt = (
+    detectResult: IDetectorResultWithSelection[],
+  ) => {
     appendMessages([
       {
         role: "user",
@@ -97,7 +101,9 @@ export default function useRevisionContent() {
     ]);
   };
 
-  const reviseLastChartWithProblem = () => {
+  const reviseLastChartWithProblem = (
+    detectResult: IDetectorResultWithSelection[],
+  ) => {
     appendMessages([
       {
         role: "user",

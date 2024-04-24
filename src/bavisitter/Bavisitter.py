@@ -53,12 +53,16 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   streaming = Bool(default_value=False).tag(sync=True)
   color_mode = Unicode(default_value="system").tag(sync=True)
   ipc_queue = List(Dict()).tag(sync=True)
+  advisor = Unicode(default_value="prompt").tag(sync=True)
+  auto_fix = Bool(default_value=True).tag(sync=True)
 
   def __init__(
     self,
     df: pd.DataFrame,
     model: str = "gpt-4-turbo-preview",
     safe_model: Literal["auto", "off"] = "auto",
+    advisor: Literal["advisor", "prompt", "none"] = "prompt",
+    auto_fix: bool = True,
     auto_run: bool = True,
     color_mode: Literal["light", "dark", "system"] = "system",
     artifact_path: str = "artifacts",
@@ -77,6 +81,8 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     # set widget properties
     self.model = model
+    self.advisor = advisor
+    self.auto_fix = auto_fix
     self.chunks = []
     self.color_mode = color_mode
     self.use_cli = use_cli

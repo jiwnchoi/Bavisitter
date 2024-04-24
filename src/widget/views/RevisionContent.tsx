@@ -1,3 +1,4 @@
+import { useModelState } from "@anywidget/react";
 import {
   Avatar,
   Button,
@@ -13,18 +14,19 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useRevisionView } from "@hooks";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FaTools } from "react-icons/fa";
 import { FaAngleDown, FaBaby, FaBabyCarriage } from "react-icons/fa6";
 
-const REVISE_WITH_ACTUATOR = 0;
-const REVISE_WITH_SOLUTION = 1;
-const REVISE_WITH_ISSUE = 2;
+type TRevisionType = "advisor" | "prompt" | "none";
+const REVISE_WITH_ACTUATOR = "advisor";
+const REVISE_WITH_SOLUTION = "prompt";
+const REVISE_WITH_ISSUE = "none";
 
 interface IRevisionButtonProps {
   disabled: boolean;
-  revisionType: number;
-  setRevisionType: (revisionType: number) => void;
+  revisionType: TRevisionType;
+  setRevisionType: (revisionType: TRevisionType) => void;
   reviseLastChartWithAction: () => void;
   reviseLastChartWithProblem: () => void;
   reviseLastChartWithPrompt: () => void;
@@ -38,30 +40,30 @@ function RevisionButton({
   reviseLastChartWithProblem,
   reviseLastChartWithPrompt,
 }: IRevisionButtonProps) {
-  const actionTypes = [
-    {
+  const actionTypes = {
+    advisor: {
       label: "with Actuator",
       Icon: <Icon as={FaTools} />,
       setRevisionType: () => setRevisionType(REVISE_WITH_ACTUATOR),
       colorSchenme: "green",
       revise: reviseLastChartWithAction,
     },
-    {
+    prompt: {
       label: "with Action Prompt",
       Icon: <Icon as={FaBabyCarriage} />,
       setRevisionType: () => setRevisionType(REVISE_WITH_SOLUTION),
       colorSchenme: "orange",
       revise: reviseLastChartWithPrompt,
     },
-    {
+    none: {
       label: "with LLM Desicion",
       Icon: <Icon as={FaBaby} />,
       setRevisionType: () => setRevisionType(REVISE_WITH_ISSUE),
       colorSchenme: "red",
       revise: reviseLastChartWithProblem,
     },
-  ];
-
+  };
+  console.log(revisionType);
   return (
     <Flex w="full">
       <Button
@@ -90,19 +92,22 @@ function RevisionButton({
           onClick={() => {}}
         />
         <MenuList>
-          {actionTypes.map((action, index) => (
-            <MenuItem
-              as={Button}
-              size={"xs"}
-              variant={"ghost"}
-              colorScheme={action.colorSchenme}
-              icon={action.Icon}
-              key={index}
-              onClick={action.setRevisionType}
-            >
-              {action.label}
-            </MenuItem>
-          ))}
+          {Object.values(actionTypes).map((action, index) => {
+            console.log(action);
+            return (
+              <MenuItem
+                as={Button}
+                size={"xs"}
+                variant={"ghost"}
+                colorScheme={action["colorSchenme"]}
+                icon={action["Icon"]}
+                key={index}
+                onClick={action["setRevisionType"]}
+              >
+                {action["label"]}
+              </MenuItem>
+            );
+          })}
         </MenuList>
       </Menu>
     </Flex>
@@ -118,7 +123,7 @@ function IssueItem({
 }: {
   problem: string;
   solution: string;
-  revisionType: number;
+  revisionType: TRevisionType;
   selected: boolean;
   setDetectResult: (selected: boolean) => void;
 }) {
@@ -183,8 +188,21 @@ export default function RevisionContent({
     setDetectResult,
   } = useRevisionView();
 
-  const [revisionType, setRevisionType] = useState(0);
+  const [revisionType, setRevisionType] =
+    useModelState<TRevisionType>("advisor");
   useEffect(scrollToBottom, [detectResult]);
+
+  useEffect(() => {
+    if (!revisionViewDisplayed) return;
+    if (revisionType === REVISE_WITH_ISSUE) {
+      reviseLastChartWithProblem(detectResult);
+    } else if (revisionType === REVISE_WITH_SOLUTION) {
+      reviseLastChartWithPrompt(detectResult);
+    } else if (revisionType === REVISE_WITH_ACTUATOR) {
+      reviseLastChartWithAction(detectResult);
+    }
+  }, [detectResult]);
+
   if (!revisionViewDisplayed) return null;
 
   return (
@@ -220,9 +238,15 @@ export default function RevisionContent({
             revisionType={revisionType}
             setRevisionType={setRevisionType}
             disabled={detectResult.every((result) => !result.selected)}
-            reviseLastChartWithAction={reviseLastChartWithAction}
-            reviseLastChartWithProblem={reviseLastChartWithProblem}
-            reviseLastChartWithPrompt={reviseLastChartWithPrompt}
+            reviseLastChartWithAction={() => {
+              reviseLastChartWithAction(detectResult);
+            }}
+            reviseLastChartWithProblem={() => {
+              reviseLastChartWithProblem(detectResult);
+            }}
+            reviseLastChartWithPrompt={() => {
+              reviseLastChartWithPrompt(detectResult);
+            }}
           />
         </Flex>
       </Flex>

@@ -82,6 +82,7 @@ export async function getThumbnailFromSpec(
       },
     },
     data: { values: _data },
+    title: undefined,
   };
 
   if (newSpec.encoding) {

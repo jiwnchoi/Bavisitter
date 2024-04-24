@@ -1,6 +1,7 @@
 import { State } from "videre/model";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { cloneDeep } from "lodash-es";
+import { getMarkOpacity } from "videre/utils";
 export function convertPieToBar(state: State) {
   const { spec } = state;
   const newSpec = {
@@ -35,18 +36,24 @@ const MIN_OPACITY = 0.2;
 
 export const reduceOpacity = (state: State) => {
   const { spec } = state;
-  const newSpec = cloneDeep(spec);
-
-  let currentOpacity = 0.7;
-  if (typeof newSpec.mark === "string") {
-    newSpec.mark = {
-      type: newSpec.mark,
-      opacity: MIN_OPACITY + (0.7 - MIN_OPACITY) / 2,
-    };
-  } else {
-    currentOpacity = newSpec.mark.opacity as number;
-    newSpec.mark.opacity = MIN_OPACITY + (currentOpacity - MIN_OPACITY) / 2;
-  }
+  const currentOpacity = getMarkOpacity(spec);
+  const newOpacity = Math.max(
+    MIN_OPACITY,
+    Math.round((MIN_OPACITY + (currentOpacity - MIN_OPACITY) / 2) * 100) / 100,
+  );
+  const newSpec = {
+    ...cloneDeep(spec),
+    mark:
+      typeof spec.mark === "string"
+        ? {
+            type: spec.mark,
+            opacity: newOpacity,
+          }
+        : {
+            ...spec.mark,
+            opacity: newOpacity,
+          },
+  };
 
   return state.updateSpec(newSpec);
 };
