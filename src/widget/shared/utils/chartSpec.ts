@@ -73,12 +73,15 @@ export async function getThumbnailFromSpec(
   };
   newSpec = {
     ...newSpec,
-    width: 80,
-    height: 80,
+    width: 200,
+    height: 200,
     config: {
       ...newSpec.config,
       mark: {
         strokeWidth: 0.1,
+      },
+      legend: {
+        disable: true,
       },
     },
     data: { values: _data },

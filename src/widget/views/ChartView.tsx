@@ -13,7 +13,7 @@ export default function ChartView(props: CenterProps) {
           mode={"vega-lite"}
           spec={currentChart.spec}
           data={currentChart.data}
-          actions={false}
+          actions={true}
           theme={colorMode === "light" ? undefined : "dark"}
         />
       )}

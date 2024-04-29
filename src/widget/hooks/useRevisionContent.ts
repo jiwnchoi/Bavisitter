@@ -1,13 +1,9 @@
 import { detectResultToContent, stringfyVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect, useState } from "react";
-import { detect, revise, type IDetectorResult } from "videre/index";
+import { IDetectorResultWithSelection, detect, revise } from "videre/index";
 import useIPC from "./useIPC";
 import { useModelMessage } from "./useModelMessage";
-
-type IDetectorResultWithSelection = IDetectorResult & {
-  selected: boolean;
-};
 
 export default function useRevisionContent() {
   const messages = useMessageStore((state) => state.messages);
@@ -43,7 +39,10 @@ export default function useRevisionContent() {
           setDetectorResult(
             prompts.map((p) => ({
               ...p,
-              selected: true,
+              resolvers: p.resolvers.map((r) => ({
+                ...r,
+                selected: false,
+              })),
             })),
           );
           setDetecting(false);
@@ -66,7 +65,9 @@ export default function useRevisionContent() {
       const { spec: revisedSpec, data: revisedData } = revise(
         spec,
         records,
-        detectResult.filter((r) => r.selected),
+        detectResult
+          .flatMap((r) => r.resolvers.filter((r) => r.selected))
+          .map((r) => r.id),
       );
       appendArtifact(revisedSpec.data.name!, revisedData);
       fetchModel("save_artifact", {
@@ -113,12 +114,25 @@ export default function useRevisionContent() {
     ]);
   };
 
+  const setResolver = (id: string) => (selected: boolean) => {
+    setDetectorResult(
+      detectResult.map((d) => ({
+        ...d,
+        resolvers: d.resolvers.map((r) =>
+          r.id === id ? { ...r, selected } : r,
+        ),
+      })),
+    );
+  };
+
   const setDetectResult = (index: number) => (selected: boolean) => {
     setDetectorResult([
       ...detectResult.slice(0, index),
       {
         ...detectResult[index],
-        selected,
+        resolvers: detectResult[index].resolvers.map((r) =>
+          r.selected === selected ? r : { ...r, selected },
+        ),
       },
       ...detectResult.slice(index + 1),
     ]);
@@ -132,5 +146,6 @@ export default function useRevisionContent() {
     reviseLastChartWithPrompt,
     reviseLastChartWithProblem,
     setDetectResult,
+    setResolver,
   };
 }

@@ -2,6 +2,19 @@ import { State } from "videre/model";
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 import { cloneDeep } from "lodash-es";
 import { getMarkOpacity } from "videre/utils";
+import { AnyMark } from "vega-lite/build/src/mark";
+
+export function replaceMark(mark: AnyMark) {
+  return (state: State) => {
+    const { spec } = state;
+    const newSpec = {
+      ...cloneDeep(spec),
+      mark,
+    } as TopLevelUnitSpec<string>;
+    return state.updateSpec(newSpec);
+  };
+}
+
 export function convertPieToBar(state: State) {
   const { spec } = state;
   const newSpec = {
@@ -25,12 +38,13 @@ export function convertScatterToHeatmap(state: State) {
       x: { ...spec.encoding?.x, bin: true },
       y: { ...spec.encoding?.y, bin: true },
       color: {
-        field: "count()",
+        aggregate: "count",
+        type: "quantitative",
       },
     },
-  };
+  } as TopLevelUnitSpec<string>;
 
-  return { ...state, spec: newSpec };
+  return state.updateSpec(newSpec);
 }
 const MIN_OPACITY = 0.2;
 

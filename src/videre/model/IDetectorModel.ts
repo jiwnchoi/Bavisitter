@@ -3,8 +3,9 @@ import TDetectorLevel from "./TDetectorLevel";
 import TDetectorType from "./TDetectorType";
 
 export default interface IDetectorModel {
-  type: TDetectorType;
+  id: string;
+  type?: TDetectorType;
   description: string;
-  level: TDetectorLevel;
+  level?: TDetectorLevel;
   detect: (state: State) => boolean | Promise<boolean>;
 }

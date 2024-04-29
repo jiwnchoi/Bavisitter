@@ -1,6 +1,8 @@
 import { useModelState } from "@anywidget/react";
 import {
   Avatar,
+  Badge,
+  Box,
   Button,
   Checkbox,
   Fade,
@@ -17,6 +19,8 @@ import { useRevisionView } from "@hooks";
 import { useEffect } from "react";
 import { FaTools } from "react-icons/fa";
 import { FaAngleDown, FaBaby, FaBabyCarriage } from "react-icons/fa6";
+import { IDetectorModel } from "videre/model";
+import IResolverModel from "videre/model/IActuatorModel";
 
 type TRevisionType = "advisor" | "prompt" | "none";
 const REVISE_WITH_ACTUATOR = "advisor";
@@ -63,7 +67,6 @@ function RevisionButton({
       revise: reviseLastChartWithProblem,
     },
   };
-  console.log(revisionType);
   return (
     <Flex w="full">
       <Button
@@ -93,7 +96,6 @@ function RevisionButton({
         />
         <MenuList>
           {Object.values(actionTypes).map((action, index) => {
-            console.log(action);
             return (
               <MenuItem
                 as={Button}
@@ -115,17 +117,17 @@ function RevisionButton({
 }
 
 function IssueItem({
-  problem,
-  solution,
+  issue,
+  resolvers,
   revisionType,
-  selected,
-  setDetectResult,
+  setResolver,
 }: {
-  problem: string;
-  solution: string;
+  issue: Pick<IDetectorModel, "type" | "id" | "description">;
+  resolvers: (Pick<IResolverModel, "id" | "description"> & {
+    selected: boolean;
+  })[];
   revisionType: TRevisionType;
-  selected: boolean;
-  setDetectResult: (selected: boolean) => void;
+  setResolver: (id: string) => (selected: boolean) => void;
 }) {
   return (
     <Flex
@@ -136,38 +138,44 @@ function IssueItem({
       p={4}
       borderRadius={8}
     >
-      <Text
-        fontWeight={700}
-        fontSize={"sm"}
-        opacity={selected ? 1 : 0.2}
-        transitionDuration={"0.2s"}
-      >
-        {problem}
-      </Text>
-
-      <Flex
-        flexDir={"row"}
-        gap={2}
-        onClick={() => setDetectResult(!selected)}
-        _hover={{ cursor: "pointer" }}
-        align={"start"}
-      >
-        <Checkbox
-          size="sm"
-          isChecked={selected}
-          mt={0.5}
-          onChange={(e) => {
-            setDetectResult(!e.target.checked);
-          }}
-        />
-        <Text
-          fontSize="sm"
-          opacity={selected ? 0.7 : 0.2}
-          transitionDuration={"0.2s"}
-        >
-          {revisionType !== REVISE_WITH_ISSUE ? solution : "Revise this issue"}
+      <Flex direction={"column"} gap={1}>
+        <Box>
+          <Badge ml={-0.5} variant={"subtle"} colorScheme="red">
+            {issue.type}
+          </Badge>
+        </Box>
+        <Text fontWeight={700} fontSize={"sm"} transitionDuration={"0.2s"}>
+          {issue.description}
         </Text>
       </Flex>
+
+      {revisionType !== "none" &&
+        resolvers.map((resolver, index) => (
+          <Flex
+            key={`resolver-${index}`}
+            flexDir={"row"}
+            gap={2}
+            onClick={() => setResolver(resolver.id)(!resolver.selected)}
+            _hover={{ cursor: "pointer" }}
+            align={"start"}
+          >
+            <Checkbox
+              size="sm"
+              isChecked={resolver.selected}
+              mt={0.5}
+              onChange={(e) => {
+                setResolver(resolver.id)(!e.target.checked);
+              }}
+            />
+            <Text
+              fontSize="sm"
+              opacity={resolver.selected ? 0.7 : 0.2}
+              transitionDuration={"0.2s"}
+            >
+              {resolver.description}
+            </Text>
+          </Flex>
+        ))}
     </Flex>
   );
 }
@@ -185,14 +193,16 @@ export default function RevisionContent({
     reviseLastChartWithAction,
     reviseLastChartWithProblem,
     reviseLastChartWithPrompt,
-    setDetectResult,
+    setResolver,
   } = useRevisionView();
 
   const [revisionType, setRevisionType] =
     useModelState<TRevisionType>("advisor");
+  const [autoFix] = useModelState<boolean>("auto_fix");
   useEffect(scrollToBottom, [detectResult]);
 
   useEffect(() => {
+    if (!autoFix) return;
     if (!revisionViewDisplayed) return;
     if (revisionType === REVISE_WITH_ISSUE) {
       reviseLastChartWithProblem(detectResult);
@@ -204,7 +214,6 @@ export default function RevisionContent({
   }, [detectResult]);
 
   if (!revisionViewDisplayed) return null;
-
   return (
     <Flex direction="row" maxW="full">
       <Flex minW={"32px"}>{<Avatar size="sm" name={"Bavisitter"} />}</Flex>
@@ -217,7 +226,7 @@ export default function RevisionContent({
           <Text>{`Current Vega Lite visualization has following issues.`}</Text>
 
           <SimpleGrid columns={3} gap={2} minChildWidth={"200px"}>
-            {detectResult.map(({ problem, solution, selected }, index) => (
+            {detectResult.map(({ issue, resolvers }, index) => (
               <Fade
                 in={true}
                 key={`revisionItem-${index}`}
@@ -225,11 +234,10 @@ export default function RevisionContent({
               >
                 <IssueItem
                   key={`issueItem${index}`}
-                  problem={problem}
-                  solution={solution}
+                  issue={issue}
+                  resolvers={resolvers}
                   revisionType={revisionType}
-                  selected={selected}
-                  setDetectResult={setDetectResult(index)}
+                  setResolver={setResolver}
                 />
               </Fade>
             ))}
@@ -237,7 +245,10 @@ export default function RevisionContent({
           <RevisionButton
             revisionType={revisionType}
             setRevisionType={setRevisionType}
-            disabled={detectResult.every((result) => !result.selected)}
+            disabled={
+              revisionType !== "none" &&
+              detectResult.flatMap((d) => d.resolvers).every((r) => !r.selected)
+            }
             reviseLastChartWithAction={() => {
               reviseLastChartWithAction(detectResult);
             }}
