@@ -6,5 +6,5 @@ export default interface IResolverModel {
   type?: TActuatorType;
   trigger: (state: State) => boolean | Promise<boolean>;
   description: string;
-  resolve: ((state: State) => State)[];
+  resolve?: ((state: State) => State)[];
 }

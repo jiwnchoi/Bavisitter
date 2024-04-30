@@ -78,7 +78,7 @@ export async function getThumbnailFromSpec(
     config: {
       ...newSpec.config,
       mark: {
-        strokeWidth: 0.1,
+        strokeWidth: newSpec.mark === "line" ? 4 : 0,
       },
       legend: {
         disable: true,

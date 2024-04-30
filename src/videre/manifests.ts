@@ -1,8 +1,5 @@
-import {
-  removeMissingValue,
-  removeNegativeValues,
-  removeZeroValues,
-} from "videre/actions/data";
+import { Encoding } from "vega-lite/build/src/encoding";
+import { removeNegativeValues, removeZeroValues } from "videre/actions/data";
 import {
   applyScale,
   convertPieToBar,
@@ -15,18 +12,36 @@ import { isChannelProp, isMark } from "videre/detectors/encoding";
 import { isOverplotted } from "videre/detectors/perception";
 import { IManifestManual } from "videre/model";
 import { applyJitter } from "./actions/spec/jittering";
-import { and, not } from "./utils";
+import { isCardinalityExcessive } from "./detectors/data/isCardinality";
+import { and, asyncAnd, not } from "./utils";
 
 const manifest: IManifestManual[] = [
+  ...["x", "y"].map(
+    (channel): IManifestManual => ({
+      detector: {
+        id: "label-overlap",
+        type: "legibility",
+        description: "Labels overlap each other.",
+        detect: and(
+          isCardinalityExcessive(channel as keyof Encoding<string>),
+          isChannelProp(channel as keyof Encoding<string>, "type", "nominal"),
+        ),
+      },
+      resolvers: [
+        {
+          id: "filter-20-and-group-rest",
+          trigger: () => true,
+          description: "Filter 20 unique values and group the rest.",
+        },
+      ],
+    }),
+  ),
   {
     detector: {
       id: "line-for-nominal",
       type: "expressivenss",
-      description: "Line chart is used for nominal data.",
-      detect: await and(
-        isMark(["line"]),
-        isChannelProp("x", "type", "nominal"),
-      ),
+      description: "Line chart is used for categorical attribute.",
+      detect: and(isMark(["line"]), isChannelProp("x", "type", "nominal")),
     },
     resolvers: [
       {
@@ -42,7 +57,7 @@ const manifest: IManifestManual[] = [
       id: "indistinct-theta",
       type: "effectiveness",
       description: "Values for theta channel are balanced.",
-      detect: await and(isMark(["arc"]), isDataBalanced("theta")),
+      detect: and(isMark(["arc"]), isDataBalanced("theta")),
     },
     resolvers: [
       {
@@ -58,24 +73,24 @@ const manifest: IManifestManual[] = [
       id: "overplotted-marks",
       type: "perception",
       description: "Marks are overplotted.",
-      detect: await and(isMark(["point", "circle"]), isOverplotted),
+      detect: await asyncAnd(isMark(["point", "circle"]), isOverplotted),
     },
     resolvers: [
       {
         id: "apply-jitter-x",
         description: "Apply jittering to the x-axis.",
-        trigger: await and(
+        trigger: and(
           isChannelProp("x", "type", ["ordinal", "nominal"]),
-          await not(isChannelProp("xOffset", "type", "quantitative")),
+          not(isChannelProp("xOffset", "type", "quantitative")),
         ),
         resolve: [applyJitter("x")],
       },
       {
         id: "apply-jitter-y",
         description: "Apply jittering to the y-axis.",
-        trigger: await and(
+        trigger: and(
           isChannelProp("y", "type", ["ordinal", "nominal"]),
-          await not(isChannelProp("yOffset", "type", "quantitative")),
+          not(isChannelProp("yOffset", "type", "quantitative")),
         ),
         resolve: [applyJitter("y")],
       },
@@ -95,9 +110,9 @@ const manifest: IManifestManual[] = [
         id: "apply-log-scale-x",
         description:
           "Remove non-negative values and apply log scale to x-axis.",
-        trigger: await and(
+        trigger: and(
           isDataSkewed("x", "positive"),
-          await not(isChannelProp("x", "scale", { type: "log" })),
+          not(isChannelProp("x", "scale", { type: "log" })),
         ),
         resolve: [
           removeNegativeValues(["x"]),
@@ -109,9 +124,9 @@ const manifest: IManifestManual[] = [
         id: "apply-log-scale-y",
         description:
           "Remove non-negative values and apply log scale to y-axis.",
-        trigger: await and(
+        trigger: and(
           isDataSkewed("y", "positive"),
-          await not(isChannelProp("y", "scale", { type: "log" })),
+          not(isChannelProp("y", "scale", { type: "log" })),
         ),
         resolve: [
           removeNegativeValues(["y"]),
@@ -122,18 +137,18 @@ const manifest: IManifestManual[] = [
       {
         id: "apply-pow-scale-x",
         description: "Apply power scale to x-axis.",
-        trigger: await and(
+        trigger: and(
           isDataSkewed("x", "negative"),
-          await not(isChannelProp("x", "scale", { type: "pow" })),
+          not(isChannelProp("x", "scale", { type: "pow" })),
         ),
         resolve: [applyScale("x", "pow")],
       },
       {
         id: "apply-pow-scale-y",
         description: "Apply power scale to y-axis.",
-        trigger: await and(
+        trigger: and(
           isDataSkewed("y", "negative"),
-          await not(isChannelProp("y", "scale", { type: "pow" })),
+          not(isChannelProp("y", "scale", { type: "pow" })),
         ),
         resolve: [applyScale("y", "pow")],
       },
