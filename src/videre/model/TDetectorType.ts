@@ -1,8 +1,8 @@
 // type TDetectorType = "encoding" | "perception" | "data";
 type TDetectorType =
-  | "expressivenss"
+  | "expressiveness"
   | "effectiveness"
-  | "interpretabilty"
+  | "interpretability"
   | "perception"
   | "legibility";
 
