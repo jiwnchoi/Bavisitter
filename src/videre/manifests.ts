@@ -1,12 +1,12 @@
 import { Encoding } from "vega-lite/build/src/encoding";
-import { removeNegativeValues, removeZeroValues } from "videre/actions/data";
+import { removeNegativeValues, removeZeroValues } from "videre/resolvers/data";
 import {
   applyScale,
   convertPieToBar,
   convertScatterToHeatmap,
   reduceOpacity,
   replaceMark,
-} from "videre/actions/spec";
+} from "videre/resolvers/spec";
 import {
   isCardinalityExcessive,
   isCardinalityOne,
@@ -28,7 +28,7 @@ import {
 } from "videre/detectors/encoding";
 import { isOverplotted } from "videre/detectors/perception";
 import { IManifestManual } from "videre/model";
-import { applyJitter } from "./actions/spec/jittering";
+import { applyJitter } from "./resolvers/spec/jittering";
 import { and, asyncAnd, not } from "./utils";
 
 const manifest: IManifestManual[] = [
@@ -354,7 +354,7 @@ const manifest: IManifestManual[] = [
       id: "no-legend",
       type: "legibility",
       description: "Legends are missing.",
-      detect: noLegend(),
+      detect: noLegend,
     },
     resolvers: [
       {
@@ -370,7 +370,7 @@ const manifest: IManifestManual[] = [
       id: "shapes-with-size",
       type: "interpretability",
       description: "Shapes other than circles are used to encode size.",
-      detect: shapesWithSize(),
+      detect: shapesWithSize,
     },
     resolvers: [
       {
