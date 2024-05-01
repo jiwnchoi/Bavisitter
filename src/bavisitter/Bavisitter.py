@@ -62,7 +62,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     model: str = "gpt-4-turbo-preview",
     safe_model: Literal["auto", "off"] = "auto",
     advisor: Literal["advisor", "prompt", "none"] = "prompt",
-    auto_fix: bool = True,
+    auto_fix: bool = False,
     auto_run: bool = True,
     color_mode: Literal["light", "dark", "system"] = "system",
     artifact_path: str = "artifacts",

@@ -6,7 +6,7 @@ function isCardinalityExcessive(channel: keyof Encoding<string>) {
   return (state: State) => {
     const { data, spec } = state;
     const encoding = spec.encoding![channel] as PositionFieldDef<string>;
-    const values = data.map((d) => d[encoding.field as string]);
+    const values = data.map((d) => d[encoding.field as string] ?? null);
     const uniqueValues = new Set(values);
     return channel === "color"
       ? uniqueValues.size > 10
@@ -18,7 +18,7 @@ function isCardinalityOne(channel: keyof Encoding<string>) {
   return (state: State) => {
     const { data, spec } = state;
     const encoding = spec.encoding![channel] as PositionFieldDef<string>;
-    const values = data.map((d) => d[encoding.field as string]);
+    const values = data.map((d) => d[encoding.field as string] ?? null);
     const uniqueValues = new Set(values);
     return uniqueValues.size === 1;
   };

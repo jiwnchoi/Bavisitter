@@ -11,14 +11,8 @@ export async function asyncNot(func: Function) {
 }
 
 export function and(...funcs: Function[]) {
-  return (...args: any[]) => {
-    for (const func of funcs) {
-      if (!func(...args)) {
-        return false;
-      }
-    }
-    return true;
-  };
+  return (...args: any[]) =>
+    args.every((arg) => funcs.every((func) => func(arg)));
 }
 
 export async function asyncAnd(...funcs: Function[]) {
@@ -33,14 +27,8 @@ export async function asyncAnd(...funcs: Function[]) {
 }
 
 export function or(...funcs: Function[]) {
-  return (...args: any[]) => {
-    for (const func of funcs) {
-      if (func(...args)) {
-        return true;
-      }
-    }
-    return false;
-  };
+  return (...args: any[]) =>
+    args.some((arg) => funcs.some((func) => func(arg)));
 }
 
 export async function asyncOr(...funcs: Function[]) {

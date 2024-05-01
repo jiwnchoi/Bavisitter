@@ -7,39 +7,50 @@ import {
   reduceOpacity,
   replaceMark,
 } from "videre/actions/spec";
-import { isCardinalityExcessive, isCardinalityOne, isDataBalanced, isDataSkewed } from "videre/detectors/data";
 import {
-  isChannelProp, isMark,
+  isCardinalityExcessive,
+  isCardinalityOne,
+  isDataBalanced,
+  isDataSkewed,
+} from "videre/detectors/data";
+import {
+  isChannel,
+  isChannelProp,
+  isMark,
   isNotBinNice,
   isOrdinalNotSorted,
   isRedundantEncoding,
-  noLabels, noLegend, noTicks,
+  noLabels,
+  noLegend,
+  noTicks,
   noZeroInPosition,
   shapesWithSize,
 } from "videre/detectors/encoding";
 import { isOverplotted } from "videre/detectors/perception";
 import { IManifestManual } from "videre/model";
 import { applyJitter } from "./actions/spec/jittering";
-import { } from './detectors/encoding/noZeroInPosition';
 import { and, asyncAnd, not } from "./utils";
 
 const manifest: IManifestManual[] = [
   ...["x", "y"].map(
     (channel): IManifestManual => ({
       detector: {
-        id: "label-overlap",
+        id: `labels-overlap-${channel}`,
         type: "legibility",
-        description: "Labels overlap each other.",
+        description: `Labels are overlap each other in the ${channel} channel.`,
         detect: and(
+          isChannelProp(channel as keyof Encoding<string>, "type", [
+            "nominal",
+            "ordinal",
+          ]),
           isCardinalityExcessive(channel as keyof Encoding<string>),
-          isChannelProp(channel as keyof Encoding<string>, "type", "nominal"),
         ),
       },
       resolvers: [
         {
           id: "filter-20-and-group-rest",
           trigger: () => true,
-          description: "Filter 20 unique values and group the rest.",
+          description: "Rotate labels to avoid overlap.",
         },
       ],
     }),
@@ -60,58 +71,141 @@ const manifest: IManifestManual[] = [
       },
     ],
   },
-  {// "cat-colors-for-ordered"
+  {
+    // "cat-colors-for-ordered"
     detector: {
       id: "cat-colors-for-ordered",
       type: "expressiveness",
       description: "Categorical colors are used for ordered data.",
-      detect: await and(
-        isChannelProp("color", "type", "nominal"),
-        isChannelProp("x", "type", "ordinal"),
+      detect: and(
+        isChannelProp("color", "scheme"),
+        not(isChannelProp("color", "type", "nominal")),
+        not(
+          isChannelProp("color", "scheme", [
+            "blues",
+            "tealblues",
+            "teals",
+            "greens",
+            "browns",
+            "oranges",
+            "reds",
+            "purples",
+            "warmgreys",
+            "greys",
+            "viridis",
+            "magma",
+            "inferno",
+            "plasma",
+            "cividis",
+            "turbo",
+            "bluegreen",
+            "bluepurple",
+            "goldgreen",
+            "goldorange",
+            "goldred",
+            "greenblue",
+            "orangered",
+            "purplebluegreen",
+            "purpleblue",
+            "purplered",
+            "redpurple",
+            "yellowgreenblue",
+            "yellowgreen",
+            "yelloworangebrown",
+            "yelloworangered",
+            "darkblue",
+            "darkgold",
+            "darkgreen",
+            "darkmulti",
+            "darkred",
+            "lightgreyred",
+            "lightgreyteal",
+            "lightmulti",
+            "lightorange",
+            "lighttealblue",
+            "blueorange",
+            "brownbluegreen",
+            "purplegreen",
+            "pinkyellowgreen",
+            "purpleorange",
+            "redblue",
+            "redgrey",
+            "redyellowblue",
+            "redyellowgreen",
+            "spectral",
+          ]),
+        ),
       ),
     },
     resolvers: [
       {
         id: "convert-cat-to-seq-colors",
         trigger: () => true,
-        description: "Convert categorical color scale to a more appropriate scale for ordered data."
-      }
-    ]
+        description:
+          "Convert categorical color scale to a more appropriate scale for ordered data.",
+      },
+    ],
   },
-  { // cont-colors-for-cat
+  {
+    // cont-colors-for-cat
     detector: {
       id: "cont-colors-for-cat",
       type: "expressiveness",
       description: "Continuous colors are used for categorical data.",
-      detect: await and(
-        await not(isChannelProp("color", "type", "nominal")),
-        isChannelProp("x", "type", "nominal"),
+      detect: and(
+        isChannelProp("color", "type", "nominal"),
+        isChannelProp("color", "scheme"),
+        not(
+          isChannelProp("color", "scheme", [
+            "accent",
+            "category10",
+            "category20",
+            "category20b",
+            "category20c",
+            "observable10",
+            "dark2",
+            "paired",
+            "pastel1",
+            "pastel2",
+            "set1",
+            "set2",
+            "set3",
+            "tableau10",
+            "tableau20",
+          ]),
+        ),
       ),
     },
     resolvers: [
       {
         id: "convert-cont-to-cat-colors",
         trigger: () => true,
-        description: "Convert continuous color scale to categorical color scale for nominal data.",
-      }
-    ]
+        description:
+          "Convert continuous color scale to categorical color scale for nominal data.",
+      },
+    ],
   },
   // "cardinality-is-one"
-  ...["x", "y"].map(
+  ...["x", "y", "color"].map(
     (channel): IManifestManual => ({
-    detector: {
-      id: "cardinality-is-one",
-      type: "effectiveness",
-      description: "Assigning a visual channel to an attribute of cardinality 1 is ineffective.",
-      detect: isCardinalityOne(channel as keyof Encoding<string>),
-    },
-    resolvers: [
-      {
-        id: "remove-ineffective-encoding",
-        trigger: () => true,
-        description: "Remove the encoding from channels where the attribute's cardinality is 1."
-      }
-    ]}),
+      detector: {
+        id: `cardinality-is-one-${channel}`,
+        type: "effectiveness",
+        description: `Assigning a ${channel} channel to an attribute of cardinality 1 is ineffective.`,
+        detect: and(
+          isChannel(channel as keyof Encoding<string>),
+          isCardinalityOne(channel as keyof Encoding<string>),
+        ),
+      },
+      resolvers: [
+        {
+          id: "remove-ineffective-encoding",
+          trigger: () => true,
+          description:
+            "Move the unique value's information to title and reduct encoding dimensionality.",
+        },
+      ],
+    }),
   ),
   {
     detector: {
@@ -129,39 +223,50 @@ const manifest: IManifestManual[] = [
       },
     ],
   },
-  {// "redundant-encoding"
+  {
+    // "redundant-encoding"
     detector: {
       id: "redundant-encoding",
       type: "effectiveness",
-      description: "Unnecessary multiple encodings are used to represent the same data.",
-      detect: isRedundantEncoding(),
+      description:
+        "Unnecessary multiple encodings are used to represent the same data.",
+      detect: isRedundantEncoding,
     },
     resolvers: [
       {
         id: "remove-redundant-encoding",
         trigger: () => true,
-        description: "Remove redundant encodings to simplify the visualization."
-      }
-    ]
+        description:
+          "Remove redundant encodings to simplify the visualization.",
+      },
+    ],
   }, // "exccessive-cardinaility"
-  ...["x", "y"].map(
+  ...["x", "y", "color"].map(
     (channel): IManifestManual => ({
       detector: {
-        id: "exccessive-cardinaility",
+        id: `excessive-cardinality-${channel}`,
         type: "effectiveness",
-        description: "The cardinality of a categorical attribute is too high.",
-        detect: isCardinalityExcessive(channel as keyof Encoding<string>),
+        description: `The cardinality of a ${channel} channel is too high.`,
+        detect: and(
+          isChannel(channel as keyof Encoding<string>),
+          isChannelProp(channel as keyof Encoding<string>, "type", [
+            "nominal",
+            "ordinal",
+          ]),
+          isCardinalityExcessive(channel as keyof Encoding<string>),
+        ),
       },
       resolvers: [
         {
           id: `reduce-cardinality`,
           trigger: () => true,
-          description: `Reduce the cardinality of the channel.`
+          description: `Filter 20 unique values and group the rest.`,
         },
       ],
     }),
   ),
-  { // "no-zero-in-position"
+  {
+    // "no-zero-in-position"
     detector: {
       id: "no-zero-in-position",
       type: "interpretability",
@@ -172,12 +277,13 @@ const manifest: IManifestManual[] = [
       {
         id: "include-zero-in-position",
         trigger: () => true,
-        description: "Include zero in the position scale."
-      }
-    ]
+        description: "Include zero in the position scale.",
+      },
+    ],
   },
-  { // "is-ordinal-not-sorted"
-    detector:{
+  {
+    // "is-ordinal-not-sorted"
+    detector: {
       id: "is-ordinal-not-sorted",
       type: "interpretability",
       description: "Ordinal data is not sorted.",
@@ -187,12 +293,13 @@ const manifest: IManifestManual[] = [
       {
         id: "sort-ordinal-data",
         trigger: () => true,
-        description: "Sort the ordinal data."
-      }
-    ]
+        description: "Sort the ordinal data.",
+      },
+    ],
   },
-  { // "is-not-bin-nice"
-    detector:{
+  {
+    // "is-not-bin-nice"
+    detector: {
       id: "is-not-bin-nice",
       type: "legibility",
       description: "The boundaries of bins are not nice numbers.",
@@ -203,44 +310,47 @@ const manifest: IManifestManual[] = [
         id: "make-bin-nice",
         trigger: () => true,
         description: "Make the bin boundaries use human-friendly boundaries.",
-      }
-    ]
+      },
+    ],
   },
   // "no-labels"
   ...["x", "y"].map(
     (channel): IManifestManual => ({
-    detector: {
-      id: "no-labels",
-      type: "legibility",
-      description: "Labels are missing.",
-      detect: noLabels(channel as keyof Encoding<string>),
-    },
-    resolvers: [
-      {
-        id: "add-labels",
-        trigger: () => true,
-        description: "Add labels."
-      }
-    ]}),
+      detector: {
+        id: `no-labels-${channel}`,
+        type: "legibility",
+        description: `Labels are missing in ${channel} channel.`,
+        detect: noLabels(channel as keyof Encoding<string>),
+      },
+      resolvers: [
+        {
+          id: "add-labels",
+          trigger: () => true,
+          description: "Add labels.",
+        },
+      ],
+    }),
   ),
   ...["x", "y"].map(
     (channel): IManifestManual => ({
-    detector: {
-      id: "no-ticks",
-      type: "legibility",
-      description: "Ticks are missing.",
-      detect: noTicks(channel as keyof Encoding<string>),
-    },
-    resolvers: [
-      {
-        id: "add-ticks",
-        trigger: () => true,
-        description: "Add ticks."
-      }
-    ]}),
+      detector: {
+        id: `no-ticks-${channel}`,
+        type: "legibility",
+        description: `Ticks are missing in ${channel} channel.`,
+        detect: noTicks(channel as keyof Encoding<string>),
+      },
+      resolvers: [
+        {
+          id: "add-ticks",
+          trigger: () => true,
+          description: "Add ticks.",
+        },
+      ],
+    }),
   ),
-  { // "no-legend"
-    detector:{
+  {
+    // "no-legend"
+    detector: {
       id: "no-legend",
       type: "legibility",
       description: "Legends are missing.",
@@ -250,12 +360,13 @@ const manifest: IManifestManual[] = [
       {
         id: "add-legend",
         trigger: () => true,
-        description: "Add legends."
-      }
-    ]
-  }, 
-  { // "shapes-with-size"
-    detector:{
+        description: "Add legends.",
+      },
+    ],
+  },
+  {
+    // "shapes-with-size"
+    detector: {
       id: "shapes-with-size",
       type: "interpretability",
       description: "Shapes other than circles are used to encode size.",
@@ -266,8 +377,8 @@ const manifest: IManifestManual[] = [
         id: "use-circles-for-size",
         trigger: () => true,
         description: "Use circles to encode size.",
-      }
-    ]
+      },
+    ],
   },
   {
     detector: {
