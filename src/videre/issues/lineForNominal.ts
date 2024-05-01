@@ -1,8 +1,9 @@
 import { isChannelProp, isMark } from "videre/detectors/encoding";
+import { IManifestManual } from "videre/model";
 import { replaceMark } from "videre/resolvers/spec";
 import { and } from "videre/utils";
 
-const lineForNominal = {
+const lineForNominal: IManifestManual = {
   detector: {
     id: "line-for-nominal",
     description: "Line chart is used for categorical attribute.",

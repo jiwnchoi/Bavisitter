@@ -30,6 +30,7 @@ import { isOverplotted } from "videre/detectors/perception";
 import { IManifestManual } from "videre/model";
 import { applyJitter } from "./resolvers/spec/jittering";
 import { and, asyncAnd, not } from "./utils";
+import { lineForNominal } from "./issues";
 
 const manifest: IManifestManual[] = [
   ...["x", "y"].map(
@@ -55,22 +56,7 @@ const manifest: IManifestManual[] = [
       ],
     }),
   ),
-  {
-    detector: {
-      id: "line-for-nominal",
-      description: "Line chart is used for categorical attribute.",
-      detect: and(isMark(["line"]), isChannelProp("x", "type", "nominal")),
-      type: "expressiveness",
-    },
-    resolvers: [
-      {
-        id: "convert-line-to-bar",
-        trigger: () => true,
-        description: "Convert line chart to bar chart",
-        resolve: [replaceMark("bar")],
-      },
-    ],
-  },
+  lineForNominal,
   {
     // "cat-colors-for-ordered"
     detector: {
