@@ -1,12 +1,4 @@
 import { Encoding } from "vega-lite/build/src/encoding";
-import { removeNegativeValues, removeZeroValues } from "videre/resolvers/data";
-import {
-  applyScale,
-  convertPieToBar,
-  convertScatterToHeatmap,
-  reduceOpacity,
-  replaceMark,
-} from "videre/resolvers/spec";
 import {
   isCardinalityExcessive,
   isCardinalityOne,
@@ -28,9 +20,16 @@ import {
 } from "videre/detectors/encoding";
 import { isOverplotted } from "videre/detectors/perception";
 import { IManifestManual } from "videre/model";
+import { removeNegativeValues, removeZeroValues } from "videre/resolvers/data";
+import {
+  applyScale,
+  convertPieToBar,
+  convertScatterToHeatmap,
+  reduceOpacity,
+} from "videre/resolvers/spec";
+import { lineForNominal } from "./issues";
 import { applyJitter } from "./resolvers/spec/jittering";
 import { and, asyncAnd, not } from "./utils";
-import { lineForNominal } from "./issues";
 
 const manifest: IManifestManual[] = [
   ...["x", "y"].map(
