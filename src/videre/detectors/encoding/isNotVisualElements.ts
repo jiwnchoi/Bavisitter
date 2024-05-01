@@ -1,7 +1,7 @@
 import { State } from "videre/model";
 import { Encoding } from "vega-lite/build/src/encoding";
 
-function noLabels(channel: keyof Encoding<string>): (state: State) => boolean {
+function isNotLabels(channel: keyof Encoding<string>): (state: State) => boolean {
   return (state: State): boolean => {
     const { spec } = state;
     if (!spec || !spec.encoding) {
@@ -19,7 +19,7 @@ function noLabels(channel: keyof Encoding<string>): (state: State) => boolean {
   };
 }
 
-function noTicks(channel: keyof Encoding<string>): (state: State) => boolean {
+function isNotTicks(channel: keyof Encoding<string>): (state: State) => boolean {
   return (state: State): boolean => {
     const { spec } = state;
     if (!spec || !spec.encoding) {
@@ -37,7 +37,7 @@ function noTicks(channel: keyof Encoding<string>): (state: State) => boolean {
   };
 }
 
-function noLegend(state: State): boolean {
+function isNotLegend(state: State): boolean {
   const { spec } = state;
   if (!spec || !spec.encoding) {
     console.error("No encoding defined in the visualization spec.");
@@ -49,4 +49,4 @@ function noLegend(state: State): boolean {
   });
 }
 
-export { noLabels, noLegend, noTicks };
+export { isNotLabels, isNotLegend, isNotTicks};

@@ -1,6 +1,6 @@
 import { State } from "videre/model";
 
-export default function shapesWithSize(state: State): boolean {
+export default function isShapesWithSize(state: State): boolean {
   const { spec } = state;
   if (!spec || !spec.encoding) {
     console.error("No suitable spec defined in the visualization.");

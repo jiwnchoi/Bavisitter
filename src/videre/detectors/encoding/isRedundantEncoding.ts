@@ -1,6 +1,6 @@
 import { State } from "videre/model";
 
-export default function createRedundantEncodingDetector(state: State): boolean {
+export default function isRedundantEncoding(state: State): boolean {
   const { spec } = state;
   if (!spec || !spec.encoding) {
     console.error("No encoding defined in the visualization spec.");
