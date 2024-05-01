@@ -13,3 +13,6 @@ artifacts
 demo*
 
 .coverage*
+
+script
+*.zip

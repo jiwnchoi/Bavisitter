@@ -65,7 +65,7 @@ export function revise(
   for (const { resolvers } of manifests) {
     if (!resolvers.some((r) => resolverIds.includes(r.id))) continue;
     for (const resolver of resolvers) {
-      if (resolverIds.includes(resolver.id)) {
+      if (resolverIds.includes(resolver.id) && resolver.resolve) {
         resolver.resolve.forEach((r) => {
           state = r(state);
         });

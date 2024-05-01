@@ -1,5 +1,5 @@
 import { IManifestManual } from "videre/model";
-import { 
+import {
   lineForNominal,
   catColorsForOrdered,
   contColorsForNominal,
@@ -16,7 +16,7 @@ import {
   labelOverlap,
   shapesWithSize,
   overplottedMarks,
-} from "./issues";
+} from "videre/issues";
 
 const manifest: IManifestManual[] = [
   lineForNominal,
