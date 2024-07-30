@@ -1,8 +1,10 @@
 import TActuatorType from "./TActuatorType";
 import { State } from ".";
 
-export default interface IActuatorModel {
-  type: TActuatorType;
+export default interface IResolverModel {
+  id: string;
+  type?: TActuatorType;
+  trigger: (state: State) => boolean | Promise<boolean>;
   description: string;
-  action: ((state: State) => State)[];
+  resolve?: ((state: State) => State)[];
 }

@@ -1,16 +1,44 @@
-import { ChakraProvider, DarkMode, LightMode } from "@chakra-ui/react";
-import { useColorMode } from "@hooks";
+import { useModelState } from "@anywidget/react";
+import {
+  ChakraProvider,
+  DarkMode,
+  LightMode,
+  useColorMode,
+} from "@chakra-ui/react";
 import { TColorMode } from "@shared/types";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import ShadowRoot from "react-shadow/emotion";
 import theme from "./theme";
+import { Global, css } from "@emotion/react";
 
-function ColorMode({
-  colorMode,
-  children,
-}: PropsWithChildren<{ colorMode: TColorMode }>) {
+function ColorMode({ children }: PropsWithChildren<{}>) {
+  const { colorMode } = useColorMode();
+  const [modelColorMode] = useModelState<TColorMode>("color_mode");
+  const { setColorMode } = useColorMode();
+
+  useEffect(() => {
+    setColorMode(modelColorMode);
+  }, []);
+  const globalStyles = css`
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      background-color: ${colorMode === "light"
+        ? "rgba(0, 0, 0, 0.1)"
+        : "rgba(255, 255, 255, 0.1)"};
+    }
+
+    *::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+  `;
   return (
     <>
+      <Global styles={globalStyles} />
       {colorMode === "light" ? (
         <LightMode> {children} </LightMode>
       ) : (
@@ -21,8 +49,6 @@ function ColorMode({
 }
 
 function Providers({ children }: PropsWithChildren<{}>) {
-  const { colorMode } = useColorMode();
-
   return (
     <ShadowRoot.div
       id="shadow-root"
@@ -37,7 +63,7 @@ function Providers({ children }: PropsWithChildren<{}>) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <ColorMode colorMode={colorMode}>{children}</ColorMode>
+        <ColorMode>{children}</ColorMode>
       </ChakraProvider>
     </ShadowRoot.div>
   );

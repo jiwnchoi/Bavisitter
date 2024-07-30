@@ -1,5 +1,5 @@
 import { useMessageStore } from "@stores";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function useMessages() {
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -30,21 +30,29 @@ export default function useMessages() {
     }
   }, [messages]);
 
-  const scrollToBottom = useCallback(
-    (behavior: ScrollBehavior = "instant") => {
-      if (chatBoxRef.current) {
-        chatBoxRef.current.scrollTo({
-          top: chatBoxRef.current.scrollHeight,
-          behavior,
-        });
-      }
-    },
-    [chatBoxRef],
-  );
+  const scrollToBottom = (behavior: ScrollBehavior = "instant") => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior,
+      });
+    }
+  };
+
+  const scrollToContentByIndex = (chatIndex: number) => {
+    const message = messages.find((m) => m.chatIndex === chatIndex);
+    if (chatBoxRef.current && message && message.ref.current) {
+      chatBoxRef.current.scrollTo({
+        top: message.ref.current.offsetTop - 32,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return {
     chatBoxRef,
-    scrollToBottom,
     chatBoxAtBottom,
+    scrollToBottom,
+    scrollToContentByIndex,
   };
 }

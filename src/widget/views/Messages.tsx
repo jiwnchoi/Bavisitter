@@ -1,14 +1,19 @@
 import { Flex, FlexProps, IconButton, useColorMode } from "@chakra-ui/react";
-import { useMessages } from "@hooks";
 import { useMessageStore } from "@stores";
 import { FaArrowDown } from "react-icons/fa";
 import Content from "./Content";
 import RevisionContent from "./RevisionContent";
 
-const Messages = (props: FlexProps) => {
+interface IMessagesProps extends FlexProps {
+  chatBoxRef: React.RefObject<HTMLDivElement>;
+  chatBoxAtBottom: boolean;
+  scrollToBottom: (behavior?: ScrollBehavior) => void;
+}
+
+const Messages = (props: IMessagesProps) => {
   const { colorMode } = useColorMode();
   const messages = useMessageStore((state) => state.messages);
-  const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = useMessages();
+  const { chatBoxRef, chatBoxAtBottom, scrollToBottom } = props;
 
   return (
     <Flex {...props} ref={chatBoxRef}>

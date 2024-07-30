@@ -8,7 +8,7 @@ import { deepEqual } from "vega-lite";
 export default function isChannelProp(
   channelName: keyof Encoding<string>,
   prop: string,
-  value: any,
+  value?: any,
 ) {
   return (state: State) => {
     if (!isUnitSpec(state.spec)) {
@@ -19,7 +19,16 @@ export default function isChannelProp(
       throw new Error("Spec has no encoding");
     }
     const { spec } = state;
+    if (!spec.encoding[channelName]) {
+      return false;
+    }
+
     const encoding = spec.encoding![channelName] as PositionFieldDef<string>;
+
+    if (Array.isArray(value)) {
+      return value.some((v) => deepEqual(encoding[prop], v));
+    }
+
     return encoding && deepEqual(encoding[prop], value);
   };
 }

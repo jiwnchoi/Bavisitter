@@ -1,0 +1,16 @@
+export { default as lineForNominal } from "./lineForNominal";
+export { default as labelOverlap } from "./labelOverlap";
+export { default as catColorsForOrdered } from "./catColorsForOrdered";
+export { default as contColorsForNominal } from "./contColorsForNominal";
+export { default as cardinalityIsOne } from "./cardinalityIsOne";
+export { default as indistinctTheta } from "./indistinctTheta";
+export { default as redundantEncoding } from "./redundantEncoding";
+export { default as excessiveCardinality } from "./excessiveCardinality";
+export { default as noZeroInPosition } from "./noZeroInPosition";
+export { default as ordinalNotSorted } from "./ordinalNotSorted";
+export { default as binIsNotNice } from "./binIsNotNice";
+export { default as noLabels } from "./noLabels";
+export { default as noTicks } from "./noTicks";
+export { default as noLegend } from "./noLegend";
+export { default as shapesWithSize } from "./shapesWithSize";
+export { default as overplottedMarks } from "./overplottedMarks";

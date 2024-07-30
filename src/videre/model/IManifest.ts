@@ -1,8 +1,12 @@
-import IActuatorModel from "./IActuatorModel";
+import IResolverModel from "./IActuatorModel";
 import IDetectorModel from "./IDetectorModel";
 
-interface IManifest {
+export interface IManifestAuto {
   detector: IDetectorModel;
-  actuator: IActuatorModel;
+  resolver: IResolverModel;
 }
-export default IManifest;
+
+export interface IManifestManual {
+  detector: IDetectorModel;
+  resolvers: IResolverModel[];
+}

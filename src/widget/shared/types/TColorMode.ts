@@ -1,3 +1,3 @@
-type TColorMode = "light" | "dark";
+type TColorMode = "light" | "dark" | "system";
 
 export default TColorMode;

@@ -1,10 +1,20 @@
 import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
-import { State } from "./model";
+import { IDetectorModel, State } from "./model";
 import manifests from "./manifests";
+import IResolverModel from "./model/IActuatorModel";
 export interface IDetectorResult {
-  problem: string;
-  solution: string;
+  issue: Pick<IDetectorModel, "id" | "description" | "type">;
+  resolvers: Pick<IResolverModel, "id" | "description">[];
 }
+
+export type IDetectorResultWithSelection = Omit<
+  IDetectorResult,
+  "resolvers"
+> & {
+  resolvers: (Pick<IResolverModel, "id" | "description"> & {
+    selected: boolean;
+  })[];
+};
 
 export interface IRevisionResult {
   spec: TopLevelUnitSpec<string>;
@@ -18,40 +28,49 @@ export async function detect(
   let state = new State(spec, {}, data);
   const prompts: IDetectorResult[] = [];
 
-  for (const { detector: linter, actuator } of manifests) {
-    let hasToFix = await linter.detect(state);
+  for (const { detector, resolvers } of manifests) {
+    let hasToFix = await detector.detect(state);
+    console.log(detector.description, hasToFix);
     if (!hasToFix) continue;
 
-    let actions = actuator.action;
-    for (const action of actions) {
-      state = action(state);
+    const triggeredResolvers: IResolverModel[] = [];
+    for (const resolver of resolvers) {
+      if (await resolver.trigger(state)) {
+        triggeredResolvers.push(resolver);
+      }
     }
 
     prompts.push({
-      problem: linter.description,
-      solution: actuator.description,
+      issue: {
+        id: detector.id,
+        type: detector.type,
+        description: detector.description,
+      },
+      resolvers: triggeredResolvers.map((resolver) => ({
+        id: resolver.id,
+        description: resolver.description,
+      })),
     });
   }
+  console.log(prompts);
   return prompts;
 }
 
 export function revise(
   spec: TopLevelUnitSpec<string>,
   data: Record<any, any>[],
-  prompts: IDetectorResult[],
+  resolverIds: string[],
 ) {
   let state = new State(spec, {}, data);
-  for (const { detector: linter, actuator } of manifests) {
-    const problemDescription =
-      prompts.findIndex((prompt) => prompt.problem === linter.description) !==
-      -1;
-    if (!problemDescription) continue;
-
-    let actions = actuator.action;
-    for (const action of actions) {
-      state = action(state);
+  for (const { resolvers } of manifests) {
+    if (!resolvers.some((r) => resolverIds.includes(r.id))) continue;
+    for (const resolver of resolvers) {
+      if (resolverIds.includes(resolver.id) && resolver.resolve) {
+        resolver.resolve.forEach((r) => {
+          state = r(state);
+        });
+      }
     }
   }
-
   return state.export();
 }

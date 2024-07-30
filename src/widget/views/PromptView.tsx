@@ -29,7 +29,7 @@ export default function PromptView() {
       flexDir={"row"}
       gap={2}
       p={2}
-      borderWidth={2}
+      borderWidth={1.5}
       borderRadius={"md"}
       _focusWithin={{ borderColor: "blue.500" }}
     >

@@ -7,7 +7,7 @@ import pandas as pd
 
 def load_artifact(path: str):
   if not pathlib.Path(path).exists():
-    return None
+    raise FileNotFoundError(f"File not found: {path}")
 
   # check if file type is supported by pandas dataframe
   if path.endswith((".csv", ".json", ".xlsx", ".html", ".parquet", ".feather")):
@@ -17,7 +17,7 @@ def load_artifact(path: str):
     df = df.where(pd.notnull(df), None)
     return df.to_json(orient="records")
 
-  return None
+  raise ValueError(f"File type not supported: {path}")
 
 
 def save_artifact(record: list[dict], path: str):

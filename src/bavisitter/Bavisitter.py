@@ -51,21 +51,28 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     sync=True
   )
   streaming = Bool(default_value=False).tag(sync=True)
-  color_mode = Unicode(default_value="light").tag(sync=True)
+  color_mode = Unicode(default_value="system").tag(sync=True)
   ipc_queue = List(Dict()).tag(sync=True)
+  advisor = Unicode(default_value="prompt").tag(sync=True)
+  auto_fix = Bool(default_value=True).tag(sync=True)
 
   def __init__(
     self,
     df: pd.DataFrame,
     model: str = "gpt-4-turbo-preview",
     safe_model: Literal["auto", "off"] = "auto",
+    advisor: Literal["advisor", "prompt", "none"] = "prompt",
+    auto_fix: bool = False,
     auto_run: bool = True,
-    color_mode: Literal["light", "dark"] = "light",
+    color_mode: Literal["light", "dark", "system"] = "system",
     artifact_path: str = "artifacts",
     use_cli: bool = False,
     **kwargs,
   ):
     super().__init__(**kwargs)
+
+    if df is None or not isinstance(df, pd.DataFrame):
+      raise ValueError("Give a valid dataframe to the widget.")
 
     if not pathlib.Path(artifact_path).exists():
       pathlib.Path(artifact_path).mkdir()
@@ -74,12 +81,20 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
     # set widget properties
     self.model = model
+    self.advisor = advisor
+    self.auto_fix = auto_fix
     self.chunks = []
     self.color_mode = color_mode
     self.use_cli = use_cli
     # initialize the open interpreter
     self.interpreter = OpenInterpreter()
-    set_interpreter(self.interpreter, model, safe_model, auto_run)
+    set_interpreter(
+      self.interpreter,
+      model,
+      safe_model,
+      auto_run,
+      artifact_path,
+    )
 
   @default("messages")
   def _default_messages(self):
@@ -91,7 +106,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @default("color_mode")
   def _default_color_mode(self):
-    return "light"
+    return "system"
 
   @default("ipc_queue")
   def _default_ipc_queue(self):
@@ -99,8 +114,10 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
 
   @validate("color_mode")
   def _validate_color_mode(self, proposal):
-    if proposal["value"] not in ["light", "dark"]:
-      raise TraitError("Invalid color mode. Must be 'light' or 'dark'")
+    if proposal["value"] not in ["light", "dark", "system"]:
+      raise TraitError(
+        "Invalid color mode. Must be 'light' , 'dark' or 'system'"
+      )
 
     return proposal["value"]
 
@@ -135,16 +152,18 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
             {
               "type": "response",
               "content": data,
+              "message": "success",
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
           ]
-        except Exception:
+        except Exception as e:
           self.ipc_queue = [
             *self.ipc_queue,
             {
               "type": "response",
               "content": None,
+              "message": str(e),
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
@@ -164,12 +183,13 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
               "uuid": change["new"][-1]["uuid"],
             },
           ]
-        except Exception:
+        except Exception as e:
           self.ipc_queue = [
             *self.ipc_queue,
             {
               "type": "response",
               "content": None,
+              "message": str(e),
               "endpoint": change["new"][-1]["endpoint"],
               "uuid": change["new"][-1]["uuid"],
             },
@@ -181,6 +201,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
           {
             "type": "response",
             "content": None,
+            "message": "Invalid endpoint",
             "endpoint": change["new"][-1]["endpoint"],
             "uuid": change["new"][-1]["uuid"],
           },
