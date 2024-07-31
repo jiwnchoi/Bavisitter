@@ -1,18 +1,10 @@
-import { Paper } from "snapsvg";
+import type { Paper } from "snapsvg";
 import embed from "vega-embed";
-import { compile, type Config } from "vega-lite";
+import { type Config, compile } from "vega-lite";
 import { isFieldDef } from "vega-lite/build/src/channeldef";
-import { Encoding } from "vega-lite/build/src/encoding";
-import {
-  isUnitSpec,
-  type TopLevelUnitSpec,
-} from "vega-lite/build/src/spec/unit";
-import {
-  getCanvasFromPaper,
-  getMarksFromPaper,
-  getPaperFromVega,
-} from "../utils";
-import { cloneDeep } from "lodash-es";
+import type { Encoding } from "vega-lite/build/src/encoding";
+import { type TopLevelUnitSpec, isUnitSpec } from "vega-lite/build/src/spec/unit";
+import { getCanvasFromPaper, getMarksFromPaper, getPaperFromVega } from "../utils";
 
 class State {
   public spec: TopLevelUnitSpec<string>;
@@ -23,11 +15,7 @@ class State {
   private paper?: Paper;
   private marksPaper?: Paper;
 
-  constructor(
-    spec: TopLevelUnitSpec<string>,
-    specConfig: Config,
-    data: Record<any, any>[],
-  ) {
+  constructor(spec: TopLevelUnitSpec<string>, specConfig: Config, data: Record<any, any>[]) {
     if (!isUnitSpec(spec)) throw new Error("Spec is not a unit spec");
     this.spec = spec;
     this.specConfig = {
@@ -56,9 +44,7 @@ class State {
   }
 
   async getMarksPaper() {
-    return (
-      this.marksPaper ?? (await getMarksFromPaper((await this.getPaper())!))
-    );
+    return this.marksPaper ?? (await getMarksFromPaper((await this.getPaper())!));
   }
 
   async getCanvas() {
@@ -66,10 +52,7 @@ class State {
   }
 
   async getMarksCanvas() {
-    return (
-      this.marksCanvas ??
-      (await getCanvasFromPaper((await this.getMarksPaper())!))
-    );
+    return this.marksCanvas ?? (await getCanvasFromPaper((await this.getMarksPaper())!));
   }
 
   async render(container: HTMLElement, renderer: "svg" | "canvas") {
@@ -86,24 +69,16 @@ class State {
     );
   }
 
-  updateSpec(
-    spec?: TopLevelUnitSpec<string>,
-    config?: Config,
-    data?: Record<any, any>[],
-  ) {
-    return new State(
-      spec ?? this.spec,
-      config ?? this.specConfig,
-      data ?? this.data,
-    );
+  updateSpec(spec?: TopLevelUnitSpec<string>, config?: Config, data?: Record<any, any>[]) {
+    return new State(spec ?? this.spec, config ?? this.specConfig, data ?? this.data);
   }
 
   export() {
-    const spec = cloneDeep(this.spec);
-    const data = cloneDeep(this.data);
+    const spec = structuredClone(this.spec);
+    const data = structuredClone(this.data);
     const filePath = spec.data.name!;
     const [fileName, fileExt] = filePath.split(".");
-    const rev = parseInt(RegExp(/rev(\d+)/).exec(fileName)?.[1] ?? "0");
+    const rev = Number.parseInt(RegExp(/rev(\d+)/).exec(fileName)?.[1] ?? "0");
     const newFileName = `${fileName}-rev${rev + 1}.${fileExt}`;
     spec.data.name = newFileName;
 

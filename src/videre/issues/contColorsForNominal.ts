@@ -1,6 +1,6 @@
-import { and, not } from "videre/utils";
 import { isChannelProp } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
+import { and, not } from "videre/utils";
 
 const contColorsForNominal: IManifestManual = {
   detector: {
@@ -35,8 +35,7 @@ const contColorsForNominal: IManifestManual = {
     {
       id: "convert-cont-to-cat-colors",
       trigger: () => true,
-      description:
-        "Convert continuous color scale to categorical color scale for nominal data.",
+      description: "Convert continuous color scale to categorical color scale for nominal data.",
     },
   ],
 };

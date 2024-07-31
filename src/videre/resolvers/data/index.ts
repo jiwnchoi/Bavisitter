@@ -1,2 +1,6 @@
-export * from "./nullish";
-export * from "./domain";
+export {
+  removeNegativeValues,
+  removePositiveValues,
+  removeZeroValues,
+} from "./domain";
+export { removeMissingValue } from "./nullish";

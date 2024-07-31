@@ -1,7 +1,7 @@
 def deep_equal(a, b):
   if a == b:
     return True
-  if type(a) != type(b):
+  if type(a) is not type(b):
     return False
   if isinstance(a, dict):
     if len(a) != len(b):

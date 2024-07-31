@@ -1,5 +1,5 @@
-import IResolverModel from "./IActuatorModel";
-import IDetectorModel from "./IDetectorModel";
+import type IResolverModel from "./IActuatorModel";
+import type IDetectorModel from "./IDetectorModel";
 
 export interface IManifestAuto {
   detector: IDetectorModel;

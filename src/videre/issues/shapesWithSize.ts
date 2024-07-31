@@ -1,5 +1,5 @@
 import { isShapesWithSize } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 
 const shapesWithSize: IManifestManual = {
   detector: {

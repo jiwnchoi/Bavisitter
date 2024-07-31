@@ -1,6 +1,6 @@
-import { Encoding } from "vega-lite/build/src/encoding";
-import { IManifestManual } from "videre/model";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isNotLabels } from "videre/detectors/encoding";
+import type { IManifestManual } from "videre/model";
 
 const noLabels = ["x", "y"].map(
   (channel): IManifestManual => ({

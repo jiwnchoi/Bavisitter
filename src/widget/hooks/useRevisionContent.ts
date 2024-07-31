@@ -1,24 +1,22 @@
 import { detectResultToContent, stringfyVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { useEffect, useState } from "react";
-import { IDetectorResultWithSelection, detect, revise } from "videre/index";
+import { type IDetectorResultWithSelection, detect, revise } from "videre/index";
 import useIPC from "./useIPC";
 import { useModelMessage } from "./useModelMessage";
 
 export default function useRevisionContent() {
-  const messages = useMessageStore((state) => state.messages);
-  const streaming = useMessageStore((state) => state.streaming);
+  const messages = useMessageStore(state => state.messages);
+  const streaming = useMessageStore(state => state.streaming);
   const { appendMessages } = useModelMessage();
   const { fetchModel } = useIPC();
-  const appendArtifact = useArtifactStore((state) => state.appendArtifact);
+  const appendArtifact = useArtifactStore(state => state.appendArtifact);
   const [detecting, setDetecting] = useState(false);
-  const [detectResult, setDetectorResult] = useState<
-    IDetectorResultWithSelection[]
-  >([]);
-  const charts = useChartStore((state) => state.charts);
+  const [detectResult, setDetectorResult] = useState<IDetectorResultWithSelection[]>([]);
+  const charts = useChartStore(state => state.charts);
   const [lastDetectedChart, setLastDetectedChart] = useState<number>(-1);
   const lastChart = charts[charts.length - 1];
-  const lastUserMessage = messages.findLastIndex((m) => m.role === "user");
+  const lastUserMessage = messages.findLastIndex(m => m.role === "user");
   const lastChartIndex = lastChart ? lastChart.chatIndex : 0;
   const revisionViewDisplayed =
     !streaming &&
@@ -35,11 +33,11 @@ export default function useRevisionContent() {
       const records = data[spec.data.name!] as any[];
       setDetecting(true);
       try {
-        detect(spec, records).then((prompts) => {
+        detect(spec, records).then(prompts => {
           setDetectorResult(
-            prompts.map((p) => ({
+            prompts.map(p => ({
               ...p,
-              resolvers: p.resolvers.map((r) => ({
+              resolvers: p.resolvers.map(r => ({
                 ...r,
                 selected: false,
               })),
@@ -49,14 +47,12 @@ export default function useRevisionContent() {
           setLastDetectedChart(lastChartIndex);
         });
       } catch (e) {
-        console.error(e);
+        throw new Error("Failed to detect");
       }
     }
   }, [lastChart]);
 
-  const reviseLastChartWithAction = (
-    detectResult: IDetectorResultWithSelection[],
-  ) => {
+  const reviseLastChartWithAction = (detectResult: IDetectorResultWithSelection[]) => {
     if (!lastChart) return;
     const { spec, data } = lastChart;
 
@@ -65,9 +61,7 @@ export default function useRevisionContent() {
       const { spec: revisedSpec, data: revisedData } = revise(
         spec,
         records,
-        detectResult
-          .flatMap((r) => r.resolvers.filter((r) => r.selected))
-          .map((r) => r.id),
+        detectResult.flatMap(r => r.resolvers.filter(r => r.selected)).map(r => r.id),
       );
       appendArtifact(revisedSpec.data.name!, revisedData);
       fetchModel("save_artifact", {
@@ -90,9 +84,7 @@ export default function useRevisionContent() {
     }
   };
 
-  const reviseLastChartWithPrompt = (
-    detectResult: IDetectorResultWithSelection[],
-  ) => {
+  const reviseLastChartWithPrompt = (detectResult: IDetectorResultWithSelection[]) => {
     appendMessages([
       {
         role: "user",
@@ -102,9 +94,7 @@ export default function useRevisionContent() {
     ]);
   };
 
-  const reviseLastChartWithProblem = (
-    detectResult: IDetectorResultWithSelection[],
-  ) => {
+  const reviseLastChartWithProblem = (detectResult: IDetectorResultWithSelection[]) => {
     appendMessages([
       {
         role: "user",
@@ -116,11 +106,9 @@ export default function useRevisionContent() {
 
   const setResolver = (id: string) => (selected: boolean) => {
     setDetectorResult(
-      detectResult.map((d) => ({
+      detectResult.map(d => ({
         ...d,
-        resolvers: d.resolvers.map((r) =>
-          r.id === id ? { ...r, selected } : r,
-        ),
+        resolvers: d.resolvers.map(r => (r.id === id ? { ...r, selected } : r)),
       })),
     );
   };
@@ -130,7 +118,7 @@ export default function useRevisionContent() {
       ...detectResult.slice(0, index),
       {
         ...detectResult[index],
-        resolvers: detectResult[index].resolvers.map((r) =>
+        resolvers: detectResult[index].resolvers.map(r =>
           r.selected === selected ? r : { ...r, selected },
         ),
       },

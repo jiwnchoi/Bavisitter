@@ -1,7 +1,4 @@
-function getAlphaMapFromCanvas(
-  canvas: HTMLCanvasElement,
-  samplingRate: number = 4,
-): Float32Array {
+function getAlphaMapFromCanvas(canvas: HTMLCanvasElement, samplingRate = 4): Float32Array {
   const context = canvas.getContext("2d") as CanvasRenderingContext2D;
   const { width, height } = canvas;
   const imageData = context.getImageData(0, 0, width, height).data;

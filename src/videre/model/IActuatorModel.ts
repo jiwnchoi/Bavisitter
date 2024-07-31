@@ -1,5 +1,5 @@
-import TActuatorType from "./TActuatorType";
-import { State } from ".";
+import type { State } from ".";
+import type TActuatorType from "./TActuatorType";
 
 export default interface IResolverModel {
   id: string;

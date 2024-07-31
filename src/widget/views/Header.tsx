@@ -24,12 +24,7 @@ export default function Header() {
           </Button>
         </Link> */}
         <Link href="https://github.com/jiwnchoi" isExternal>
-          <Button
-            leftIcon={<Icon as={FaGithub} />}
-            size={"xs"}
-            variant={"link"}
-            p={0}
-          >
+          <Button leftIcon={<Icon as={FaGithub} />} size={"xs"} variant={"link"} p={0}>
             Github
           </Button>
         </Link>

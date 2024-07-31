@@ -1,7 +1,7 @@
-import { Encoding } from "vega-lite/build/src/encoding";
-import { IManifestManual } from "videre/model";
-import { isChannelProp } from "videre/detectors/encoding";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isCardinalityExcessive } from "videre/detectors/data";
+import { isChannelProp } from "videre/detectors/encoding";
+import type { IManifestManual } from "videre/model";
 import { and } from "videre/utils";
 
 const labelOverlap = ["x", "y"].map(
@@ -11,10 +11,7 @@ const labelOverlap = ["x", "y"].map(
       type: "legibility",
       description: `Labels are overlap each other in the ${channel} channel.`,
       detect: and(
-        isChannelProp(channel as keyof Encoding<string>, "type", [
-          "nominal",
-          "ordinal",
-        ]),
+        isChannelProp(channel as keyof Encoding<string>, "type", ["nominal", "ordinal"]),
         isCardinalityExcessive(channel as keyof Encoding<string>),
       ),
     },

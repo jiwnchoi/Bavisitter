@@ -1,5 +1,5 @@
-import TMessageRole from "./TMessageRole";
-import TMessageType from "./TMessageType";
+import type TMessageRole from "./TMessageRole";
+import type TMessageType from "./TMessageType";
 
 interface IMessage {
   role: TMessageRole;

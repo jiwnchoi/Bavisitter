@@ -1,5 +1,5 @@
 import { isChannelProp, isMark } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 import { replaceMark } from "videre/resolvers/spec";
 import { and } from "videre/utils";
 

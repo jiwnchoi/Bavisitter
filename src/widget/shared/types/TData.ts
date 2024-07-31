@@ -1,4 +1,4 @@
-import { PlainObject } from "react-vega";
+import type { PlainObject } from "react-vega";
 
 type TData = PlainObject[];
 

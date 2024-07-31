@@ -1,13 +1,9 @@
-import { IMessageWithRef } from "@shared/types";
-import { cloneDeep } from "lodash-es";
-import style from "react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark";
+import type { IMessageWithRef } from "@shared/types";
 import embed from "vega-embed";
-import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
+import type { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
-export function parseVegaLite(
-  content: string,
-  size: number,
-): TopLevelUnitSpec<string> {
+export function parseVegaLite(content: string, size: number): TopLevelUnitSpec<string> {
+  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let spec;
   try {
     if (content.includes("```")) {
@@ -18,7 +14,7 @@ export function parseVegaLite(
   } catch (e) {
     spec = {};
   }
-  if (spec.data && spec.data.url) {
+  if (spec.data?.url) {
     spec.data = { name: spec.data.url };
   }
   spec.width = size;
@@ -37,8 +33,8 @@ export function parseVegaLite(
 }
 
 export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
-  const newSpec = cloneDeep(spec);
-  if (newSpec.data && newSpec.data.name) {
+  const newSpec = structuredClone(spec);
+  if (newSpec.data?.name) {
     newSpec.data = { url: newSpec.data.name };
   }
   delete newSpec.width;
@@ -63,7 +59,7 @@ export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
   _data: any,
 ): Promise<string> {
-  let newSpec = cloneDeep(spec);
+  let newSpec = structuredClone(spec);
   const thumbnailAxis = {
     disable: true,
     title: "",
@@ -90,12 +86,8 @@ export async function getThumbnailFromSpec(
 
   if (newSpec.encoding) {
     for (const key in newSpec.encoding) {
-      if (
-        (newSpec.encoding[key as keyof typeof newSpec.encoding] as any)
-          ?.legend !== undefined
-      ) {
-        (newSpec.encoding[key as keyof typeof newSpec.encoding] as any).legend =
-          null;
+      if ((newSpec.encoding[key as keyof typeof newSpec.encoding] as any)?.legend !== undefined) {
+        (newSpec.encoding[key as keyof typeof newSpec.encoding] as any).legend = null;
       }
     }
   }
@@ -116,7 +108,7 @@ export async function getThumbnailFromSpec(
 
   const view = await embed(document.createElement("div"), newSpec, {
     actions: false,
-  }).then((result) => result.view);
+  }).then(result => result.view);
   const canvas = await view.toCanvas();
   const thumbnailDataURL = canvas.toDataURL();
   return thumbnailDataURL;

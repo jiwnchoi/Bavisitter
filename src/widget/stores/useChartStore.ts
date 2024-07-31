@@ -1,4 +1,4 @@
-import { IChartSpec } from "@shared/types";
+import type { IChartSpec } from "@shared/types";
 import { create } from "zustand";
 
 interface ChartState {
@@ -34,24 +34,23 @@ const useChartStore = create<ChartState & CharTActuator>((set, get) => ({
   },
   getCurrentChart: () => get().charts.at(get().currentChartIndex) ?? null,
 
-  appendChart: (chart) => set({ charts: [...get().charts, chart] }),
-  setCharts: (charts) => set({ charts }),
-  setCurrentChartByChartIndex: (index) =>
+  appendChart: chart => set({ charts: [...get().charts, chart] }),
+  setCharts: charts => set({ charts }),
+  setCurrentChartByChartIndex: index =>
     set({ currentChartIndex: index < 0 ? get().charts.length - 1 : index }),
-  setCurrentChartByChatIndex: (chatIndex) => {
-    const chartIndex = get().charts.findIndex((c) => c.chatIndex === chatIndex);
+  setCurrentChartByChatIndex: chatIndex => {
+    const chartIndex = get().charts.findIndex(c => c.chatIndex === chatIndex);
     set({ currentChartIndex: chartIndex });
   },
-  getChartByChartIndex: (chartIndex) => get().charts[chartIndex] ?? undefined,
-  getChartByChatIndex: (chatIndex) =>
-    get().charts.find((c) => c.chatIndex === chatIndex) ?? undefined,
+  getChartByChartIndex: chartIndex => get().charts[chartIndex] ?? undefined,
+  getChartByChatIndex: chatIndex => get().charts.find(c => c.chatIndex === chatIndex) ?? undefined,
 
   updateChart: (chartIndex, chart) => {
     const charts = get().charts;
     charts[chartIndex] = chart;
     set({ charts });
   },
-  updateCurrentChart: (chart) => {
+  updateCurrentChart: chart => {
     const chartIndex = get().currentChartIndex;
     if (chartIndex !== -1) {
       const charts = get().charts;

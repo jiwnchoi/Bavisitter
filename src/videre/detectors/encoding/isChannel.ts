@@ -1,6 +1,6 @@
-import { type Encoding } from "vega-lite/build/src/encoding";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isUnitSpec } from "vega-lite/build/src/spec";
-import { State } from "videre/model";
+import type { State } from "videre/model";
 
 export default function isChannel(channelName: keyof Encoding<string>) {
   return (state: State) => {

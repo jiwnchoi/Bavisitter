@@ -1,6 +1,6 @@
 import {
   Button,
-  ButtonProps,
+  type ButtonProps,
   Collapse,
   Flex,
   Icon,
@@ -11,10 +11,7 @@ import {
 import { useCodeContent } from "@hooks";
 import { FaAngleDown, FaAngleUp, FaChartBar, FaCopy } from "react-icons/fa6";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  coldarkCold,
-  coldarkDark,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { coldarkCold, coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ICodeContentProps {
   index: number;
@@ -34,8 +31,7 @@ function CodeBlockButton(proos: ButtonProps) {
       py={2}
       px={2}
       _hover={{ textDecoration: "none" }}
-      {...proos}
-    >
+      {...proos}>
       {proos.children}
     </Button>
   );
@@ -48,8 +44,7 @@ export default function CodeContent({
   contentIsVegaLite,
 }: ICodeContentProps) {
   const { colorMode } = useColorMode();
-  const { ref, onToggle, isOpen, setCurrentChartByChatIndex } =
-    useCodeContent(index);
+  const { ref, onToggle, isOpen, setCurrentChartByChatIndex } = useCodeContent(index);
   return (
     <Flex
       flexDir="column"
@@ -58,16 +53,14 @@ export default function CodeContent({
       gap={0}
       borderRadius={8}
       overflow={"auto"}
-      ref={ref}
-    >
+      ref={ref}>
       <Flex
         flexDir="row"
         w="full"
         backgroundColor={colorMode === "dark" ? "gray.700" : "gray.100"}
         px={2}
         onClick={onToggle}
-        _hover={{ cursor: "pointer" }}
-      >
+        _hover={{ cursor: "pointer" }}>
         <CodeBlockButton
           leftIcon={
             streamingMessage ? (
@@ -75,29 +68,26 @@ export default function CodeContent({
             ) : (
               <Icon as={isOpen ? FaAngleUp : FaAngleDown} />
             )
-          }
-        >
+          }>
           {contentIsVegaLite ? "Vega-Lite" : format}
         </CodeBlockButton>
         <Spacer />
         {contentIsVegaLite && !streamingMessage && (
           <CodeBlockButton
             leftIcon={<Icon as={FaChartBar} />}
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               setCurrentChartByChatIndex(index);
-            }}
-          >
+            }}>
             Load Chart
           </CodeBlockButton>
         )}
         <CodeBlockButton
           leftIcon={<Icon as={FaCopy} />}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             navigator.clipboard.writeText(content);
-          }}
-        >
+          }}>
           Copy Code
         </CodeBlockButton>
       </Flex>
@@ -113,8 +103,7 @@ export default function CodeContent({
             wordBreak: "break-all",
             whiteSpace: "pre-wrap",
             maxWidth: ref.current?.clientWidth,
-          }}
-        >
+          }}>
           {content}
         </SyntaxHighlighter>
       </Collapse>

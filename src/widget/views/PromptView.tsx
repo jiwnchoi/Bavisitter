@@ -1,8 +1,8 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
 import { useModelMessage } from "@hooks";
-import { IPrompt } from "@shared/types";
+import type { IPrompt } from "@shared/types";
 import { useMessageStore } from "@stores";
-import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
+import { Field, type FieldProps, Form, Formik, type FormikProps } from "formik";
 import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
 const handleKeyDown = (
@@ -13,7 +13,7 @@ const handleKeyDown = (
     e.preventDefault();
     e.stopPropagation();
     if (e.shiftKey) {
-      props.setFieldValue("prompt", props.values.prompt + "\n");
+      props.setFieldValue("prompt", `${props.values.prompt}\n`);
     } else {
       props.submitForm();
     }
@@ -21,7 +21,7 @@ const handleKeyDown = (
 };
 
 export default function PromptView() {
-  const streaming = useMessageStore((state) => state.streaming);
+  const streaming = useMessageStore(state => state.streaming);
   const { appendMessages, clearUserMessages } = useModelMessage();
 
   return (
@@ -31,8 +31,7 @@ export default function PromptView() {
       p={2}
       borderWidth={1.5}
       borderRadius={"md"}
-      _focusWithin={{ borderColor: "blue.500" }}
-    >
+      _focusWithin={{ borderColor: "blue.500" }}>
       <Formik
         initialValues={{ prompt: "" }}
         onSubmit={(values, actions) => {
@@ -45,9 +44,8 @@ export default function PromptView() {
           ]);
           actions.resetForm();
           actions.setSubmitting(false);
-        }}
-      >
-        {(props) => (
+        }}>
+        {props => (
           <Form style={{ display: "flex", minWidth: "100%" }}>
             <Field name="prompt" as="textarea">
               {({ field }: FieldProps) => (
@@ -62,7 +60,7 @@ export default function PromptView() {
                   background={"transparent"}
                   _focus={{ border: "none", borderWidth: 0 }}
                   _placeholder={{ color: "gray.400" }}
-                  onKeyDown={(e) => handleKeyDown(e, props)}
+                  onKeyDown={e => handleKeyDown(e, props)}
                 />
               )}
             </Field>

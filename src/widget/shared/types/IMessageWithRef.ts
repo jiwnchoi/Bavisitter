@@ -1,5 +1,5 @@
-import { RefObject } from "react";
-import { IMessage } from ".";
+import type { RefObject } from "react";
+import type { IMessage } from ".";
 
 type IMessageWithRef = IMessage & {
   ref: RefObject<HTMLDivElement>;

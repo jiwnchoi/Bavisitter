@@ -1,6 +1,6 @@
 import { Avatar, Flex, Icon, Text } from "@chakra-ui/react";
 import { useContent } from "@hooks";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import CodeContent from "./CodeContent";
 import MessageContent from "./MessageContent";
 
@@ -9,14 +9,15 @@ type IContentProps = {
 };
 const RoboticIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width={24}
     height={24}
     color={"#000000"}
     fill={"none"}
-    {...props}
-  >
+    {...props}>
+    <title>Robotic Icon</title>
     <path
       d="M19 16V14C19 11.1716 19 9.75736 18.1213 8.87868C17.2426 8 15.8284 8 13 8H11C8.17157 8 6.75736 8 5.87868 8.87868C5 9.75736 5 11.1716 5 14V16C5 18.8284 5 20.2426 5.87868 21.1213C6.75736 22 8.17157 22 11 22H13C15.8284 22 17.2426 22 18.1213 21.1213C19 20.2426 19 18.8284 19 16Z"
       stroke="currentColor"
@@ -71,14 +72,15 @@ const RoboticIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 const UserQuestion01Icon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width={24}
     height={24}
     color={"#000000"}
     fill={"none"}
-    {...props}
-  >
+    {...props}>
+    <title>User Question Icon</title>
     <path
       d="M17 15.8462C17 14.8266 17.8954 14 19 14C20.1046 14 21 14.8266 21 15.8462C21 16.2137 20.8837 16.5561 20.6831 16.8438C20.0854 17.7012 19 18.5189 19 19.5385V20M18.9902 22H18.9992"
       stroke="currentColor"
@@ -102,14 +104,15 @@ const UserQuestion01Icon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 const BabyBottleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width={24}
     height={24}
     color={"#000000"}
     fill={"none"}
-    {...props}
-  >
+    {...props}>
+    <title>Baby Bottle Icon</title>
     <path
       d="M17 10.5C17 10.5 18 13 18 16.25C18 17.4212 17.8701 18.4949 17.704 19.3894C17.4952 20.5137 17.3908 21.0758 16.835 21.5379C16.2792 22 15.6168 22 14.2919 22H9.70813C8.38323 22 7.72079 22 7.16499 21.5379C6.60919 21.0758 6.50478 20.5137 6.29598 19.3894C6.12986 18.4949 6 17.4212 6 16.25C6 13 7 10.5 7 10.5"
       stroke="currentColor"
@@ -181,10 +184,7 @@ export default function Content({ index }: PropsWithChildren<IContentProps>) {
         )}
         <Flex w="full" overflow={"auto"} ref={ref}>
           {type === "message" ? (
-            <MessageContent
-              content={contentWithoutCodeblock}
-              key={`message${index}`}
-            />
+            <MessageContent content={contentWithoutCodeblock} key={`message${index}`} />
           ) : (
             <CodeContent
               index={index}

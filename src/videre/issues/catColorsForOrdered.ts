@@ -1,6 +1,6 @@
-import { and, not } from "videre/utils";
 import { isChannelProp } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
+import { and, not } from "videre/utils";
 
 const catColorsForOrdered: IManifestManual = {
   detector: {
@@ -71,8 +71,7 @@ const catColorsForOrdered: IManifestManual = {
     {
       id: "convert-cat-to-seq-colors",
       trigger: () => true,
-      description:
-        "Convert categorical color scale to a more appropriate scale for ordered data.",
+      description: "Convert categorical color scale to a more appropriate scale for ordered data.",
     },
   ],
 };

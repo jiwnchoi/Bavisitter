@@ -1,7 +1,7 @@
-import { Encoding } from "vega-lite/build/src/encoding";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isCardinalityExcessive } from "videre/detectors/data";
 import { isChannel, isChannelProp } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 import { and } from "videre/utils";
 
 const exccessiveCardinality = ["x", "y", "color"].map(
@@ -12,18 +12,15 @@ const exccessiveCardinality = ["x", "y", "color"].map(
       description: `The cardinality of a ${channel} channel is too high.`,
       detect: and(
         isChannel(channel as keyof Encoding<string>),
-        isChannelProp(channel as keyof Encoding<string>, "type", [
-          "nominal",
-          "ordinal",
-        ]),
+        isChannelProp(channel as keyof Encoding<string>, "type", ["nominal", "ordinal"]),
         isCardinalityExcessive(channel as keyof Encoding<string>),
       ),
     },
     resolvers: [
       {
-        id: `reduce-cardinality`,
+        id: "reduce-cardinality",
         trigger: () => true,
-        description: `Filter 20 unique values and group the rest.`,
+        description: "Filter 20 unique values and group the rest.",
       },
     ],
   }),

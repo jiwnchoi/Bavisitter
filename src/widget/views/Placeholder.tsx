@@ -1,12 +1,4 @@
-import {
-  Center,
-  Fade,
-  Flex,
-  Heading,
-  SimpleGrid,
-  Text,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Center, Fade, Flex, Heading, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
 import { useModelMessage } from "@hooks";
 
 const EXAMPLE = [
@@ -60,11 +52,9 @@ function Placeholder() {
               }}
               _hover={{
                 cursor: "pointer",
-                backgroundColor:
-                  colorMode === "light" ? "blackAlpha.50" : "whiteAlpha.50",
+                backgroundColor: colorMode === "light" ? "blackAlpha.50" : "whiteAlpha.50",
                 transition: "background-color 0.2s",
-              }}
-            >
+              }}>
               <Text fontWeight={700}>{title}</Text>
               <Text opacity={0.6}>{prompt}</Text>
             </Flex>

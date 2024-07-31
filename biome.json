@@ -1,0 +1,69 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "files": {
+    "ignore": ["./src/bavisitter/**/*"]
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noCommaOperator": "off",
+        "noNonNullAssertion": "off",
+        "noParameterAssign": "warn",
+        "noVar": "error",
+        "useConsistentArrayType": "warn",
+        "useTemplate": "warn",
+        "useSingleVarDeclarator": "warn"
+      },
+      "nursery": {
+        "noConsole": "warn",
+        "noDuplicateAtImportRules": "error",
+        "noDuplicateElseIf": "error",
+        "noDuplicateJsonKeys": "error",
+        "noEvolvingTypes": "off"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "noBannedTypes": "off",
+        "noUselessTypeConstraint": "error",
+        "useFlatMap": "warn"
+      },
+      "performance": {
+        "noReExportAll": "error",
+        "noDelete": "off"
+      },
+      "correctness": {
+        "noRenderReturnValue": "error",
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentWidth": 2,
+    "indentStyle": "space",
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "attributePosition": "auto",
+    "formatWithErrors": true
+  },
+  "javascript": {
+    "formatter": {
+      "bracketSameLine": true,
+      "bracketSpacing": true,
+      "semicolons": "always",
+      "jsxQuoteStyle": "double",
+      "trailingCommas": "all",
+      "arrowParentheses": "asNeeded"
+    }
+  }
+}

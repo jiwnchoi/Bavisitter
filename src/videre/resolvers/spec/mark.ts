@@ -1,14 +1,13 @@
-import { State } from "videre/model";
-import { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
-import { cloneDeep } from "lodash-es";
+import type { AnyMark } from "vega-lite/build/src/mark";
+import type { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
+import type { State } from "videre/model";
 import { getMarkOpacity } from "videre/utils";
-import { AnyMark } from "vega-lite/build/src/mark";
 
 export function replaceMark(mark: AnyMark) {
   return (state: State) => {
     const { spec } = state;
     const newSpec = {
-      ...cloneDeep(spec),
+      ...structuredClone(spec),
       mark,
     } as TopLevelUnitSpec<string>;
     return state.updateSpec(newSpec);
@@ -18,7 +17,7 @@ export function replaceMark(mark: AnyMark) {
 export function convertPieToBar(state: State) {
   const { spec } = state;
   const newSpec = {
-    ...cloneDeep(spec),
+    ...structuredClone(spec),
     mark: "bar",
     encoding: {
       x: spec.encoding?.color,
@@ -32,7 +31,7 @@ export function convertPieToBar(state: State) {
 export function convertScatterToHeatmap(state: State) {
   const { spec } = state;
   const newSpec = {
-    ...cloneDeep(spec),
+    ...structuredClone(spec),
     mark: "rect",
     encoding: {
       x: { ...spec.encoding?.x, bin: true },
@@ -56,7 +55,7 @@ export const reduceOpacity = (state: State) => {
     Math.round((MIN_OPACITY + (currentOpacity - MIN_OPACITY) / 2) * 100) / 100,
   );
   const newSpec = {
-    ...cloneDeep(spec),
+    ...structuredClone(spec),
     mark:
       typeof spec.mark === "string"
         ? {

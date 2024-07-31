@@ -1,4 +1,4 @@
-import { IDetectorResultWithSelection } from "videre/index";
+import type { IDetectorResultWithSelection } from "videre/index";
 
 export function detectResultToContent(
   detectResult: IDetectorResultWithSelection[],
@@ -21,7 +21,8 @@ ${selectedReslts.map(({ issue }) => `  - ${issue.description}`).join("\n")}
 
 ${selectedReslts.map(({ resolvers }) => resolvers.map(({ description }) => `  - ${description}`).join("\n")).join("\n")}`;
 
-  const commandString = `\n\nBased on the detected issues, revise the Vega-Lite specification and data to improve the visualization.`;
+  const commandString =
+    "\n\nBased on the detected issues, revise the Vega-Lite specification and data to improve the visualization.";
 
   return problemString + (giveSolution ? solutionString : commandString);
 }

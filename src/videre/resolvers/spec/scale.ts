@@ -1,14 +1,10 @@
-import { State } from "videre/model";
-import { PositionFieldDef } from "vega-lite/build/src/channeldef";
-import { cloneDeep } from "lodash-es";
+import type { PositionFieldDef } from "vega-lite/build/src/channeldef";
+import type { State } from "videre/model";
 
-function applyScale(
-  channelName: "x" | "y",
-  type: "log" | "symlog" | "linear" | "pow",
-) {
+function applyScale(channelName: "x" | "y", type: "log" | "symlog" | "linear" | "pow") {
   return (state: State) => {
     const { spec } = state;
-    const newSpec = cloneDeep(spec);
+    const newSpec = structuredClone(spec);
     const channel = newSpec.encoding![channelName] as PositionFieldDef<string>;
     channel.scale = { type };
     return state.updateSpec(newSpec);
@@ -18,7 +14,7 @@ function applyScale(
 function removeScale(channelName: "x" | "y") {
   return (state: State) => {
     const { spec } = state;
-    const newSpec = cloneDeep(spec);
+    const newSpec = structuredClone(spec);
     const channel = newSpec.encoding![channelName] as PositionFieldDef<string>;
     delete channel.scale;
     return state.updateSpec(newSpec);

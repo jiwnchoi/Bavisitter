@@ -10,9 +10,7 @@ describe("extractCodeBlocksFromString", () => {
   const TEST_MESSAGE = JSON.parse(CODEBLOCK_STRING);
   const codeBlockString = extractCodeBlocksFromString(TEST_MESSAGE.content);
   test("should extract code blocks from a string", () => {
-    expect(
-      codeBlockString.startsWith("```json") && codeBlockString.endsWith("```"),
-    ).toBe(true);
+    expect(JSON.parse(codeBlockString).data?.url).toBe("data.csv");
   });
 
   test("should return empty string if no code block is found", () => {

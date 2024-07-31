@@ -1,4 +1,4 @@
-import { State } from "videre/model";
+import type { State } from "videre/model";
 
 export function applyJitter(channel: "x" | "y") {
   return (state: State) => {

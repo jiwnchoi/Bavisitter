@@ -1,16 +1,14 @@
-import { IMessageWithRef } from "@shared/types";
+import type { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
 import { useMessageStore } from "@stores";
 
 const isUserMessageBySystem = (message: IMessageWithRef) =>
   message.role === "user" &&
-  message.content.startsWith(
-    "**Current Vega Lite visualization has following issues",
-  );
+  message.content.startsWith("**Current Vega Lite visualization has following issues");
 
 export default function useContent(index: number) {
-  const messages = useMessageStore((state) => state.messages);
-  const streaming = useMessageStore((state) => state.streaming);
+  const messages = useMessageStore(state => state.messages);
+  const streaming = useMessageStore(state => state.streaming);
 
   const userName = (() => {
     const previousMessage = index > 0 ? messages[index - 1] : null;
@@ -31,9 +29,7 @@ export default function useContent(index: number) {
 
   const streamingMessage = index === messages.length - 1 && streaming;
 
-  const contentWithoutCodeblock = replaceJSONCodeBlocks(
-    messages[index].content,
-  );
+  const contentWithoutCodeblock = replaceJSONCodeBlocks(messages[index].content);
 
   const format = messages[index].format ?? "console";
 

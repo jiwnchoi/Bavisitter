@@ -1,6 +1,6 @@
-import { Encoding } from "vega-lite/build/src/encoding";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isNotTicks } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 
 const noTicks = ["x", "y"].map(
   (channel): IManifestManual => ({

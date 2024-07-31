@@ -1,24 +1,20 @@
 import { useModelState } from "@anywidget/react";
-import {
-  ChakraProvider,
-  DarkMode,
-  LightMode,
-  useColorMode,
-} from "@chakra-ui/react";
-import { TColorMode } from "@shared/types";
-import { PropsWithChildren, useEffect } from "react";
+import { ChakraProvider, DarkMode, LightMode, useColorMode } from "@chakra-ui/react";
+import { Global, css } from "@emotion/react";
+import type { TColorMode } from "@shared/types";
+import { type PropsWithChildren, useEffect } from "react";
 import ShadowRoot from "react-shadow/emotion";
 import theme from "./theme";
-import { Global, css } from "@emotion/react";
 
-function ColorMode({ children }: PropsWithChildren<{}>) {
+function ColorMode({ children }: PropsWithChildren) {
   const { colorMode } = useColorMode();
   const [modelColorMode] = useModelState<TColorMode>("color_mode");
   const { setColorMode } = useColorMode();
 
   useEffect(() => {
     setColorMode(modelColorMode);
-  }, []);
+  }, [modelColorMode, setColorMode]);
+
   const globalStyles = css`
     *::-webkit-scrollbar {
       width: 8px;
@@ -27,9 +23,7 @@ function ColorMode({ children }: PropsWithChildren<{}>) {
 
     *::-webkit-scrollbar-thumb {
       border-radius: 8px;
-      background-color: ${colorMode === "light"
-        ? "rgba(0, 0, 0, 0.1)"
-        : "rgba(255, 255, 255, 0.1)"};
+      background-color: ${colorMode === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)"};
     }
 
     *::-webkit-scrollbar-track {
@@ -48,7 +42,7 @@ function ColorMode({ children }: PropsWithChildren<{}>) {
   );
 }
 
-function Providers({ children }: PropsWithChildren<{}>) {
+function Providers({ children }: PropsWithChildren) {
   return (
     <ShadowRoot.div
       id="shadow-root"
@@ -60,8 +54,7 @@ function Providers({ children }: PropsWithChildren<{}>) {
         alignItems: "center",
         display: "flex",
         scrollBehavior: "smooth",
-      }}
-    >
+      }}>
       <ChakraProvider theme={theme}>
         <ColorMode>{children}</ColorMode>
       </ChakraProvider>

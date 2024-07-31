@@ -1,5 +1,5 @@
-import Snap, { Paper } from "snapsvg";
-import { Spec } from "vega";
+import Snap, { type Paper } from "snapsvg";
+import type { Spec } from "vega";
 import embed from "vega-embed";
 
 async function getPaperFromVega(spec: Spec): Promise<Paper | null> {

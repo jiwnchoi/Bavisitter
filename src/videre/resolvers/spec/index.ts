@@ -1,2 +1,7 @@
-export * from "./scale";
-export * from "./mark";
+export {
+  convertPieToBar,
+  convertScatterToHeatmap,
+  reduceOpacity,
+  replaceMark,
+} from "./mark";
+export { applyScale, removeScale } from "./scale";

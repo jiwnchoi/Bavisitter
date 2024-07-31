@@ -59,7 +59,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   def __init__(
     self,
     df: pd.DataFrame,
-    model: str = "gpt-4-turbo-preview",
+    model: str = "gpt-4o-mini",
     safe_model: Literal["auto", "off"] = "auto",
     advisor: Literal["advisor", "prompt", "none"] = "prompt",
     auto_fix: bool = False,

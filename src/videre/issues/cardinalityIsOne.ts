@@ -1,7 +1,7 @@
-import { Encoding } from "vega-lite/build/src/encoding";
-import { IManifestManual } from "videre/model";
-import { isChannel } from "videre/detectors/encoding";
+import type { Encoding } from "vega-lite/build/src/encoding";
 import { isCardinalityOne } from "videre/detectors/data";
+import { isChannel } from "videre/detectors/encoding";
+import type { IManifestManual } from "videre/model";
 import { and } from "videre/utils";
 
 const cardinalityIsOne = ["x", "y", "color"].map(

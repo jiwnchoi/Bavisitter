@@ -1,11 +1,11 @@
-import { Paper } from "snapsvg";
+import type { Paper } from "snapsvg";
 
 function getMarksFromPaper(paper: Paper) {
   const newPaper = paper.clone();
   const children = newPaper.selectAll(".root > g > g > g");
-  // const children = containerGroup.children()
   newPaper.select(".background").remove();
-  children.forEach((child) => {
+  // biome-ignore lint/complexity/noForEach: <explanation>
+  children.forEach(child => {
     if (!child.hasClass("role-mark")) {
       child.remove();
     }

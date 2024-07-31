@@ -1,16 +1,11 @@
+import { Divider, Flex, Spacer, Text } from "@chakra-ui/react";
 import { useMessages } from "@hooks";
 import ChartView from "./ChartView";
-import Messages from "./Messages";
-import { Divider, Flex, Spacer, Text } from "@chakra-ui/react";
 import HistoryView from "./HistoryView";
+import Messages from "./Messages";
 
 export default function Main({ chartWidth }: { chartWidth: number }) {
-  const {
-    chatBoxRef,
-    chatBoxAtBottom,
-    scrollToBottom,
-    scrollToContentByIndex,
-  } = useMessages();
+  const { chatBoxRef, chatBoxAtBottom, scrollToBottom, scrollToContentByIndex } = useMessages();
 
   return (
     <>

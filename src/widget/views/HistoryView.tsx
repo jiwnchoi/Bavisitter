@@ -1,4 +1,4 @@
-import { Flex, FlexProps, Image, useColorMode } from "@chakra-ui/react";
+import { Flex, type FlexProps, Image, useColorMode } from "@chakra-ui/react";
 import { useChartStore, useMessageStore } from "@stores";
 
 interface ThumbnailViewProps extends FlexProps {
@@ -7,11 +7,9 @@ interface ThumbnailViewProps extends FlexProps {
 }
 
 const HistoryView = (props: ThumbnailViewProps) => {
-  const charts = useChartStore((state) => state.charts);
-  const setCurrentChartByChatIndex = useChartStore(
-    (state) => state.setCurrentChartByChatIndex,
-  );
-  const toggleCodeBlock = useMessageStore((state) => state.toggleCodeBlock);
+  const charts = useChartStore(state => state.charts);
+  const setCurrentChartByChatIndex = useChartStore(state => state.setCurrentChartByChatIndex);
+  const toggleCodeBlock = useMessageStore(state => state.toggleCodeBlock);
   const { thumbnailSize, scrollToContentByIndex } = props;
   const { colorMode } = useColorMode();
   return (
@@ -23,8 +21,7 @@ const HistoryView = (props: ThumbnailViewProps) => {
             borderRadius={8}
             overflow={"clip"}
             key={`thumbnail-${index}`}
-            h={"fit-content"}
-          >
+            h={"fit-content"}>
             <Image
               key={`thumbnail-${index}`}
               src={chart.thumbnail}

@@ -1,12 +1,11 @@
 import { isRedundantEncoding } from "videre/detectors/encoding";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 
 const redundantEncoding: IManifestManual = {
   detector: {
     id: "redundant-encoding",
     type: "effectiveness",
-    description:
-      "Unnecessary multiple encodings are used to represent the same data.",
+    description: "Unnecessary multiple encodings are used to represent the same data.",
     detect: isRedundantEncoding,
   },
   resolvers: [

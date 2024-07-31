@@ -1,13 +1,12 @@
 import { useModelState } from "@anywidget/react";
-import { IChartSpec, IMessage, IMessageWithRef, TData } from "@shared/types";
+import type { IChartSpec, IMessage, IMessageWithRef, TData } from "@shared/types";
 import { getThumbnailFromSpec, parseVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
 import { createRef, useEffect } from "react";
 import useIPC from "./useIPC";
 
 export function useModelMessage() {
-  const [modelMessages, setModelMessages] =
-    useModelState<IMessage[]>("messages");
+  const [modelMessages, setModelMessages] = useModelState<IMessage[]>("messages");
 
   const appendMessages = (messages: IMessage[]) => {
     setModelMessages([...modelMessages, ...messages]);
@@ -38,14 +37,14 @@ export function useModelMessageEffect(chartSize: number) {
   const [modelMessages] = useModelState<IMessage[]>("messages");
   const [modelStreaming] = useModelState<boolean>("streaming");
 
-  const streaming = useMessageStore((state) => state.streaming);
-  const setMessages = useMessageStore((state) => state.setMessages);
-  const setStreaming = useMessageStore((state) => state.setStreaming);
+  const streaming = useMessageStore(state => state.streaming);
+  const setMessages = useMessageStore(state => state.setMessages);
+  const setStreaming = useMessageStore(state => state.setStreaming);
 
   const { fetchModel } = useIPC();
-  const getArtifact = useArtifactStore((state) => state.getArtifact);
+  const getArtifact = useArtifactStore(state => state.getArtifact);
 
-  const setCharts = useChartStore((state) => state.setCharts);
+  const setCharts = useChartStore(state => state.setCharts);
 
   useEffect(() => {
     setMessages(
@@ -63,13 +62,9 @@ export function useModelMessageEffect(chartSize: number) {
 
   useEffect(
     () =>
-      useMessageStore.subscribe(
-        (state) => state.computed.chartMessages,
-        handleChartLoaded,
-        {
-          fireImmediately: true,
-        },
-      ),
+      useMessageStore.subscribe(state => state.computed.chartMessages, handleChartLoaded, {
+        fireImmediately: true,
+      }),
     [],
   );
 

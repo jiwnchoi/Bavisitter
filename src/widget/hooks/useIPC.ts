@@ -19,7 +19,7 @@ function useIPC() {
       pendingRequests.get(uuid)!(content);
       pendingRequests.delete(uuid);
     }
-    setIPCQueue(ipcQueue.filter((m) => m.uuid !== uuid));
+    setIPCQueue(ipcQueue.filter(m => m.uuid !== uuid));
   };
 
   async function fetchModel<T>(type: string, data: any) {
@@ -39,11 +39,11 @@ function useIPC() {
     });
   }
   useEffect(() => {
-    ipcQueue.forEach((message) => {
+    for (const message of ipcQueue) {
       if (message.type === "response") {
         handleMessage(message);
       }
-    });
+    }
   }, [ipcQueue]);
 
   return { fetchModel };

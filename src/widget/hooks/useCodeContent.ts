@@ -3,16 +3,10 @@ import { useChartStore, useMessageStore } from "@stores";
 import { useEffect, useRef } from "react";
 
 function useCodeContent(index: number) {
-  const openedCodeBlockIndices = useMessageStore(
-    (state) => state.openedCodeBlockIndices,
-  );
-  const toggleCodeBlock = useMessageStore((state) =>
-    state.toggleCodeBlock(index),
-  );
+  const openedCodeBlockIndices = useMessageStore(state => state.openedCodeBlockIndices);
+  const toggleCodeBlock = useMessageStore(state => state.toggleCodeBlock(index));
 
-  const setCurrentChartByChatIndex = useChartStore(
-    (state) => state.setCurrentChartByChatIndex,
-  );
+  const setCurrentChartByChatIndex = useChartStore(state => state.setCurrentChartByChatIndex);
   const ref = useRef<HTMLDivElement>(null);
 
   const { isOpen, onToggle } = useDisclosure({

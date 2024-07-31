@@ -7,6 +7,6 @@ export type { default as TDetectorType } from "./TDetectorType";
 
 export { default as State } from "./State";
 
-export * from "./IManifest";
+export type { IManifestAuto, IManifestManual } from "./IManifest";
 
 export type { default as IPrompt } from "./IPrompt";

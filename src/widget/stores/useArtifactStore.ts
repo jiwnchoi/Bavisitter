@@ -13,26 +13,24 @@ interface ArtifacTActuator {
   initArtifacts: () => void;
 }
 
-const useArtifactStore = create<ArtifactState & ArtifacTActuator>(
-  (set, get) => ({
-    artifacts: {},
-    appendArtifact: (key: string, value: any) =>
-      set((state) => ({
-        artifacts: { ...state.artifacts, [key]: value },
-      })),
-    getArtifact: (key: string) => {
-      return get().artifacts[key];
-    },
-    removeArtifact: (key: string) =>
-      set((state) => {
-        const { [key]: _, ...rest } = state.artifacts;
-        return { artifacts: rest };
-      }),
-    initArtifacts: () =>
-      set(() => {
-        return { artifacts: {} };
-      }),
-  }),
-);
+const useArtifactStore = create<ArtifactState & ArtifacTActuator>((set, get) => ({
+  artifacts: {},
+  appendArtifact: (key: string, value: any) =>
+    set(state => ({
+      artifacts: { ...state.artifacts, [key]: value },
+    })),
+  getArtifact: (key: string) => {
+    return get().artifacts[key];
+  },
+  removeArtifact: (key: string) =>
+    set(state => {
+      const { [key]: _, ...rest } = state.artifacts;
+      return { artifacts: rest };
+    }),
+  initArtifacts: () =>
+    set(() => {
+      return { artifacts: {} };
+    }),
+}));
 
 export default useArtifactStore;

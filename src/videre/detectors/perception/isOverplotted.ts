@@ -1,4 +1,4 @@
-import { State } from "videre/model";
+import type { State } from "videre/model";
 import { getAlphaMapFromCanvas, getMarkOpacity } from "videre/utils";
 
 async function isOverplotted(state: State) {
@@ -8,9 +8,7 @@ async function isOverplotted(state: State) {
 
   return (
     currentOpacity > 0.25 &&
-    alphaMap.filter((alpha) => alpha > 230).length /
-      alphaMap.filter((alpha) => alpha > 0).length >
-      0.3
+    alphaMap.filter(alpha => alpha > 230).length / alphaMap.filter(alpha => alpha > 0).length > 0.3
   );
 }
 

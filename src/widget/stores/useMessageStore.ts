@@ -1,4 +1,4 @@
-import { IMessageWithRef } from "@shared/types";
+import type { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, isContentValidJSON } from "@shared/utils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
@@ -27,9 +27,7 @@ const useMessageStore = create(
     openedCodeBlockIndices: [],
     computed: {
       get chartMessages() {
-        return get().messages.filter(
-          (m) => isCodeVegaLite(m) && isContentValidJSON(m.content),
-        );
+        return get().messages.filter(m => isCodeVegaLite(m) && isContentValidJSON(m.content));
       },
     },
 
@@ -44,9 +42,7 @@ const useMessageStore = create(
           });
         } else {
           set({
-            openedCodeBlockIndices: openedCodeBlockIndices.filter(
-              (index) => index !== chatIndex,
-            ),
+            openedCodeBlockIndices: openedCodeBlockIndices.filter(index => index !== chatIndex),
           });
         }
       };

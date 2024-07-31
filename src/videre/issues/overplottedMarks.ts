@@ -1,13 +1,9 @@
 import { isDataSkewed } from "videre/detectors/data";
 import { isChannelProp, isMark } from "videre/detectors/encoding";
 import { isOverplotted } from "videre/detectors/perception";
-import { IManifestManual } from "videre/model";
+import type { IManifestManual } from "videre/model";
 import { removeNegativeValues, removeZeroValues } from "videre/resolvers/data";
-import {
-  applyScale,
-  convertScatterToHeatmap,
-  reduceOpacity,
-} from "videre/resolvers/spec";
+import { applyScale, convertScatterToHeatmap, reduceOpacity } from "videre/resolvers/spec";
 import { applyJitter } from "videre/resolvers/spec/jittering";
 import { and, asyncAnd, not } from "videre/utils";
 
@@ -56,11 +52,7 @@ const overplottedMarks: IManifestManual = {
         isDataSkewed("x", "positive"),
         not(isChannelProp("x", "scale", { type: "log" })),
       ),
-      resolve: [
-        removeNegativeValues(["x"]),
-        removeZeroValues(["x"]),
-        applyScale("x", "log"),
-      ],
+      resolve: [removeNegativeValues(["x"]), removeZeroValues(["x"]), applyScale("x", "log")],
     },
     {
       id: "apply-log-scale-y",
@@ -69,11 +61,7 @@ const overplottedMarks: IManifestManual = {
         isDataSkewed("y", "positive"),
         not(isChannelProp("y", "scale", { type: "log" })),
       ),
-      resolve: [
-        removeNegativeValues(["y"]),
-        removeZeroValues(["y"]),
-        applyScale("y", "log"),
-      ],
+      resolve: [removeNegativeValues(["y"]), removeZeroValues(["y"]), applyScale("y", "log")],
     },
     {
       id: "apply-pow-scale-x",

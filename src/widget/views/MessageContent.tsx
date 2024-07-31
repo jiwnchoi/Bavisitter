@@ -36,8 +36,7 @@ export default function MessageContent({ content }: IMessageContentProps) {
                 {...props}
               />
             ),
-          }}
-        >
+          }}>
           {content}
         </Markdown>
       </Text>
