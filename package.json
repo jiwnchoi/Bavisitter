@@ -54,7 +54,7 @@
     "typescript": "^5.4.2"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,css,html,json}": ["jest", "biome check --write"],
+    "*.{js,ts,tsx,css,html,json}": ["biome check --write"],
     "*.{py,pyi,pyc}": ["hatch run ruff check --fix", "hatch run ruff format"]
   }
 }
