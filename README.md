@@ -9,7 +9,7 @@ from bavisitter import Bavisitter
 os.environ["OPENAI_API_KEY"] = "sk-"
 # If you are using different LLMs (e.g., Claude, Gemini) use different api keys.
 
-bavisitter = Bavisitter(df, model="gpt-4-turbo-preview", color_mode="dark")
+bavisitter = Bavisitter(df, model="gpt-4o", color_mode="dark")
 bavisitter
 ```
 
