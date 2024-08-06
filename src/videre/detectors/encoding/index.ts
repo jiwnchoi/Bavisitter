@@ -8,3 +8,4 @@ export { default as isOrdinalNotSorted } from "./isOrdinalNotSorted";
 export { default as isRedundantEncoding } from "./isRedundantEncoding";
 export { default as isShapesWithSize } from "./isShapesWithSize";
 export { default as isTooManyBins } from "./isTooManyBins";
+export { default as isSmallMarks } from "./isSmallMarks";
