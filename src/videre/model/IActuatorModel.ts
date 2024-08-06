@@ -1,9 +1,9 @@
 import type { State } from ".";
-import type TActuatorType from "./TActuatorType";
+import type TResolverType from "./TResolverType";
 
 export default interface IResolverModel {
   id: string;
-  type?: TActuatorType;
+  type?: TResolverType;
   trigger: (state: State) => boolean | Promise<boolean>;
   description: string;
   resolve?: ((state: State) => State)[];

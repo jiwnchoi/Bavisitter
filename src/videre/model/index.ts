@@ -1,5 +1,5 @@
 export type { default as IActuatorModel } from "./IActuatorModel";
-export type { default as TActuatorType } from "./TActuatorType";
+export type { default as TResolverType } from "./TResolverType";
 
 export type { default as IDetectorModel } from "./IDetectorModel";
 export type { default as IDetectorLevel } from "./TDetectorLevel";
