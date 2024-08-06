@@ -14,3 +14,4 @@ export { default as noTicks } from "./noTicks";
 export { default as noLegend } from "./noLegend";
 export { default as shapesWithSize } from "./shapesWithSize";
 export { default as overplottedMarks } from "./overplottedMarks";
+export { default as tooManyBins } from "./tooManyBins";
