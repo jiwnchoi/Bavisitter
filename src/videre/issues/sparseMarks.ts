@@ -7,13 +7,13 @@ const sparseMarks: IManifestManual = {
   detector: {
     id: "sparse-marks",
     type: "perception",
-    description: "Marks are sparse.",
+    description: "Marks are too sparse.",
     detect: await asyncAnd(isMark(["point", "circle"]), isUnderplotted),
   },
   resolvers: [
     {
-      id: "scatterplot-to-heatmap",
-      description: "Convert scatterplot to bar chart.",
+      id: "increase-mark-size",
+      description: "Increase mark size.",
       trigger: isMark(["point", "circle"]),
     },
   ],
