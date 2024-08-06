@@ -1,10 +1,10 @@
 import type { Paper } from "snapsvg";
 import embed from "vega-embed";
-import { type Config, compile } from "vega-lite";
+import type { Config } from "vega-lite";
 import { isFieldDef } from "vega-lite/build/src/channeldef";
 import type { Encoding } from "vega-lite/build/src/encoding";
 import { type TopLevelUnitSpec, isUnitSpec } from "vega-lite/build/src/spec/unit";
-import { getCanvasFromPaper, getMarksFromPaper, getPaperFromVega } from "../utils";
+import { getCanvasFromPaper, getMarksFromPaper, getPaperFromSVG } from "../utils";
 
 class State {
   public spec: TopLevelUnitSpec<string>;
@@ -32,15 +32,28 @@ class State {
     return field.field;
   }
 
-  async getPaper() {
-    const compiledSpec = compile(
+  async getSVG() {
+    const container = document.createElement("div");
+
+    await embed(
+      container,
       {
         ...this.spec,
         data: { values: this.data },
+        config: this.specConfig,
       },
-      { config: this.specConfig },
-    ).spec;
-    return this.paper ?? (await getPaperFromVega(compiledSpec));
+      {
+        renderer: "svg",
+        actions: false,
+      },
+    );
+
+    return container.querySelector("svg");
+  }
+
+  async getPaper() {
+    const svg = await this.getSVG();
+    return this.paper ?? (await getPaperFromSVG(svg));
   }
 
   async getMarksPaper() {
