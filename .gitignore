@@ -6,7 +6,7 @@ dist
 __pycache__
 .ipynb_checkpoints
 
-packages/bavisitter/static
+bavisitter/static
 artifacts
 .env
 *.ipynb

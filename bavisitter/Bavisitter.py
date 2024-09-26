@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.metadata
+import json
+import os
 import pathlib
 import re
 from copy import copy
@@ -46,7 +48,6 @@ match = re.compile(r"```(\w+)\n")
 
 
 class Bavisitter(anywidget.AnyWidget, HasTraits):
-  _esm = pathlib.Path(__file__).parent / "static" / "main.js"
   messages = List(Dict(value_trait=Unicode(), key_trait=Unicode())).tag(
     sync=True
   )
@@ -70,6 +71,14 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
     **kwargs,
   ):
     super().__init__(**kwargs)
+
+    if os.getenv("ANYWIDGET_DEV") == "1":
+      vite_config = json.load(
+        open(pathlib.Path(__file__).parent.parent / "vite.config.json")
+      )
+      self._esm = f"http://localhost:{vite_config['server']['port']}/packages/widget/main.tsx?anywidget"
+    else:
+      self._esm = (pathlib.Path(__file__) / "static" / "widget.js").read_text()
 
     if df is None or not isinstance(df, pd.DataFrame):
       raise ValueError("Give a valid dataframe to the widget.")

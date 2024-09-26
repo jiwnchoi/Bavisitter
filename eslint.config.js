@@ -7,7 +7,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "artifacts", "node_modules", "packages/videre"] },
+  { ignores: ["*.ts", "dist", "artifacts", "node_modules", "packages/videre"] },
   eslintConfigPrettier,
   {
     settings: { react: { version: "18.3" } },

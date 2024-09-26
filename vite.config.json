@@ -1,0 +1,25 @@
+{
+  "build": {
+    "target": "esnext",
+    "outDir": "bavisitter/static",
+    "rollupOptions": {
+      "output": {
+        "entryFileNames": "widget.js",
+        "assetFileNames": "widget.[ext]"
+      }
+    },
+    "lib": {
+      "entry": "packages/widget/main.tsx",
+      "formats": ["es"]
+    }
+  },
+  "resolve": {
+    "alias": {
+      "@/": "/widget/"
+    }
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5173
+  }
+}
