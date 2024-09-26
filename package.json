@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "ANYWIDGET_DEV=1 concurrently --kill-others \"vite\" \"pnpm jupyter\"",
     "jupyter": "hatch run jupyter lab --no-browser --ServerApp.log_level='CRITICAL'",
-    "build": "esbuild packages/widget/main.tsx --minify --format=esm --bundle --outdir=bavisitter/static",
+    "build": "vite build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && hatch run ruff check .",
     "format": "prettier . --write --log-level error  && hatch run ruff format .",

@@ -2,7 +2,8 @@ import { useModelState } from "@anywidget/react";
 import type { IChartSpec, IMessage, IMessageWithRef, TData } from "@shared/types";
 import { getThumbnailFromSpec, parseVegaLite } from "@shared/utils";
 import { useArtifactStore, useChartStore, useMessageStore } from "@stores";
-import { createRef, useCallback, useEffect } from "react";
+import { createRef, useEffect } from "react";
+import useChartMessages from "./useChartMessages";
 import useIPC from "./useIPC";
 
 export function useModelMessage() {
@@ -41,14 +42,29 @@ export function useModelMessageEffect(chartSize: number) {
   const setMessages = useMessageStore((state) => state.setMessages);
   const setStreaming = useMessageStore((state) => state.setStreaming);
 
+  const chartMessages = useChartMessages();
+
   const { fetchModel } = useIPC();
   const getArtifact = useArtifactStore((state) => state.getArtifact);
 
   const setCharts = useChartStore((state) => state.setCharts);
 
-  const handleChartLoaded = useCallback(
-    async (chartMessages: IMessageWithRef[]) => {
-      if (streaming) return;
+  useEffect(() => {
+    setMessages(
+      modelMessages.map((m, i) => ({
+        ...m,
+        ref: createRef<HTMLDivElement>(),
+        chatIndex: i,
+      })),
+    );
+  }, [modelMessages, setMessages]);
+
+  useEffect(() => {
+    setStreaming(modelStreaming);
+  }, [modelStreaming, setStreaming]);
+
+  useEffect(() => {
+    const handleChartLoaded = async (chartMessages: IMessageWithRef[]) => {
       const newCharts: IChartSpec[] = [];
 
       for await (const message of chartMessages) {
@@ -68,35 +84,8 @@ export function useModelMessageEffect(chartSize: number) {
       }
 
       setCharts(newCharts);
-    },
-    [chartSize, fetchModel, getArtifact, setCharts, streaming],
-  );
+    };
 
-  useEffect(() => {
-    setMessages(
-      modelMessages.map((m, i) => ({
-        ...m,
-        ref: createRef<HTMLDivElement>(),
-        chatIndex: i,
-      })),
-    );
-  }, [modelMessages, setMessages]);
-
-  useEffect(() => {
-    setStreaming(modelStreaming);
-  }, [modelStreaming, setStreaming]);
-
-  useEffect(() => {
-    const unsub = useMessageStore.subscribe(
-      (state) => state.computed.chartMessages,
-      (c) => {
-        handleChartLoaded(c);
-      },
-      {
-        fireImmediately: true,
-      },
-    );
-
-    return unsub;
-  }, [handleChartLoaded]);
+    handleChartLoaded(chartMessages);
+  }, [chartMessages, chartSize, fetchModel, getArtifact, setCharts]);
 }

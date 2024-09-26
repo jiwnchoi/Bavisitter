@@ -214,7 +214,7 @@ export default function RevisionContent({ scrollToBottom }: IRevisionContentProp
 
   const [revisionType, setRevisionType] = useModelState<TRevisionType>("advisor");
   const [autoFix] = useModelState<boolean>("auto_fix");
-  useEffect(scrollToBottom, [revisionViewDisplayed, scrollToBottom]);
+  useEffect(scrollToBottom, [detectResult]);
 
   useEffect(() => {
     if (!autoFix) return;
@@ -226,15 +226,7 @@ export default function RevisionContent({ scrollToBottom }: IRevisionContentProp
     } else if (revisionType === REVISE_WITH_ACTUATOR) {
       reviseLastChartWithAction(detectResult);
     }
-  }, [
-    autoFix,
-    revisionType,
-    revisionViewDisplayed,
-    reviseLastChartWithProblem,
-    reviseLastChartWithPrompt,
-    reviseLastChartWithAction,
-    detectResult,
-  ]);
+  }, [detectResult]);
 
   if (!revisionViewDisplayed) return null;
   return (

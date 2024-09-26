@@ -78,7 +78,9 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       )
       self._esm = f"http://localhost:{vite_config['server']['port']}/packages/widget/main.tsx?anywidget"
     else:
-      self._esm = (pathlib.Path(__file__) / "static" / "widget.js").read_text()
+      self._esm = (
+        pathlib.Path(__file__).parent / "static" / "widget.js"
+      ).read_text()
 
     if df is None or not isinstance(df, pd.DataFrame):
       raise ValueError("Give a valid dataframe to the widget.")
