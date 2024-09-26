@@ -6,7 +6,7 @@ export default function useMessages() {
   const messages = useMessageStore((state) => state.messages);
   const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean>(true);
 
-  const setChatBoxAtBottom = () => {
+  const setChatBoxAtBottom = useCallback(() => {
     _setChatBoxAtBottom(
       chatBoxRef.current !== null &&
         chatBoxRef.current.scrollHeight -
@@ -14,8 +14,15 @@ export default function useMessages() {
           chatBoxRef.current.clientHeight <=
           50,
     );
-  };
-
+  }, []);
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "instant") => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo({
+        top: chatBoxRef.current.scrollHeight,
+        behavior,
+      });
+    }
+  }, []);
   useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.addEventListener("scroll", setChatBoxAtBottom);
@@ -27,16 +34,7 @@ export default function useMessages() {
     if (chatBoxRef.current && chatBoxAtBottom) {
       scrollToBottom();
     }
-  }, [messages]);
-
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = "instant") => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTo({
-        top: chatBoxRef.current.scrollHeight,
-        behavior,
-      });
-    }
-  }, []);
+  }, [chatBoxAtBottom, messages, scrollToBottom]);
 
   const scrollToContentByIndex = (chatIndex: number) => {
     const message = messages.find((m) => m.chatIndex === chatIndex);
