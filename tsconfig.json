@@ -1,5 +1,5 @@
 {
-  "include": ["src/widget", "src/videre"],
+  "include": ["packages/widget", "packages/videre"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -17,8 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./",
     "paths": {
-      "@*": ["src/widget/*"],
-      "videre/*": ["src/videre/*"]
+      "@*": ["packages/widget/*"],
+      "videre/*": ["packages/videre/*"]
     }
   }
 }

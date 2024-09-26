@@ -6,7 +6,7 @@ dist
 __pycache__
 .ipynb_checkpoints
 
-src/bavisitter/static
+packages/bavisitter/static
 artifacts
 .env
 *.ipynb
@@ -16,3 +16,5 @@ demo*
 
 script
 *.zip
+
+.DS_Store
