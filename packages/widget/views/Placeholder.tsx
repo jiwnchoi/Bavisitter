@@ -1,23 +1,9 @@
 import { Center, Fade, Flex, Heading, SimpleGrid, Text, useColorMode } from "@chakra-ui/react";
-import { useModelMessage } from "@hooks";
-
-const EXAMPLE = [
-  {
-    title: "Request by Chart Type",
-    prompt: "Draw scatterplot with two columns in input data",
-  },
-  {
-    title: "Specify Some Analytic Task",
-    prompt: "Show me the distribution of a column in input data",
-  },
-  {
-    title: "Analyze Data with Machine Learning",
-    prompt: "Do linear regression on two columns in data and visualize it",
-  },
-];
+import { useMessages } from "@hooks";
+import { EXAMPLE } from "@shared/constants";
 
 function Placeholder() {
-  const { appendMessages } = useModelMessage();
+  const { appendMessages } = useMessages();
   const { colorMode } = useColorMode();
   return (
     <Flex w={"full"} h={"full"} flexDir="column" p={4}>

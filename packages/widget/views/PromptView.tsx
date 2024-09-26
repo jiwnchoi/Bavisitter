@@ -1,28 +1,10 @@
 import { Flex, Icon, IconButton, Spinner, Textarea } from "@chakra-ui/react";
-import { useModelMessage } from "@hooks";
-import type { IPrompt } from "@shared/types";
-import { useMessageStore } from "@stores";
-import { Field, type FieldProps, Form, Formik, type FormikProps } from "formik";
+import { usePromptView } from "@hooks";
+import { Field, type FieldProps, Form, Formik } from "formik";
 import { FaArrowUp, FaTrash } from "react-icons/fa6";
 
-const handleKeyDown = (
-  e: React.KeyboardEvent<HTMLTextAreaElement>,
-  props: FormikProps<IPrompt>,
-) => {
-  if (props.values.prompt !== "" && e.key === "Enter") {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.shiftKey) {
-      props.setFieldValue("prompt", `${props.values.prompt}\n`);
-    } else {
-      props.submitForm();
-    }
-  }
-};
-
 export default function PromptView() {
-  const streaming = useMessageStore((state) => state.streaming);
-  const { appendMessages, clearUserMessages } = useModelMessage();
+  const { streaming, handleSubmit, handleKeyDown, handleClear } = usePromptView();
 
   return (
     <Flex
@@ -32,20 +14,8 @@ export default function PromptView() {
       borderWidth={1.5}
       borderRadius={"md"}
       _focusWithin={{ borderColor: "blue.500" }}>
-      <Formik
-        initialValues={{ prompt: "" }}
-        onSubmit={(values, actions) => {
-          appendMessages([
-            {
-              role: "user",
-              content: values.prompt,
-              type: "message",
-            },
-          ]);
-          actions.resetForm();
-          actions.setSubmitting(false);
-        }}>
-        {(props) => (
+      <Formik initialValues={{ prompt: "" }} onSubmit={handleSubmit}>
+        {({ values, isSubmitting, resetForm, setFieldValue, submitForm }) => (
           <Form style={{ display: "flex", minWidth: "100%" }}>
             <Field name="prompt" as="textarea">
               {({ field }: FieldProps) => (
@@ -60,7 +30,7 @@ export default function PromptView() {
                   background={"transparent"}
                   _focus={{ border: "none", borderWidth: 0 }}
                   _placeholder={{ color: "gray.400" }}
-                  onKeyDown={(e) => handleKeyDown(e, props)}
+                  onKeyDown={(e) => handleKeyDown(e, values.prompt, setFieldValue, submitForm)}
                 />
               )}
             </Field>
@@ -69,19 +39,16 @@ export default function PromptView() {
                 type="submit"
                 size={"sm"}
                 icon={streaming ? <Spinner /> : <Icon as={FaArrowUp} />}
-                isLoading={props.isSubmitting || streaming}
-                isDisabled={props.isSubmitting || props.values.prompt === ""}
+                isLoading={isSubmitting || streaming}
+                isDisabled={isSubmitting || values.prompt === ""}
                 aria-label="Sending Button"
               />
               <IconButton
                 size={"sm"}
                 icon={<Icon as={FaTrash} />}
-                isDisabled={props.isSubmitting || streaming}
+                isDisabled={isSubmitting || streaming}
                 aria-label="Clear Button"
-                onClick={() => {
-                  props.resetForm();
-                  clearUserMessages();
-                }}
+                onClick={() => handleClear(resetForm)}
               />
             </Flex>
           </Form>

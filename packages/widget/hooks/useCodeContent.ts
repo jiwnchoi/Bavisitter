@@ -1,36 +1,24 @@
-import { useDisclosure } from "@chakra-ui/react";
-import { useChartStore, useMessageStore } from "@stores";
-import { useEffect, useMemo, useRef } from "react";
+import { useInteractionStore } from "@stores";
+import { useCallback, useMemo, useRef } from "react";
 
-function useCodeContent(index: number) {
-  const openedCodeBlockIndices = useMessageStore((state) => state.openedCodeBlockIndices);
-  const toggleCodeBlockBase = useMessageStore((state) => state.toggleCodeBlock);
+function useCodeContent(chatIndex: number) {
+  const setCodeBlockOpened = useInteractionStore((state) => state.setCodeBlockOpened);
+  const openedCodeBlockIndices = useInteractionStore((state) => state.openedCodeBlockIndices);
 
-  const toggleCodeBlock = useMemo(() => toggleCodeBlockBase(index), [index, toggleCodeBlockBase]);
+  const codeBlockRef = useRef<HTMLDivElement>(null);
 
-  const setCurrentChartByChatIndex = useChartStore((state) => state.setCurrentChartByChatIndex);
-  const ref = useRef<HTMLDivElement>(null);
-
-  const { isOpen, onToggle } = useDisclosure({
-    defaultIsOpen: openedCodeBlockIndices.includes(index),
-  });
-
-  useEffect(() => {
-    toggleCodeBlock(isOpen);
-  }, [isOpen, toggleCodeBlock]);
-
-  useEffect(() => {
-    if (isOpen !== openedCodeBlockIndices.includes(index)) {
-      onToggle();
-    }
-  }, [index, isOpen, onToggle, openedCodeBlockIndices]);
+  const isOpen = useMemo(
+    () => openedCodeBlockIndices.includes(chatIndex),
+    [chatIndex, openedCodeBlockIndices],
+  );
+  const onToggle = useCallback(() => {
+    setCodeBlockOpened(chatIndex, !isOpen);
+  }, [chatIndex, isOpen, setCodeBlockOpened]);
 
   return {
-    ref,
+    codeBlockRef,
     onToggle,
     isOpen,
-    setCurrentChartByChatIndex,
-    toggleCodeBlock,
   };
 }
 

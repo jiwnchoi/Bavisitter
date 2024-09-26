@@ -1,46 +1,64 @@
 import type { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
-import { useMessageStore } from "@stores";
+import { BabyBottleIcon, RoboticIcon, UserQuestion01Icon } from "hugeicons-react";
+import type { FC } from "react";
+import useMessages from "./useMessagess";
+import useStreaming from "./useStreaming";
+type TUserNames = "You" | "Visualization Assistant" | "Bavisitter";
+
+const avatarIcons: Record<TUserNames, FC> = {
+  You: UserQuestion01Icon,
+  Bavisitter: BabyBottleIcon,
+  "Visualization Assistant": RoboticIcon,
+};
+
+const avatarColors: Record<TUserNames, string> = {
+  You: "green.500",
+  Bavisitter: "blue.500",
+  "Visualization Assistant": "orange.500",
+};
 
 const isUserMessageBySystem = (message: IMessageWithRef) =>
   message.role === "user" &&
   message.content.startsWith("**Current Vega Lite visualization has following issues");
 
-export default function useContent(index: number) {
-  const messages = useMessageStore((state) => state.messages);
-  const streaming = useMessageStore((state) => state.streaming);
+export default function useContent(chatIndex: number) {
+  const { messages } = useMessages();
+  const streaming = useStreaming();
 
-  const userName = (() => {
-    const previousMessage = index > 0 ? messages[index - 1] : null;
-    if (isUserMessageBySystem(messages[index])) {
+  const userName: TUserNames = (() => {
+    const previousMessage = chatIndex > 0 ? messages[chatIndex - 1] : null;
+    if (isUserMessageBySystem(messages[chatIndex])) {
       return "Bavisitter";
     }
-    if (messages[index].role === "user") {
+    if (messages[chatIndex].role === "user") {
       return "You";
     }
     if (previousMessage && previousMessage.role === "user") {
       return "Visualization Assistant";
     }
-    if (previousMessage && previousMessage.role !== "user") {
-      return null;
-    }
-    return null;
+    return "You";
   })();
 
-  const streamingMessage = index === messages.length - 1 && streaming;
+  const avatarColor = avatarColors[userName];
+  const avatarIcon = avatarIcons[userName];
 
-  const contentWithoutCodeblock = replaceJSONCodeBlocks(messages[index].content);
+  const streamingMessage = chatIndex === messages.length - 1 && streaming;
 
-  const format = messages[index].format ?? "console";
+  const contentWithoutCodeblock = replaceJSONCodeBlocks(messages[chatIndex].content);
 
-  const contentIsVegaLite = isCodeVegaLite(messages[index]);
+  const format = messages[chatIndex].format ?? "console";
 
-  const type = messages[index].type;
+  const contentIsVegaLite = isCodeVegaLite(messages[chatIndex]);
 
-  const ref = messages[index].ref;
+  const type = messages[chatIndex].type;
+
+  const ref = messages[chatIndex].ref;
 
   return {
     userName,
+    avatarIcon,
+    avatarColor,
     contentWithoutCodeblock,
     streamingMessage,
     contentIsVegaLite,

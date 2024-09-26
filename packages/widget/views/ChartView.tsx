@@ -1,18 +1,18 @@
-import { type CenterProps, Flex, useColorMode } from "@chakra-ui/react";
-import { useChartStore } from "@stores";
+import { Flex, useColorMode, type CenterProps } from "@chakra-ui/react";
+import { useChartView } from "@hooks";
 import { Vega } from "react-vega";
 
-export default function ChartView(props: CenterProps) {
+function ChartView(props: CenterProps) {
   const { colorMode } = useColorMode();
-  const currentChart = useChartStore((state) => state.currentChart.state);
+  const { spec, data } = useChartView();
 
   return (
     <Flex {...props}>
-      {currentChart && (
+      {spec && data && (
         <Vega
           mode={"vega-lite"}
-          spec={currentChart.spec}
-          data={currentChart.data}
+          spec={spec}
+          data={data}
           actions={true}
           theme={colorMode === "light" ? undefined : "dark"}
         />
@@ -20,3 +20,5 @@ export default function ChartView(props: CenterProps) {
     </Flex>
   );
 }
+
+export default ChartView;

@@ -14,7 +14,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkCold, coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ICodeContentProps {
-  index: number;
+  chatIndex: number;
   content: string;
   format: string;
   streamingMessage: boolean;
@@ -36,15 +36,16 @@ function CodeBlockButton(proos: ButtonProps) {
     </Button>
   );
 }
-export default function CodeContent({
-  index,
+function CodeContent({
+  chatIndex: chatIndex,
   content,
   format,
   streamingMessage,
   contentIsVegaLite,
 }: ICodeContentProps) {
   const { colorMode } = useColorMode();
-  const { ref, onToggle, isOpen, setCurrentChartByChatIndex } = useCodeContent(index);
+  const { codeBlockRef, onToggle, isOpen } = useCodeContent(chatIndex);
+
   return (
     <Flex
       flexDir="column"
@@ -53,7 +54,7 @@ export default function CodeContent({
       gap={0}
       borderRadius={8}
       overflow={"auto"}
-      ref={ref}>
+      ref={codeBlockRef}>
       <Flex
         flexDir="row"
         w="full"
@@ -77,13 +78,13 @@ export default function CodeContent({
             leftIcon={<Icon as={FaChartBar} />}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentChartByChatIndex(index);
+              // setCurrentChartByChatIndex(chatIndex);
             }}>
             Load Chart
           </CodeBlockButton>
         )}
         <CodeBlockButton
-          leftIcon={<Icon as={FaCopy} />}
+          leftIcon={<Icon as={FaCopy} />} // Copied 추가
           onClick={(e) => {
             e.stopPropagation();
             navigator.clipboard.writeText(content);
@@ -102,7 +103,7 @@ export default function CodeContent({
             overflow: "auto",
             wordBreak: "break-all",
             whiteSpace: "pre-wrap",
-            maxWidth: ref.current?.clientWidth,
+            maxWidth: codeBlockRef.current?.clientWidth,
           }}>
           {content}
         </SyntaxHighlighter>
@@ -110,3 +111,5 @@ export default function CodeContent({
     </Flex>
   );
 }
+
+export default CodeContent;

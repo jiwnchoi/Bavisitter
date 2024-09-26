@@ -1,10 +1,11 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { memo } from "react";
 import Markdown from "react-markdown";
 
 interface IMessageContentProps {
   content: string;
 }
-export default function MessageContent({ content }: IMessageContentProps) {
+function MessageContent({ content }: IMessageContentProps) {
   return (
     <Flex flexDir="column" w="full">
       <Text as={"p"} fontSize="sm" whiteSpace={"pre-line"} lineHeight={"18px"}>
@@ -43,3 +44,5 @@ export default function MessageContent({ content }: IMessageContentProps) {
     </Flex>
   );
 }
+
+export default memo(MessageContent);

@@ -3,7 +3,6 @@ import embed from "vega-embed";
 import type { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
 export function parseVegaLite(content: string, size: number): TopLevelUnitSpec<string> {
-  // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let spec;
   try {
     if (content.includes("```")) {
@@ -54,11 +53,19 @@ export const isContentValidJSON = (content: string) => {
     return false;
   }
 };
-
 export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
   _data: any,
 ): Promise<string> {
+  // Create a unique key for this spec and data combination
+  const cacheKey = `thumbnail_${JSON.stringify(spec)}_${JSON.stringify(_data)}`;
+
+  // Check if the thumbnail is already in SessionStorage
+  const cachedThumbnail = sessionStorage.getItem(cacheKey);
+  if (cachedThumbnail) {
+    return cachedThumbnail;
+  }
+
   let newSpec = structuredClone(spec);
   const thumbnailAxis = {
     disable: true,
@@ -111,5 +118,14 @@ export async function getThumbnailFromSpec(
   }).then((result) => result.view);
   const canvas = await view.toCanvas();
   const thumbnailDataURL = canvas.toDataURL();
+
+  // Cache the result in SessionStorage
+  try {
+    sessionStorage.setItem(cacheKey, thumbnailDataURL);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn("Failed to cache thumbnail in SessionStorage:", e);
+  }
+
   return thumbnailDataURL;
 }

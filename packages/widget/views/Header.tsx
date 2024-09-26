@@ -1,5 +1,5 @@
 import { Button, Center, Flex, Icon, Link, Text } from "@chakra-ui/react";
-import { FaGithub } from "react-icons/fa6";
+import { FaFlask, FaGithub } from "react-icons/fa6";
 
 export default function Header() {
   return (
@@ -8,13 +8,8 @@ export default function Header() {
         Bavisitter
       </Text>
       <Center gap={4}>
-        {/* <Link href="https://idclab.skku.edu" isExternal>
-          <Button
-            variant={"link"}
-            size={"xs"}
-            leftIcon={<Icon as={FaFlask} />}
-            p={0}
-          >
+        <Link href="https://idclab.skku.edu" isExternal>
+          <Button variant={"link"} size={"xs"} leftIcon={<Icon as={FaFlask} />} p={0}>
             <Text fontFamily="Rajdhani" fontWeight={600} fontSize={"sm"}>
               IDC
             </Text>
@@ -22,7 +17,7 @@ export default function Header() {
               Lab
             </Text>
           </Button>
-        </Link> */}
+        </Link>
         <Link href="https://github.com/jiwnchoi" isExternal>
           <Button leftIcon={<Icon as={FaGithub} />} size={"xs"} variant={"link"} p={0}>
             Github
