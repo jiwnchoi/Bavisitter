@@ -1,4 +1,3 @@
-import { useModelState } from "@anywidget/react";
 import {
   Avatar,
   Badge,
@@ -14,56 +13,16 @@ import {
 import { useRevisionView } from "@hooks";
 import { BabyBottleIcon } from "@shared/icons";
 import { useEffect } from "react";
-import { FaTools } from "react-icons/fa";
-import { FaBaby, FaBabyCarriage } from "react-icons/fa6";
+import { FaBabyCarriage } from "react-icons/fa6";
 import type { IDetectorModel } from "videre/model";
 import type IResolverModel from "videre/model/IActuatorModel";
 
-type TRevisionType = "advisor" | "prompt" | "none";
-const REVISE_WITH_ACTUATOR = "advisor";
-const REVISE_WITH_SOLUTION = "prompt";
-const REVISE_WITH_ISSUE = "none";
-
 interface IRevisionButtonProps {
   disabled: boolean;
-  revisionType: TRevisionType;
-  setRevisionType: (revisionType: TRevisionType) => void;
-  reviseLastChartWithAction: () => void;
-  reviseLastChartWithProblem: () => void;
   reviseLastChartWithPrompt: () => void;
 }
 
-function RevisionButton({
-  disabled,
-  revisionType,
-  setRevisionType,
-  reviseLastChartWithAction,
-  reviseLastChartWithProblem,
-  reviseLastChartWithPrompt,
-}: IRevisionButtonProps) {
-  const actionTypes = {
-    advisor: {
-      label: "with Actuator",
-      Icon: <Icon as={FaTools} />,
-      setRevisionType: () => setRevisionType(REVISE_WITH_ACTUATOR),
-      colorSchenme: "green",
-      revise: reviseLastChartWithAction,
-    },
-    prompt: {
-      label: "with Action Prompt",
-      Icon: <Icon as={FaBabyCarriage} />,
-      setRevisionType: () => setRevisionType(REVISE_WITH_SOLUTION),
-      colorSchenme: "orange",
-      revise: reviseLastChartWithPrompt,
-    },
-    none: {
-      label: "with LLM Desicion",
-      Icon: <Icon as={FaBaby} />,
-      setRevisionType: () => setRevisionType(REVISE_WITH_ISSUE),
-      colorSchenme: "red",
-      revise: reviseLastChartWithProblem,
-    },
-  };
+function RevisionButton({ disabled, reviseLastChartWithPrompt }: IRevisionButtonProps) {
   return (
     <Flex w="full">
       <Button
@@ -71,45 +30,12 @@ function RevisionButton({
         w={"full"}
         size={"sm"}
         ps={4}
-        // borderRightRadius={0}
-        // colorScheme={actionTypes[revisionType].colorSchenme}
         colorScheme="blue"
-        // variant={"outline"}
         variant={"solid"}
-        onClick={actionTypes[revisionType].revise}>
+        onClick={reviseLastChartWithPrompt}
+        leftIcon={<Icon as={FaBabyCarriage} />}>
         {disabled ? "Select Solution to Apply" : "Revise Current Visualization"}
       </Button>
-
-      {/* <Menu>
-        <MenuButton
-          as={Button}
-          size={"sm"}
-          variant={"solid"}
-          borderLeftRadius={0}
-          leftIcon={actionTypes[revisionType].Icon}
-          colorScheme={actionTypes[revisionType].colorSchenme}
-          rightIcon={<Icon as={FaAngleDown} />}
-          aria-label="expand solution"
-          onClick={() => {}}
-        />
-        <MenuList>
-          {Object.values(actionTypes).map((action, index) => {
-            return (
-              <MenuItem
-                as={Button}
-                size={"xs"}
-                variant={"ghost"}
-                colorScheme={action["colorSchenme"]}
-                icon={action["Icon"]}
-                key={index}
-                onClick={action["setRevisionType"]}
-              >
-                {action["label"]}
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </Menu> */}
     </Flex>
   );
 }
@@ -117,15 +43,13 @@ function RevisionButton({
 function IssueItem({
   issue,
   resolvers,
-  revisionType,
-  setResolver,
+  setResolverSelected,
 }: {
   issue: Pick<IDetectorModel, "type" | "id" | "description">;
   resolvers: (Pick<IResolverModel, "id" | "description"> & {
     selected: boolean;
   })[];
-  revisionType: TRevisionType;
-  setResolver: (id: string) => (selected: boolean) => void;
+  setResolverSelected: (issueId: string, resolverId: string, selected: boolean) => void;
 }) {
   return (
     <Flex h="full" flexDir={"column"} borderWidth={2} gap={4} p={4} borderRadius={8}>
@@ -140,29 +64,30 @@ function IssueItem({
         </Text>
       </Flex>
 
-      {revisionType !== "none" &&
-        resolvers.map((resolver, index) => (
-          <Flex
-            key={`resolver-${index}`}
-            flexDir={"row"}
-            gap={2}
-            onClick={() => setResolver(resolver.id)(!resolver.selected)}
-            _hover={{ cursor: "pointer" }}
-            align={"start"}>
-            <Checkbox
-              size="sm"
-              isChecked={resolver.selected}
-              mt={0.5}
-              colorScheme="blue"
-              onChange={(e) => {
-                setResolver(resolver.id)(!e.target.checked);
-              }}
-            />
-            <Text fontSize="sm" opacity={resolver.selected ? 0.7 : 0.2} transitionDuration={"0.2s"}>
-              {resolver.description}
-            </Text>
-          </Flex>
-        ))}
+      {resolvers.map((resolver, index) => (
+        <Flex
+          key={`resolver-${index}`}
+          flexDir={"row"}
+          gap={2}
+          onClick={() => {
+            setResolverSelected(issue.id, resolver.id, !resolver.selected);
+          }}
+          _hover={{ cursor: "pointer" }}
+          align={"start"}>
+          <Checkbox
+            size="sm"
+            isChecked={resolver.selected}
+            mt={0.5}
+            colorScheme="blue"
+            onChange={(e) => {
+              setResolverSelected(issue.id, resolver.id, e.target.checked);
+            }}
+          />
+          <Text fontSize="sm" opacity={resolver.selected ? 0.7 : 0.2} transitionDuration={"0.2s"}>
+            {resolver.description}
+          </Text>
+        </Flex>
+      ))}
     </Flex>
   );
 }
@@ -172,30 +97,10 @@ interface IRevisionContentProps {
 }
 
 export default function RevisionContent({ scrollToBottom }: IRevisionContentProps) {
-  const {
-    revisionViewDisplayed,
-    detectResult,
-    reviseLastChartWithAction,
-    reviseLastChartWithProblem,
-    reviseLastChartWithPrompt,
-    setResolver,
-  } = useRevisionView();
+  const { revisionViewDisplayed, detectResult, reviseLastChartWithPrompt, setResolverSelected } =
+    useRevisionView();
 
-  const [revisionType, setRevisionType] = useModelState<TRevisionType>("advisor");
-  const [autoFix] = useModelState<boolean>("auto_fix");
-  useEffect(scrollToBottom, [detectResult]);
-
-  useEffect(() => {
-    if (!autoFix) return;
-    if (!revisionViewDisplayed) return;
-    if (revisionType === REVISE_WITH_ISSUE) {
-      reviseLastChartWithProblem(detectResult);
-    } else if (revisionType === REVISE_WITH_SOLUTION) {
-      reviseLastChartWithPrompt(detectResult);
-    } else if (revisionType === REVISE_WITH_ACTUATOR) {
-      reviseLastChartWithAction(detectResult);
-    }
-  }, [detectResult]);
+  useEffect(scrollToBottom, [detectResult, scrollToBottom]);
 
   if (!revisionViewDisplayed) return null;
   return (
@@ -223,25 +128,13 @@ export default function RevisionContent({ scrollToBottom }: IRevisionContentProp
                   key={`issueItem${index}`}
                   issue={issue}
                   resolvers={resolvers}
-                  revisionType={revisionType}
-                  setResolver={setResolver}
+                  setResolverSelected={setResolverSelected}
                 />
               </Fade>
             ))}
           </SimpleGrid>
           <RevisionButton
-            revisionType={revisionType}
-            setRevisionType={setRevisionType}
-            disabled={
-              revisionType !== "none" &&
-              detectResult.flatMap((d) => d.resolvers).every((r) => !r.selected)
-            }
-            reviseLastChartWithAction={() => {
-              reviseLastChartWithAction(detectResult);
-            }}
-            reviseLastChartWithProblem={() => {
-              reviseLastChartWithProblem(detectResult);
-            }}
+            disabled={detectResult.flatMap((d) => d.resolvers).every((r) => !r.selected)}
             reviseLastChartWithPrompt={() => {
               reviseLastChartWithPrompt(detectResult);
             }}

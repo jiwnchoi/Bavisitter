@@ -1,47 +1,63 @@
 import useLoadArtifact from "@hooks/query/useLoadArtifact";
 import { detectResultToContent } from "@shared/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { produce } from "immer";
+import { useEffect, useState } from "react";
 import { type IDetectorResultWithSelection, detect } from "videre/index";
 import useCharts from "./useCharts";
-import useMessages from "./useMessagess";
+import useMessages from "./useMessages";
 import useStreaming from "./useStreaming";
 
 export default function useRevisionContent() {
   const { messages, appendMessages } = useMessages();
   const streaming = useStreaming();
   const { lastChart } = useCharts();
-  const artifactName = lastChart.spec?.data?.name ?? "";
+  const artifactName = lastChart ? (lastChart.spec?.data?.name ?? "") : "";
   const { artifact } = useLoadArtifact(artifactName);
 
   const lastUserMessage = messages.findLastIndex((m) => m.role === "user");
   const lastChartIndex = lastChart ? lastChart.chatIndex : 0;
 
   const { data: _detectResult, isLoading: detecting } = useQuery({
-    queryKey: ["detectorResult", JSON.stringify(lastChart.spec), artifactName],
+    queryKey: ["detectorResult", JSON.stringify(lastChart?.spec), artifactName],
     queryFn: async () => {
+      if (!lastChart || !artifact) {
+        return [];
+      }
       return await detect(lastChart.spec, artifact as unknown as Record<any, any>[]);
     },
     enabled: !!lastChart && !!artifact,
   });
 
-  const [selectedDetectResultIndices, setSelectedDetectResultIndices] = useState<number[]>([]);
-
-  const detectResult: IDetectorResultWithSelection[] = useMemo(
-    () =>
-      _detectResult?.map((d) => ({
-        ...d,
-        resolvers: d.resolvers.map((r, i) => ({
-          ...r,
-          selected: selectedDetectResultIndices.includes(i),
-        })),
-      })) ?? [],
-    [_detectResult, selectedDetectResultIndices],
-  );
+  const [detectResult, setDetectResult] = useState<IDetectorResultWithSelection[]>([]);
 
   useEffect(() => {
-    setSelectedDetectResultIndices([]);
-  }, [_detectResult]);
+    if (_detectResult) {
+      setDetectResult(
+        _detectResult.map((d) => ({
+          ...d,
+          resolvers: d.resolvers.map((r) => ({
+            ...r,
+            selected: false,
+          })),
+        })),
+      );
+    }
+  }, [_detectResult, setDetectResult]);
+
+  const setResolverSelected = (issueId: string, resolverId: string, selected: boolean) => {
+    setDetectResult(
+      produce<IDetectorResultWithSelection[]>((draft) => {
+        const result = draft.find((r) => r.issue.id === issueId);
+        if (result) {
+          const resolver = result.resolvers.find((r) => r.id === resolverId);
+          if (resolver) {
+            resolver.selected = selected;
+          }
+        }
+      }),
+    );
+  };
 
   const revisionViewDisplayed =
     !streaming &&
@@ -61,29 +77,11 @@ export default function useRevisionContent() {
     ]);
   };
 
-  const reviseLastChartWithProblem = (detectResult: IDetectorResultWithSelection[]) => {
-    appendMessages([
-      {
-        role: "user",
-        type: "message",
-        content: detectResultToContent(detectResult, false),
-      },
-    ]);
-  };
-
-  const setDetectResultSelected = (detectResultIndex: number, selected: boolean) => {
-    const newSelectedDetectResultIndices = selected
-      ? [...selectedDetectResultIndices, detectResultIndex]
-      : selectedDetectResultIndices.filter((i) => i !== detectResultIndex);
-    setSelectedDetectResultIndices(newSelectedDetectResultIndices);
-  };
-
   return {
     revisionViewDisplayed,
     detecting,
     detectResult,
+    setResolverSelected,
     reviseLastChartWithPrompt,
-    reviseLastChartWithProblem,
-    setDetectResultSelected,
   };
 }

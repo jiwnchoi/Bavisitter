@@ -3,7 +3,7 @@ import type { IChartSpec } from "@shared/types";
 import { isCodeVegaLite, isContentValidJSON, parseVegaLite } from "@shared/utils";
 import { useInteractionStore } from "@stores";
 import { useMemo } from "react";
-import useMessages from "./useMessagess";
+import useMessages from "./useMessages";
 
 export default function useCharts() {
   const { messages } = useMessages();
@@ -19,7 +19,7 @@ export default function useCharts() {
   }, [messages]);
   const currentChartIndex = useInteractionStore((state) => state.currentChartIndex);
   const currentChart = charts[currentChartIndex];
-  const lastChart = charts[charts.length - 1];
+  const lastChart = charts.length > 0 ? charts[charts.length - 1] : null;
 
   return {
     charts,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import useMessages from "./useMessagess";
+import useMessages from "./useMessages";
 
 export default function useMessagesContainer() {
   const { messages } = useMessages();

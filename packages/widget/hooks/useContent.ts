@@ -2,7 +2,7 @@ import type { IMessageWithRef } from "@shared/types";
 import { isCodeVegaLite, replaceJSONCodeBlocks } from "@shared/utils";
 import { BabyBottleIcon, RoboticIcon, UserQuestion01Icon } from "hugeicons-react";
 import type { FC } from "react";
-import useMessages from "./useMessagess";
+import useMessages from "./useMessages";
 import useStreaming from "./useStreaming";
 type TUserNames = "You" | "Visualization Assistant" | "Bavisitter";
 
