@@ -3,8 +3,6 @@ import type { IManifestManual } from "videre/model";
 import {
   binIsNotNice,
   cardinalityIsOne,
-  catColorsForOrdered,
-  contColorsForNominal,
   excessiveCardinality,
   indistinctTheta,
   labelOverlap,
@@ -21,8 +19,8 @@ import {
 
 const manifest: IManifestManual[] = [
   lineForNominal,
-  catColorsForOrdered,
-  contColorsForNominal,
+  // catColorsForOrdered,
+  // contColorsForNominal,
   ...cardinalityIsOne,
   indistinctTheta,
   redundantEncoding,

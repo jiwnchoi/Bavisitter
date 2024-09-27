@@ -19,16 +19,21 @@ export default function isChannelProp(
       throw new Error("Spec has no encoding");
     }
     const { spec } = state;
-    if (!spec.encoding[channelName]) {
+    if (!spec.encoding || !spec.encoding[channelName]) {
       return false;
     }
 
     const encoding = spec.encoding![channelName] as PositionFieldDef<string>;
 
-    if (Array.isArray(value)) {
-      return value.some((v) => deepEqual(encoding[prop], v));
+    // If value is undefined, just check if the property exists
+    if (value === undefined) {
+      return prop in encoding;
     }
 
-    return encoding && deepEqual(encoding[prop], value);
+    if (Array.isArray(value)) {
+      return value.some((v) => deepEqual(encoding[prop as keyof PositionFieldDef<string>], v));
+    }
+
+    return encoding && deepEqual(encoding[prop as keyof PositionFieldDef<string>], value);
   };
 }

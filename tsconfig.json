@@ -1,5 +1,5 @@
 {
-  "include": ["packages/widget", "packages/videre"],
+  "include": ["packages/widget", "packages/videre", "vitest.setup.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
