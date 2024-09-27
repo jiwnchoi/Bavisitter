@@ -1,13 +1,17 @@
 import { Divider, Flex, Spacer, Text } from "@chakra-ui/react";
-import { useMessages } from "@hooks";
+import { useMessages, useMessagesContainer } from "@hooks";
+import { CHART_WIDTH } from "@shared/constants";
 import ChartView from "./ChartView";
 import HistoryView from "./HistoryView";
 import Messages from "./Messages";
+import Placeholder from "./Placeholder";
 
-export default function Main({ chartWidth }: { chartWidth: number }) {
-  const { chatBoxRef, chatBoxAtBottom, scrollToBottom, scrollToContentByIndex } = useMessages();
+function Main() {
+  const { messages } = useMessages();
+  const { chatBoxRef, chatBoxAtBottom, scrollToBottom, scrollToContentByIndex } =
+    useMessagesContainer();
 
-  return (
+  return messages.length !== 0 ? (
     <>
       <Messages
         w={"full"}
@@ -17,15 +21,16 @@ export default function Main({ chartWidth }: { chartWidth: number }) {
         flexDir={"column"}
         gap={8}
         p={4}
+        messages={messages}
         chatBoxRef={chatBoxRef}
         chatBoxAtBottom={chatBoxAtBottom}
         scrollToBottom={scrollToBottom}
       />
-      <Flex flexDir={"column"} w={chartWidth}>
+      <Flex flexDir={"column"} w={CHART_WIDTH}>
         <Text px={4} pb={2} fontWeight={700}>
           Current Visualization
         </Text>
-        <ChartView minW={chartWidth} />
+        <ChartView minW={CHART_WIDTH} />
         <Spacer />
         <Divider m={4} />
         <Text px={4} fontWeight={700}>
@@ -39,5 +44,9 @@ export default function Main({ chartWidth }: { chartWidth: number }) {
         />
       </Flex>
     </>
+  ) : (
+    <Placeholder />
   );
 }
+
+export default Main;

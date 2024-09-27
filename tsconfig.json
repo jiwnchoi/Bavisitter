@@ -19,6 +19,7 @@
     "paths": {
       "@*": ["packages/widget/*"],
       "videre/*": ["packages/videre/*"]
-    }
+    },
+    "types": ["vitest/globals"]
   }
 }

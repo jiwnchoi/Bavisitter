@@ -1,56 +1,42 @@
-import { useMessageStore } from "@stores";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useModelState } from "@anywidget/react";
+import { type IMessage, type IMessageWithRef } from "@shared/types";
+import { createRef, useMemo, type RefObject } from "react";
+
+const refCache = new Map<string, RefObject<HTMLDivElement>>();
 
 export default function useMessages() {
-  const chatBoxRef = useRef<HTMLDivElement>(null);
-  const messages = useMessageStore((state) => state.messages);
-  const [chatBoxAtBottom, _setChatBoxAtBottom] = useState<boolean>(true);
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = "instant") => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTo({
-        top: chatBoxRef.current.scrollHeight,
-        behavior,
-      });
-    }
-  }, []);
-  const scrollToContentByIndex = useCallback(
-    (chatIndex: number) => {
-      const message = messages.find((m) => m.chatIndex === chatIndex);
-      if (chatBoxRef.current && message && message.ref.current) {
-        chatBoxRef.current.scrollTo({
-          top: message.ref.current.offsetTop - 32,
-          behavior: "smooth",
-        });
-      }
-    },
-    [messages],
-  );
+  const [modelMessages, setModelMessages] = useModelState<IMessage[]>("messages");
 
-  useEffect(() => {
-    const current = chatBoxRef.current;
-    const setChatBoxAtBottom = () => {
-      _setChatBoxAtBottom(
-        current !== null && current.scrollHeight - current.scrollTop - current.clientHeight <= 50,
-      );
-    };
+  const messages: IMessageWithRef[] = useMemo(() => {
+    return modelMessages.map((m, i) => {
+      const ref = refCache.get(`message-${i}`) ?? createRef<HTMLDivElement>();
+      refCache.set(`message-${i}`, ref);
+      return { ...m, ref, chatIndex: i };
+    });
+  }, [modelMessages]);
 
-    if (current) {
-      current.addEventListener("scroll", setChatBoxAtBottom);
-      return () => current?.removeEventListener("scroll", setChatBoxAtBottom);
-    }
-  }, [chatBoxRef, _setChatBoxAtBottom]);
+  const appendMessages = (messages: IMessage[]) => {
+    setModelMessages([...modelMessages, ...messages]);
+  };
 
-  useEffect(() => {
-    const current = chatBoxRef.current;
-    if (current && chatBoxAtBottom) {
-      scrollToBottom();
-    }
-  }, [messages, chatBoxAtBottom, scrollToBottom]);
+  const sendCurrentMessages = () => {
+    setModelMessages([...modelMessages]);
+  };
+
+  const clearUserMessages = () => {
+    setModelMessages([]);
+  };
+
+  const editUserMessage = (index: number, message: IMessage) => {
+    setModelMessages([...modelMessages.slice(0, index), message]);
+  };
 
   return {
-    chatBoxRef,
-    chatBoxAtBottom,
-    scrollToBottom,
-    scrollToContentByIndex,
+    messages,
+    setModelMessages,
+    appendMessages,
+    editUserMessage,
+    clearUserMessages,
+    sendCurrentMessages,
   };
 }

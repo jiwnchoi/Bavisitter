@@ -2,6 +2,7 @@ import { useModelState } from "@anywidget/react";
 import { ChakraProvider, DarkMode, LightMode, useColorMode } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
 import type { TColorMode } from "@shared/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type PropsWithChildren, useEffect } from "react";
 import ShadowRoot from "react-shadow/emotion";
 import theme from "./theme";
@@ -45,6 +46,7 @@ function ColorMode({ children }: PropsWithChildren) {
 }
 
 function Providers({ children }: PropsWithChildren) {
+  const queryClient = new QueryClient();
   return (
     <ShadowRoot.div
       id="shadow-root"
@@ -57,9 +59,11 @@ function Providers({ children }: PropsWithChildren) {
         display: "flex",
         scrollBehavior: "smooth",
       }}>
-      <ChakraProvider theme={theme}>
-        <ColorMode>{children}</ColorMode>
-      </ChakraProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={theme}>
+          <ColorMode>{children}</ColorMode>
+        </ChakraProvider>
+      </QueryClientProvider>
     </ShadowRoot.div>
   );
 }
