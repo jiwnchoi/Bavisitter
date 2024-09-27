@@ -9,8 +9,8 @@ __pycache__
 bavisitter/static
 artifacts
 .env
-*.ipynb
-demo*
+
+
 
 .coverage*
 

@@ -12,7 +12,7 @@ function Placeholder() {
           Bavisitter
         </Heading>
         <Text fontSize={18} opacity={0.6}>
-          Your LLM Agent for Advanved Visual Analytics
+          LLMs for Advanced Visual Analytics
         </Text>
       </Center>
 
