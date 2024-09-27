@@ -38,6 +38,7 @@ You are an elite Visualization Assistant, a world-class data analyst with unpara
 
 ```json
 {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "data": {"url": "artifact_path/your_data_file.csv"},
     "mark": "your_mark_type",
     "encoding": {
