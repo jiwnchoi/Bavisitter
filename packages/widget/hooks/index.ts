@@ -6,5 +6,5 @@ export { default as useIPC } from "./useIPC";
 export { default as useMessages } from "./useMessages";
 export { default as useMessagesContainer } from "./useMessagesContainer";
 export { default as usePromptView } from "./usePromptView";
-export { default as useRevisionView } from "./useRevisionContent";
+export { default as useRevisionContent } from "./useRevisionContent";
 export { default as useStreaming } from "./useStreaming";

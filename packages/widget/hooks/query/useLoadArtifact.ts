@@ -1,6 +1,6 @@
+import { useIPC } from "@hooks";
 import { useQuery } from "@tanstack/react-query";
 import type { PlainObject } from "react-vega";
-import useIPC from "../useIPC";
 
 export default function useLoadArtifact(name: string | undefined) {
   const { fetchModel } = useIPC();

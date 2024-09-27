@@ -11,7 +11,7 @@ export default function useGetThumbnail(chart: IChartSpec) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["thumbnail", JSON.stringify(chart.spec)],
     queryFn: async () => {
-      const thumbnail = await getThumbnailFromSpec(chart.spec, artifact);
+      const thumbnail = await getThumbnailFromSpec(chart.spec, artifact!);
       return thumbnail;
     },
     enabled: !artifactLoading && !!artifact,

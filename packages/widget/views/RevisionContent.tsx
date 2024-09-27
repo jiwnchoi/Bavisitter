@@ -10,7 +10,7 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { useRevisionView } from "@hooks";
+import { useRevisionContent } from "@hooks";
 import { BabyBottleIcon } from "@shared/icons";
 import { useEffect } from "react";
 import { FaBabyCarriage } from "react-icons/fa6";
@@ -98,7 +98,7 @@ interface IRevisionContentProps {
 
 export default function RevisionContent({ scrollToBottom }: IRevisionContentProps) {
   const { revisionViewDisplayed, detectResult, reviseLastChartWithPrompt, setResolverSelected } =
-    useRevisionView();
+    useRevisionContent();
 
   useEffect(scrollToBottom, [detectResult, scrollToBottom]);
 

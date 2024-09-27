@@ -5,5 +5,8 @@ import config from "./vite.config.json";
 
 export default defineConfig({
   ...(config as Partial<UserConfig>),
-  plugins: [anywidget(), tspathConfig()],
+  plugins: [tspathConfig(), anywidget()],
+  define: {
+    "process.env": {},
+  },
 });

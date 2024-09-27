@@ -4,8 +4,8 @@
     "outDir": "bavisitter/static",
     "rollupOptions": {
       "output": {
-        "entryFileNames": "widget.js",
-        "assetFileNames": "widget.[ext]"
+        "entryFileNames": "main.js",
+        "assetFileNames": "main.[ext]"
       }
     },
     "lib": {

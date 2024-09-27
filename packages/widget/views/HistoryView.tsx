@@ -1,4 +1,4 @@
-import { Flex, type FlexProps, Image, Spinner, useColorMode } from "@chakra-ui/react";
+import { Center, Flex, type FlexProps, Image, Spinner, useColorMode } from "@chakra-ui/react";
 import { useCharts } from "@hooks";
 import { useGetThumbnail } from "@hooks/query";
 import { type IChartSpec } from "@shared/types";
@@ -28,6 +28,7 @@ const ThumbnailView = ({
   const { thumbnail, loading } = useGetThumbnail(chart);
   const setCodeBlockOpened = useInteractionStore((state) => state.setCodeBlockOpened);
   const setCurrentChartIndex = useInteractionStore((state) => state.setCurrentChartIndex);
+
   return (
     <Flex
       backgroundColor={colorMode === "dark" ? "gray.700" : "gray.100"}
@@ -36,11 +37,13 @@ const ThumbnailView = ({
       key={`thumbnail-${chartIndex}`}
       h={"fit-content"}
       {...props}>
-      {loading ? (
-        <Spinner w={thumbnailSize} h={thumbnailSize} />
+      {loading && !thumbnail ? (
+        <Center w={thumbnailSize} h={thumbnailSize}>
+          <Spinner />
+        </Center>
       ) : (
         <Image
-          src={thumbnail ?? ""}
+          src={thumbnail}
           h={thumbnailSize}
           w={thumbnailSize}
           minW={thumbnailSize}

@@ -54,8 +54,6 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
   streaming = Bool(default_value=False).tag(sync=True)
   color_mode = Unicode(default_value="system").tag(sync=True)
   ipc_queue = List(Dict()).tag(sync=True)
-  advisor = Unicode(default_value="prompt").tag(sync=True)
-  auto_fix = Bool(default_value=True).tag(sync=True)
 
   def __init__(
     self,
@@ -79,7 +77,7 @@ class Bavisitter(anywidget.AnyWidget, HasTraits):
       self._esm = f"http://localhost:{vite_config['server']['port']}/packages/widget/main.tsx?anywidget"
     else:
       self._esm = (
-        pathlib.Path(__file__).parent / "static" / "widget.js"
+        pathlib.Path(__file__).parent / "static" / "main.js"
       ).read_text()
 
     if df is None or not isinstance(df, pd.DataFrame):
