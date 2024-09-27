@@ -23,7 +23,7 @@ const usePromptView = () => {
     prompt: string,
     setFieldValue: (
       field: string,
-      value: any,
+      value: string,
       shouldValidate?: boolean,
     ) => Promise<void | FormikErrors<{ prompt: string }>>,
     submitForm: () => Promise<void>,

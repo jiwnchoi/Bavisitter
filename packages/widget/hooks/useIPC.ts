@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useModelState } from "@anywidget/react";
 import { useEffect } from "react";
 
@@ -14,7 +16,7 @@ interface IIPCModel {
 function useIPC() {
   const [ipcQueue, setIPCQueue] = useModelState<IIPCModel[]>("ipc_queue");
 
-  async function fetchModel<T>(type: string, data: any) {
+  async function fetchModel<T>(type: string, data: unknown) {
     const uuid = Math.random().toString(36).substring(7);
     setIPCQueue([
       ...ipcQueue,

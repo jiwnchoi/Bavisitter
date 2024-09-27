@@ -14,7 +14,7 @@ export default function useViDeRe(chart: IChartSpec | null) {
     queryKey: ["detectorResult", JSON.stringify(chart?.spec), artifactName],
     queryFn: async () => {
       if (!chart || !artifact) return [];
-      return await detect(chart.spec, artifact as unknown as Record<any, any>[]);
+      return await detect(chart.spec, artifact as unknown as Record<symbol, unknown>[]);
     },
     enabled: !!chart && !!artifact,
   });

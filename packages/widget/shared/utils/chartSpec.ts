@@ -1,21 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type { IMessageWithRef } from "@shared/types";
 import embed from "vega-embed";
+import type { InlineDataset } from "vega-lite/build/src/data";
 import type { TopLevelUnitSpec } from "vega-lite/build/src/spec/unit";
 
-export function parseVegaLite(content: string, size: number): TopLevelUnitSpec<string> {
-  let spec;
+export function parseVegaLite(content: string, size: number): TopLevelUnitSpec<string> | null {
+  let parsedContent: unknown;
   try {
     if (content.includes("```")) {
-      spec = JSON.parse(content.split("```")[0]);
+      parsedContent = JSON.parse(content.split("```")[0]);
     } else {
-      spec = JSON.parse(content);
+      parsedContent = JSON.parse(content);
     }
-  } catch (e) {
-    spec = {};
+  } catch {
+    return null;
   }
-  if (spec.data?.url) {
+
+  if (!isTopLevelUnitSpec(parsedContent)) {
+    return null;
+  }
+
+  const spec: TopLevelUnitSpec<string> = parsedContent;
+
+  if (spec.data && typeof spec.data === "object" && "url" in spec.data) {
     spec.data = { name: spec.data.url };
   }
+
   spec.width = size;
   spec.height = size;
   spec.config = {
@@ -28,7 +39,12 @@ export function parseVegaLite(content: string, size: number): TopLevelUnitSpec<s
       },
     },
   };
+
   return spec;
+}
+
+function isTopLevelUnitSpec(obj: unknown): obj is TopLevelUnitSpec<string> {
+  return typeof obj === "object" && obj !== null && "data" in obj;
 }
 
 export function stringfyVegaLite(spec: TopLevelUnitSpec<string>) {
@@ -49,13 +65,13 @@ export const isContentValidJSON = (content: string) => {
   try {
     JSON.parse(content);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
 export async function getThumbnailFromSpec(
   spec: TopLevelUnitSpec<string>,
-  _data: any,
+  _data: InlineDataset,
 ): Promise<string> {
   // Create a unique key for this spec and data combination
   const cacheKey = `thumbnail_${JSON.stringify(spec)}_${JSON.stringify(_data)}`;
@@ -93,8 +109,9 @@ export async function getThumbnailFromSpec(
 
   if (newSpec.encoding) {
     for (const key in newSpec.encoding) {
-      if ((newSpec.encoding[key as keyof typeof newSpec.encoding] as any)?.legend !== undefined) {
-        (newSpec.encoding[key as keyof typeof newSpec.encoding] as any).legend = null;
+      const encodingField = newSpec.encoding[key as keyof typeof newSpec.encoding];
+      if (encodingField && "legend" in encodingField) {
+        (encodingField as any).legend = null;
       }
     }
   }

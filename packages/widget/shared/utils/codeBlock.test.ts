@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import type { IMessage } from "@shared/types";
 import { extractCodeBlocksFromString } from "./codeBlock";
 
 const CODEBLOCK_STRING =
@@ -7,7 +9,7 @@ const TEXT_STRING =
   '{"role": "assistant", "type": "message", "content": "Based on the available columns from the dataset, I will create a scatter plot to visualize the relationship between `Horsepower` (on the x-axis) and `Miles_per_Gallon` (on the y-axis) specification defines a scatter plot that illustrates the correlation between a car\'s horsepower and its fuel efficiency (miles per gallon). The tooltip displays the name of the car and the exact values of horsepower and miles per gallon when hovering over the points.\\n\\n"}';
 
 describe("extractCodeBlocksFromString", () => {
-  const TEST_MESSAGE = JSON.parse(CODEBLOCK_STRING);
+  const TEST_MESSAGE = JSON.parse(CODEBLOCK_STRING) as IMessage;
   const codeBlockString = extractCodeBlocksFromString(TEST_MESSAGE.content);
   test("should extract code blocks from a string", () => {
     expect(JSON.parse(codeBlockString).data?.url).toBe("data.csv");

@@ -21,7 +21,6 @@ export default function useRevisionContent() {
     detectResult &&
     detectResult.length > 0;
 
-  console.log(lastChart, revisionViewDisplayed, detectResult.length);
   const reviseLastChartWithPrompt = (detectResult: IDetectorResultWithSelection[]) => {
     appendMessages([
       {

@@ -14,7 +14,7 @@ export default function useCharts() {
     );
     return chartMessages.map((message) => {
       return {
-        spec: parseVegaLite(message.content, CHART_WIDTH),
+        spec: parseVegaLite(message.content, CHART_WIDTH)!,
         chatIndex: message.chatIndex,
       };
     });
