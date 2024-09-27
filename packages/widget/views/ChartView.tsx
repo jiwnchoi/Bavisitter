@@ -8,12 +8,11 @@ function ChartView(props: CenterProps) {
 
   return (
     <Flex {...props}>
-      {spec && data && (
+      {spec?.data.name && data && (
         <Vega
           mode={"vega-lite"}
           spec={spec}
-          data={data}
-          actions={true}
+          data={{ [spec.data.name]: data }}
           theme={colorMode === "light" ? undefined : "dark"}
         />
       )}

@@ -4,18 +4,20 @@ import { BabyBottleIcon, RoboticIcon, UserQuestion01Icon } from "hugeicons-react
 import type { FC } from "react";
 import useMessages from "./useMessages";
 import useStreaming from "./useStreaming";
-type TUserNames = "You" | "Visualization Assistant" | "Bavisitter";
+type TUserNames = "You" | "Visualization Assistant" | "Bavisitter" | "";
 
-const avatarIcons: Record<TUserNames, FC> = {
+const avatarIcons: Record<TUserNames, FC | null> = {
   You: UserQuestion01Icon,
   Bavisitter: BabyBottleIcon,
   "Visualization Assistant": RoboticIcon,
+  "": null,
 };
 
 const avatarColors: Record<TUserNames, string> = {
   You: "green.500",
   Bavisitter: "blue.500",
   "Visualization Assistant": "orange.500",
+  "": "",
 };
 
 const isUserMessageBySystem = (message: IMessageWithRef) =>
@@ -37,7 +39,7 @@ export default function useContent(chatIndex: number) {
     if (previousMessage && previousMessage.role === "user") {
       return "Visualization Assistant";
     }
-    return "You";
+    return "";
   })();
 
   const avatarColor = avatarColors[userName];
